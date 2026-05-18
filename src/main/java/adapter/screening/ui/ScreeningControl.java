@@ -106,7 +106,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
 				screeningInsFrm.setVisible(true); break;
 			case "저장":  insertOne(); break;
-			case "취소":  screeningInsFrm.setVisible(false); break;
+			case "취소":  screeningInsFrm.setVisible(false); screeningUpFrm.setVisible(false); break;
 			case "수정":  updateOne(); break;
 			case "삭제":  deleteOne(); break;
 		}

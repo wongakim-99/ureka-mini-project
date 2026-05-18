@@ -82,7 +82,7 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 			case "목록 조회":   readAll(); break;
 			case "상영관 추가": theaterInsFrm.setVisible(true); break;
 			case "저장":        insertOne(); break;
-			case "취소":        theaterInsFrm.setVisible(false); break;
+			case "취소":        theaterInsFrm.setVisible(false); theaterUpFrm.setVisible(false); break;
 			case "수정":        updateOne(); break;
 			case "삭제":        deleteOne(); break;
 		}

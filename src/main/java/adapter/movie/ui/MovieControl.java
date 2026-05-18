@@ -89,7 +89,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 			case "목록 조회": readAll(); break;
 			case "영화 추가": movieInsFrm.setVisible(true); break;
 			case "저장":      insertOne(); break;
-			case "취소":      movieInsFrm.setVisible(false); break;
+			case "취소":      movieInsFrm.setVisible(false); movieUpFrm.setVisible(false); break;
 			case "수정":      updateOne(); break;
 			case "삭제":      deleteOne(); break;
 		}

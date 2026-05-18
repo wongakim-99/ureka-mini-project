@@ -80,7 +80,7 @@ public class CustControl extends MouseAdapter implements ActionListener {
 			case "목록 조회": readAll(); break;
 			case "고객 추가": custInsFrm.setVisible(true); break;
 			case "저장":      insertOne(); break;
-			case "취소":      custInsFrm.setVisible(false); break;
+			case "취소":      custInsFrm.setVisible(false); custUpFrm.setVisible(false); break;
 			case "수정":      updateOne(); break;
 			case "삭제":      deleteOne(); break;
 		}

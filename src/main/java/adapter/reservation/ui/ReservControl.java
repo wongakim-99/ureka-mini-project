@@ -100,7 +100,7 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
 				reservInsFrm.setVisible(true); break;
 			case "저장":  insertOne(); break;
-			case "취소":  reservInsFrm.setVisible(false); break;
+			case "취소":  reservInsFrm.setVisible(false); reservUpFrm.setVisible(false); break;
 			case "수정":  updateOne(); break;
 			case "삭제":  deleteOne(); break;
 		}

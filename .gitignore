@@ -48,6 +48,7 @@ Desktop.ini
 # Sensitive config
 # ========================
 src/main/resources/db.properties
+src/main/resources/kobis.properties
 
 # ========================
 # Serena MCP
