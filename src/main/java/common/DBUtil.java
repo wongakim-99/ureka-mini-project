@@ -49,4 +49,8 @@ public class DBUtil {
 		return sqlProperties.getProperty(key);
 	}
 
+	public static String getDbProperty(String key) {
+		return dbProperties.getProperty(key);
+	}
+
 }

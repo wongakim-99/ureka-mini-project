@@ -1,6 +1,7 @@
 package adapter.movie.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import javax.swing.*;
 
 public class MovieListPan extends JPanel {
@@ -34,6 +35,15 @@ public class MovieListPan extends JPanel {
 		btnReadAll.addActionListener(c);
 		btnAdd.addActionListener(c);
 		table.addMouseListener(c);
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				c.actionPerformed(new ActionEvent(btnReadAll, ActionEvent.ACTION_PERFORMED, "목록 조회"));
+			}
+		});
+		if (isShowing()) {
+			c.actionPerformed(new ActionEvent(btnReadAll, ActionEvent.ACTION_PERFORMED, "목록 조회"));
+		}
 	}
 
 }
