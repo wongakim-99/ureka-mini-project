@@ -12,7 +12,9 @@ RemoteSystemsTempFiles/
 # ========================
 # VS Code
 # ========================
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
 *.code-workspace
 
 # ========================
@@ -51,3 +53,5 @@ src/cinema/util/db.properties
 # Serena MCP
 # ========================
 .serena
+
+.vscode/
