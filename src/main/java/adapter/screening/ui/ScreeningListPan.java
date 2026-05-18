@@ -1,6 +1,7 @@
 package adapter.screening.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import javax.swing.*;
 
 public class ScreeningListPan extends JPanel {
@@ -28,6 +29,12 @@ public class ScreeningListPan extends JPanel {
 		c.setTable(table);
 		btnReadAll.addActionListener(c); btnAdd.addActionListener(c);
 		table.addMouseListener(c);
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				c.actionPerformed(new ActionEvent(btnReadAll, ActionEvent.ACTION_PERFORMED, "목록 조회"));
+			}
+		});
 	}
 
 }

@@ -16,7 +16,8 @@ public class ReservationService {
 	public void save(Reservation reservation) throws SQLException      { repository.save(reservation); }
 	public void update(Reservation reservation) throws SQLException    { repository.update(reservation); }
 	public void delete(int reservId) throws SQLException               { repository.delete(reservId); }
-	public List<ComboItem> getCustomerOptions() throws SQLException    { return repository.findCustomerOptions(); }
-	public List<ComboItem> getScreeningOptions() throws SQLException   { return repository.findScreeningOptions(); }
+	public List<ComboItem> getCustomerOptions() throws SQLException              { return repository.findCustomerOptions(); }
+	public List<ComboItem> getMovieOptions() throws SQLException                { return repository.findMovieOptions(); }
+	public List<ComboItem> getScreeningsByMovie(int movieId) throws SQLException { return repository.findScreeningsByMovie(movieId); }
 
 }

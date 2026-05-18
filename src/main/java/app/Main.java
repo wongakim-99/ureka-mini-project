@@ -5,6 +5,8 @@ import java.awt.CardLayout;
 import java.awt.GridLayout;
 import javax.swing.*;
 
+import common.DBUtil;
+import common.KobisImporter;
 import common.ui.DialogControl;
 import common.ui.WindowControl;
 import adapter.movie.ui.*;
@@ -87,7 +89,24 @@ public class Main {
 		reservListPan.addEvent(reservControl); reservInsFrm.addEvent(reservControl); reservUpFrm.addEvent(reservControl);
 	}
 
+	private static void seedFromKobisIfEmpty() {
+		try {
+			var rs = DBUtil.getConnection().createStatement()
+				.executeQuery("SELECT COUNT(*) FROM movie");
+			rs.next();
+			if (rs.getInt(1) == 0) {
+				System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
+				new KobisImporter().importMovies();
+				System.out.println("[KOBIS] 데이터 삽입 완료");
+			}
+		} catch (Exception e) {
+			System.err.println("[KOBIS] 초기 데이터 로드 실패: " + e.getMessage());
+		}
+	}
+
 	public static void main(String[] args) {
+		System.setProperty("java.awt.im.style", "below-the-spot");
+		seedFromKobisIfEmpty();
 		Main main = new Main();
 		main.makeGui();
 		main.addEvent();

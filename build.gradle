@@ -10,10 +10,16 @@ java {
 
 application {
     mainClass = 'app.Main'
+    applicationDefaultJvmArgs = ['-Djava.awt.im.style=below-the-spot', '-Dfile.encoding=UTF-8']
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
     implementation files('lib/mysql-connector-j-8.4.0.jar')
+    implementation 'com.google.code.gson:gson:2.10.1'
     compileOnly files('lib/lombok.jar')
     annotationProcessor files('lib/lombok.jar')
 }
