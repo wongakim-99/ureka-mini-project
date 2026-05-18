@@ -539,6 +539,33 @@ kobis.api.key=your_api_key
 
 ### 실행
 
+#### Gradle Wrapper (권장 — 모든 환경 공통)
+
+Gradle이 설치되어 있지 않아도 Wrapper가 자동으로 다운받아 실행한다.
+
+| 환경 | 명령어 |
+|---|---|
+| Mac / Linux 터미널 | `./gradlew run` |
+| Windows CMD / PowerShell | `gradlew.bat run` |
+
+```bash
+# Mac / Linux
+./gradlew run
+
+# Windows
+gradlew.bat run
+```
+
+#### IDE별 실행
+
+| IDE | 방법 |
+|---|---|
+| **VS Code** | 실행 버튼 (▷) 클릭 — `.vscode/launch.json` 설정 포함 |
+| **IntelliJ** | `build.gradle` 열기 → Gradle 프로젝트 자동 인식 → 실행 버튼 |
+| **Eclipse** | File → Import → Gradle → Existing Gradle Project → 실행 버튼 |
+
+#### Makefile (Mac / Linux 터미널 전용)
+
 ```bash
 make build
 make run
