@@ -6,7 +6,8 @@
             "name": "Run CinemaSys",
             "request": "launch",
             "mainClass": "app.Main",
-            "projectName": "ureka-mini-project"
+            "projectName": "ureka-mini-project",
+            "vmArgs": "-Djava.awt.im.style=below-the-spot -Dfile.encoding=UTF-8"
         }
     ]
 }

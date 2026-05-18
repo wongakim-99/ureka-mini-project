@@ -10,6 +10,7 @@ java {
 
 application {
     mainClass = 'app.Main'
+    applicationDefaultJvmArgs = ['-Djava.awt.im.style=below-the-spot', '-Dfile.encoding=UTF-8']
 }
 
 repositories {
