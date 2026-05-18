@@ -6,7 +6,9 @@ import domain.screening.ScreeningService;
 import adapter.screening.ScreeningDAO;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.*;
@@ -58,6 +60,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		cbT.removeAllItems(); service.getTheaterOptions().forEach(cbT::addItem);
 	}
 
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	private void insertOne() {
 		ComboItem movie = (ComboItem) screeningInsFrm.cbMovie.getSelectedItem();
 		ComboItem theater = (ComboItem) screeningInsFrm.cbTheater.getSelectedItem();
@@ -65,10 +69,10 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		try {
 			Screening s = new Screening();
 			s.setMovieId(movie.id); s.setTheaterId(theater.id);
-			s.setShowtime(screeningInsFrm.tfShowtime.getText());
-			s.setPrice(Integer.parseInt(screeningInsFrm.tfPrice.getText()));
+			s.setShowtime(SDF.format((Date) screeningInsFrm.spinShowtime.getValue()));
+			s.setPrice(Integer.parseInt(screeningInsFrm.tfPrice.getText().trim()));
 			service.save(s);
-			screeningInsFrm.tfShowtime.setText(""); screeningInsFrm.tfPrice.setText("");
+			screeningInsFrm.tfPrice.setText("");
 			screeningInsFrm.setVisible(false); readAll();
 		} catch (Exception e) { dialogOpen("상영일정 추가 실패"); }
 	}
@@ -80,8 +84,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		try {
 			Screening s = new Screening();
 			s.setScreenId(selectedScreenId); s.setMovieId(movie.id); s.setTheaterId(theater.id);
-			s.setShowtime(screeningUpFrm.tfShowtime.getText());
-			s.setPrice(Integer.parseInt(screeningUpFrm.tfPrice.getText()));
+			s.setShowtime(SDF.format((Date) screeningUpFrm.spinShowtime.getValue()));
+			s.setPrice(Integer.parseInt(screeningUpFrm.tfPrice.getText().trim()));
 			service.update(s); clearUpFrm(); readAll();
 		} catch (Exception e) { dialogOpen("상영일정 수정 실패"); }
 	}
@@ -92,7 +96,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void clearUpFrm() {
-		screeningUpFrm.tfShowtime.setText(""); screeningUpFrm.tfPrice.setText("");
+		screeningUpFrm.tfPrice.setText("");
 		screeningUpFrm.setVisible(false);
 	}
 
@@ -124,7 +128,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		for (int i = 0; i < screeningUpFrm.cbTheater.getItemCount(); i++)
 			if (screeningUpFrm.cbTheater.getItemAt(i).id == s.getTheaterId()) { screeningUpFrm.cbTheater.setSelectedIndex(i); break; }
 
-		screeningUpFrm.tfShowtime.setText(s.getShowtime());
+		try { screeningUpFrm.spinShowtime.setValue(SDF.parse(s.getShowtime())); }
+		catch (Exception ignored) {}
 		screeningUpFrm.tfPrice.setText(String.valueOf(s.getPrice()));
 		screeningUpFrm.setVisible(true);
 	}
