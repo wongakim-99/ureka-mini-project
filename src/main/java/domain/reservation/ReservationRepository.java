@@ -10,5 +10,6 @@ public interface ReservationRepository {
 	void update(Reservation reservation) throws SQLException;
 	void delete(int reservId) throws SQLException;
 	List<ComboItem> findCustomerOptions() throws SQLException;
-	List<ComboItem> findScreeningOptions() throws SQLException;
+	List<ComboItem> findMovieOptions() throws SQLException;
+	List<ComboItem> findScreeningsByMovie(int movieId) throws SQLException;
 }

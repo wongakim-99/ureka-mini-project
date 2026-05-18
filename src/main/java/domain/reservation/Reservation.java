@@ -6,6 +6,7 @@ public class Reservation {
 	private int custId;
 	private String custName;
 	private int screenId;
+	private int movieId;
 	private String movieTitle;
 	private String theaterName;
 	private String showtime;
@@ -23,6 +24,8 @@ public class Reservation {
 	public void setCustName(String v)     { this.custName = v; }
 	public int getScreenId()              { return screenId; }
 	public void setScreenId(int v)        { this.screenId = v; }
+	public int getMovieId()               { return movieId; }
+	public void setMovieId(int v)         { this.movieId = v; }
 	public String getMovieTitle()         { return movieTitle; }
 	public void setMovieTitle(String v)   { this.movieTitle = v; }
 	public String getTheaterName()        { return theaterName; }

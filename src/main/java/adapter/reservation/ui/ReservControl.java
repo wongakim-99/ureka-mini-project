@@ -54,15 +54,21 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 		table.setModel(new DefaultTableModel(data, columnNames));
 	}
 
-	private void loadOptions(JComboBox<ComboItem> cbC, JComboBox<ComboItem> cbS) throws SQLException {
+	public void reloadScreenings(int movieId, JComboBox<ComboItem> cbScreening) {
+		cbScreening.removeAllItems();
+		try { service.getScreeningsByMovie(movieId).forEach(cbScreening::addItem); }
+		catch (SQLException e) { dialogOpen("상영일정 로드 실패"); }
+	}
+
+	private void loadOptions(JComboBox<ComboItem> cbC, JComboBox<ComboItem> cbM) throws SQLException {
 		cbC.removeAllItems(); service.getCustomerOptions().forEach(cbC::addItem);
-		cbS.removeAllItems(); service.getScreeningOptions().forEach(cbS::addItem);
+		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
 	}
 
 	private void insertOne() {
-		ComboItem cust = (ComboItem) reservInsFrm.cbCustomer.getSelectedItem();
+		ComboItem cust   = (ComboItem) reservInsFrm.cbCustomer.getSelectedItem();
 		ComboItem screen = (ComboItem) reservInsFrm.cbScreening.getSelectedItem();
-		if (cust == null || screen == null) { dialogOpen("고객과 상영일정을 선택해주세요."); return; }
+		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
 			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(reservInsFrm.tfSeatNo.getText());
@@ -96,7 +102,7 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 			case "목록 조회":
 				readAll(); break;
 			case "예약 추가":
-				try { loadOptions(reservInsFrm.cbCustomer, reservInsFrm.cbScreening); }
+				try { loadOptions(reservInsFrm.cbCustomer, reservInsFrm.cbMovie); }
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
 				reservInsFrm.setVisible(true); break;
 			case "저장":  insertOne(); break;
@@ -110,11 +116,14 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		Reservation r = reservList.get(table.getSelectedRow());
 		selectedReservId = r.getReservId();
-		try { loadOptions(reservUpFrm.cbCustomer, reservUpFrm.cbScreening); }
+		try { loadOptions(reservUpFrm.cbCustomer, reservUpFrm.cbMovie); }
 		catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
 
 		for (int i = 0; i < reservUpFrm.cbCustomer.getItemCount(); i++)
 			if (reservUpFrm.cbCustomer.getItemAt(i).id == r.getCustId()) { reservUpFrm.cbCustomer.setSelectedIndex(i); break; }
+		// 영화 선택 → ItemListener가 자동으로 해당 영화 상영일정 로드
+		for (int i = 0; i < reservUpFrm.cbMovie.getItemCount(); i++)
+			if (reservUpFrm.cbMovie.getItemAt(i).id == r.getMovieId()) { reservUpFrm.cbMovie.setSelectedIndex(i); break; }
 		for (int i = 0; i < reservUpFrm.cbScreening.getItemCount(); i++)
 			if (reservUpFrm.cbScreening.getItemAt(i).id == r.getScreenId()) { reservUpFrm.cbScreening.setSelectedIndex(i); break; }
 

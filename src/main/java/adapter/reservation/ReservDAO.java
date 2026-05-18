@@ -18,7 +18,7 @@ public class ReservDAO implements ReservationRepository {
 		while (rs.next()) {
 			Reservation r = new Reservation();
 			r.setReservId(rs.getInt("reservid")); r.setCustId(rs.getInt("custid"));
-			r.setCustName(rs.getString("cust_name")); r.setScreenId(rs.getInt("screenid"));
+			r.setCustName(rs.getString("cust_name")); r.setScreenId(rs.getInt("screenid")); r.setMovieId(rs.getInt("movieid"));
 			r.setMovieTitle(rs.getString("title")); r.setTheaterName(rs.getString("theater_name"));
 			r.setShowtime(rs.getString("showtime")); r.setSeatNo(rs.getString("seatno"));
 			r.setPrice(rs.getInt("price")); r.setReservDate(rs.getString("reservdate"));
@@ -62,12 +62,23 @@ public class ReservDAO implements ReservationRepository {
 	}
 
 	@Override
-	public List<ComboItem> findScreeningOptions() throws SQLException {
+	public List<ComboItem> findMovieOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectScreenOpts"));
+		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectMovieOpts"));
+		List<ComboItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new ComboItem(rs.getInt("movieid"), rs.getString("title")));
+		stmt.close(); rs.close();
+		return list;
+	}
+
+	@Override
+	public List<ComboItem> findScreeningsByMovie(int movieId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservSelectScreeningsByMovie"));
+		psmt.setInt(1, movieId);
+		ResultSet rs = psmt.executeQuery();
 		List<ComboItem> list = new ArrayList<>();
 		while (rs.next()) list.add(new ComboItem(rs.getInt("screenid"), rs.getString("info")));
-		stmt.close(); rs.close();
+		psmt.close(); rs.close();
 		return list;
 	}
 
