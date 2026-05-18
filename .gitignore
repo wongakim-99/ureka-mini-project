@@ -47,7 +47,7 @@ Desktop.ini
 # ========================
 # Sensitive config
 # ========================
-src/cinema/util/db.properties
+src/main/resources/db.properties
 
 # ========================
 # Serena MCP
