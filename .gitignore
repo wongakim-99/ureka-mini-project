@@ -51,8 +51,11 @@ src/main/resources/db.properties
 src/main/resources/kobis.properties
 
 # ========================
+# Gradle
+# ========================
+.gradle/
+
+# ========================
 # Serena MCP
 # ========================
 .serena
-
-.vscode/

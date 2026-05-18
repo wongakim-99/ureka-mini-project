@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+application {
+    mainClass = 'app.Main'
+}
+
+dependencies {
+    implementation files('lib/mysql-connector-j-8.4.0.jar')
+    compileOnly files('lib/lombok.jar')
+    annotationProcessor files('lib/lombok.jar')
+}
