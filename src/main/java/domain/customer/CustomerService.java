@@ -1,31 +1,19 @@
 package domain.customer;
 
-import infrastructure.customer.CustDAO;
 import java.sql.SQLException;
 import java.util.List;
 
 public class CustomerService {
 
-	private final CustDAO dao;
+	private final CustomerRepository repository;
 
-	public CustomerService(CustDAO dao) {
-		this.dao = dao;
+	public CustomerService(CustomerRepository repository) {
+		this.repository = repository;
 	}
 
-	public List<Customer> findAll() throws SQLException {
-		return dao.findAll();
-	}
-
-	public void save(Customer customer) throws SQLException {
-		dao.insertOne(customer);
-	}
-
-	public void update(Customer customer) throws SQLException {
-		dao.updateOne(customer);
-	}
-
-	public void delete(int custId) throws SQLException {
-		dao.deleteOne(custId);
-	}
+	public List<Customer> findAll() throws SQLException        { return repository.findAll(); }
+	public void save(Customer customer) throws SQLException    { repository.save(customer); }
+	public void update(Customer customer) throws SQLException  { repository.update(customer); }
+	public void delete(int custId) throws SQLException         { repository.delete(custId); }
 
 }

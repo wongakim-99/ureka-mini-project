@@ -5,7 +5,7 @@ RES_DIR = src/main/resources
 BIN_DIR = bin
 LIB_DIR = lib
 CP      = $(LIB_DIR)/mysql-connector-j-8.4.0.jar:$(LIB_DIR)/lombok.jar
-MAIN    = common.ui.Main
+MAIN    = app.Main
 
 build:
 	find $(SRC_DIR) -name "*.java" > .sources.txt

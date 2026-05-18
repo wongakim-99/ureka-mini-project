@@ -1,40 +1,22 @@
 package domain.reservation;
 
 import common.ComboItem;
-import infrastructure.reservation.ReservDAO;
 import java.sql.SQLException;
 import java.util.List;
 
 public class ReservationService {
 
-	private final ReservDAO dao;
+	private final ReservationRepository repository;
 
-	public ReservationService(ReservDAO dao) {
-		this.dao = dao;
+	public ReservationService(ReservationRepository repository) {
+		this.repository = repository;
 	}
 
-	public List<Reservation> findAll() throws SQLException {
-		return dao.findAll();
-	}
-
-	public void save(Reservation reservation) throws SQLException {
-		dao.insertOne(reservation);
-	}
-
-	public void update(Reservation reservation) throws SQLException {
-		dao.updateOne(reservation);
-	}
-
-	public void delete(int reservId) throws SQLException {
-		dao.deleteOne(reservId);
-	}
-
-	public List<ComboItem> getCustomerOptions() throws SQLException {
-		return dao.findCustomerOptions();
-	}
-
-	public List<ComboItem> getScreeningOptions() throws SQLException {
-		return dao.findScreeningOptions();
-	}
+	public List<Reservation> findAll() throws SQLException             { return repository.findAll(); }
+	public void save(Reservation reservation) throws SQLException      { repository.save(reservation); }
+	public void update(Reservation reservation) throws SQLException    { repository.update(reservation); }
+	public void delete(int reservId) throws SQLException               { repository.delete(reservId); }
+	public List<ComboItem> getCustomerOptions() throws SQLException    { return repository.findCustomerOptions(); }
+	public List<ComboItem> getScreeningOptions() throws SQLException   { return repository.findScreeningOptions(); }
 
 }

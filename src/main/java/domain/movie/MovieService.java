@@ -1,31 +1,19 @@
 package domain.movie;
 
-import infrastructure.movie.MovieDAO;
 import java.sql.SQLException;
 import java.util.List;
 
 public class MovieService {
 
-	private final MovieDAO dao;
+	private final MovieRepository repository;
 
-	public MovieService(MovieDAO dao) {
-		this.dao = dao;
+	public MovieService(MovieRepository repository) {
+		this.repository = repository;
 	}
 
-	public List<Movie> findAll() throws SQLException {
-		return dao.findAll();
-	}
-
-	public void save(Movie movie) throws SQLException {
-		dao.insertOne(movie);
-	}
-
-	public void update(Movie movie) throws SQLException {
-		dao.updateOne(movie);
-	}
-
-	public void delete(int movieId) throws SQLException {
-		dao.deleteOne(movieId);
-	}
+	public List<Movie> findAll() throws SQLException   { return repository.findAll(); }
+	public void save(Movie movie) throws SQLException  { repository.save(movie); }
+	public void update(Movie movie) throws SQLException{ repository.update(movie); }
+	public void delete(int movieId) throws SQLException{ repository.delete(movieId); }
 
 }
