@@ -23,3 +23,6 @@ dependencies {
     compileOnly files('lib/lombok.jar')
     annotationProcessor files('lib/lombok.jar')
 }
+tasks.withType(JavaExec) {
+    systemProperty "file.encoding", "UTF-8"
+}
