@@ -241,13 +241,14 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 
 기능 유지가 가장 중요하므로 파일 이동을 한 번에 크게 하지 않는다. 컴파일 가능한 작은 단위로 진행한다.
 
-### Step 1. 진입점과 대시보드 분리
+### Step 1. 진입점과 대시보드 분리 - 완료
 
-- `src/main/java/Main.java`를 새로 만든다.
-- 현재 `app.Main`의 화면 구현은 `presentation.swing.MainDashboard`로 이동한다.
-- `build.gradle`의 `application.mainClass`를 `Main`으로 변경한다.
-- `app.MainDashboard`는 중복 파일이므로 기능 차이를 확인한 뒤 제거한다.
-- `app.MenuControl`은 실제 사용 여부를 확인한 뒤 `presentation.swing.menu.MenuController`로 이동하거나 제거한다.
+- `src/main/java/Main.java`를 새로 만들었다.
+- 현재 `app.Main`의 화면 구현은 `presentation.swing.MainDashboard`로 이동했다.
+- `build.gradle`의 `application.mainClass`를 `Main`으로 변경했다.
+- 구버전 중복 파일이던 `app.MainDashboard`는 제거했다.
+- 기존 `app.Main`도 제거하고 최상위 `Main`에서 `MainDashboard.launch()`만 호출하도록 정리했다.
+- `app.MenuControl`은 아직 유지한다. 다음 UI 패키지 이동 단계에서 실제 사용 여부를 확인한 뒤 이동하거나 제거한다.
 
 완료 기준:
 

@@ -1,4 +1,4 @@
-package app;
+package presentation.swing;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,6 +18,7 @@ import adapter.screening.ui.*;
 import adapter.customer.ui.*;
 import adapter.theater.ui.*;
 import adapter.revenue.ui.RevenueControl;
+import common.DBUtil;
 import common.KobisImporter;
 import common.ui.DialogControl;
 
@@ -27,17 +28,16 @@ public class MainDashboard extends JFrame {
     private JTable dataTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd, btnRefresh, btnDelete, btnUpdate;
+    private JTextField searchField;
+    private JButton btnSearch;
     private JLabel bigCount;
 
-    // 실시간 날짜/시간을 표시할 라벨
     private JLabel liveClockLabel;
 
-    // 알림창 관련
     private JDialog dialog;
     private JLabel dialogLabel;
     private JButton btnDialogClose;
 
-    // 컨트롤러 및 폼
     private MovieControl movieControl;
     private MovieInsFrm movieInsFrm;
     private MovieUpFrm movieUpFrm;
@@ -62,13 +62,12 @@ public class MainDashboard extends JFrame {
 
         initControls();
         initUI();
-        startClock(); // 실시간 시계 작동 시작
+        startClock();
 
         setVisible(true);
     }
 
     private void initControls() {
-        // 공통 알림창 초기화
         dialog = new JDialog(this, "알림", true);
         dialog.setSize(300, 150);
         dialog.setLayout(null);
@@ -80,17 +79,14 @@ public class MainDashboard extends JFrame {
         dialog.add(btnDialogClose);
         btnDialogClose.addActionListener(e -> dialog.setVisible(false));
 
-        // 영화 관리 도구
         movieInsFrm = new MovieInsFrm(); movieUpFrm = new MovieUpFrm();
         movieControl = new MovieControl(dialog, dialogLabel);
         movieInsFrm.addEvent(movieControl); movieUpFrm.addEvent(movieControl);
 
-        // 예약 관리 도구
         reservInsFrm = new ReservInsFrm(); reservUpFrm = new ReservUpFrm();
         reservControl = new ReservControl(dialog, dialogLabel);
         reservInsFrm.addEvent(reservControl); reservUpFrm.addEvent(reservControl);
 
-        // 상영 및 고객 관리 (동일 패턴)
         screeningInsFrm = new ScreeningInsFrm(); screeningUpFrm = new ScreeningUpFrm();
         screeningControl = new ScreeningControl(dialog, dialogLabel);
         screeningInsFrm.addEvent(screeningControl); screeningUpFrm.addEvent(screeningControl);
@@ -103,14 +99,11 @@ public class MainDashboard extends JFrame {
     }
 
     private void initUI() {
-        // 메인 패널 (절대 좌표 레이아웃)
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setBackground(new Color(245, 247, 251));
 
-        // -------------------------------------------------------------
-        // 1. 좌측 네비게이션 바 (메뉴 관리)
-        // -------------------------------------------------------------
+        // 좌측 네비게이션 바
         JPanel sideNav = new JPanel();
         sideNav.setLayout(null);
         sideNav.setBackground(new Color(34, 34, 34));
@@ -124,7 +117,6 @@ public class MainDashboard extends JFrame {
 
         String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리", "수입 관리"};
         int yOffset = 100;
-
         for (String menu : menus) {
             JButton menuBtn = new JButton(menu);
             menuBtn.setBounds(0, yOffset, 150, 45);
@@ -138,9 +130,7 @@ public class MainDashboard extends JFrame {
             yOffset += 50;
         }
 
-        // -------------------------------------------------------------
-        // 2. 중간 현황판 영역 (이모지 빼고 실시간 날짜/시간 추가)
-        // -------------------------------------------------------------
+        // 중간 현황판 영역
         JPanel middlePanel = new JPanel();
         middlePanel.setLayout(null);
         middlePanel.setBackground(new Color(229, 9, 20));
@@ -158,8 +148,6 @@ public class MainDashboard extends JFrame {
         managerLabel.setForeground(Color.WHITE);
         middlePanel.add(managerLabel);
 
-        // 🔥 [수정] 이모지 대신 현재 년월일 시간 요일이 들어갈 라벨 배치
-        // 테스트를 위해 배경색을 노란색으로 설정하여 영역을 확인합니다.
         liveClockLabel = new JLabel("", SwingConstants.CENTER);
         liveClockLabel.setForeground(Color.WHITE);
         liveClockLabel.setBounds(0, 55, 260, 130);
@@ -173,10 +161,10 @@ public class MainDashboard extends JFrame {
         infoTitle.setBounds(20, 250, 220, 20);
         infoTitle.setFont(new Font("Arial", Font.BOLD, 16));
         infoTitle.setForeground(Color.WHITE);
+        infoTitle.setHorizontalAlignment(SwingConstants.CENTER);
         middlePanel.add(infoTitle);
 
         bigCount = new JLabel("0", SwingConstants.CENTER);
-        infoTitle.setHorizontalAlignment(SwingConstants.CENTER);
         bigCount.setBounds(0, 290, 260, 90);
         bigCount.setFont(new Font("Arial", Font.BOLD, 74));
         bigCount.setForeground(Color.WHITE);
@@ -212,9 +200,7 @@ public class MainDashboard extends JFrame {
         }).start());
         middlePanel.add(actionBtn);
 
-        // -------------------------------------------------------------
-        // 3. 우측 메인 데이터 테이블 영역
-        // -------------------------------------------------------------
+        // 우측 메인 데이터 테이블 영역
         menuTitleLabel = new JLabel("영화 관리 시스템");
         menuTitleLabel.setBounds(440, 30, 300, 30);
         menuTitleLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
@@ -238,7 +224,6 @@ public class MainDashboard extends JFrame {
         dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dataTable.setRowSelectionAllowed(true);
 
-        // [삭제] 버튼 배치 (우측 상단, 초기 비활성화)
         btnDelete = new JButton("삭제");
         btnDelete.setBounds(960, 30, 100, 35);
         btnDelete.setBackground(new Color(229, 9, 20));
@@ -250,13 +235,26 @@ public class MainDashboard extends JFrame {
         btnDelete.setEnabled(false);
         mainPanel.add(btnDelete);
 
-        // 테이블 영역 높이 조정
+        searchField = new JTextField();
+        searchField.setBounds(440, 92, 390, 28);
+        searchField.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
+        mainPanel.add(searchField);
+
+        btnSearch = new JButton("검색");
+        btnSearch.setBounds(837, 92, 80, 28);
+        btnSearch.setBackground(new Color(70, 70, 70));
+        btnSearch.setForeground(Color.WHITE);
+        btnSearch.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
+        btnSearch.setFocusPainted(false);
+        btnSearch.setOpaque(true);
+        btnSearch.setBorderPainted(false);
+        mainPanel.add(btnSearch);
+
         JScrollPane scrollPane = new JScrollPane(dataTable);
-        scrollPane.setBounds(440, 120, 620, 340);
+        scrollPane.setBounds(440, 130, 620, 330);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 225)));
         mainPanel.add(scrollPane);
 
-        // [목록 조회] 버튼 배치
         btnRefresh = new JButton("목록 조회");
         btnRefresh.setBounds(440, 480, 110, 35);
         btnRefresh.setBackground(new Color(70, 70, 70));
@@ -267,7 +265,6 @@ public class MainDashboard extends JFrame {
         btnRefresh.setBorderPainted(false);
         mainPanel.add(btnRefresh);
 
-        // [추가] 버튼 배치
         btnAdd = new JButton("추가");
         btnAdd.setBounds(560, 480, 110, 35);
         btnAdd.setBackground(new Color(34, 34, 34));
@@ -278,7 +275,6 @@ public class MainDashboard extends JFrame {
         btnAdd.setBorderPainted(false);
         mainPanel.add(btnAdd);
 
-        // [수정] 버튼 배치
         btnUpdate = new JButton("수정");
         btnUpdate.setBounds(680, 480, 110, 35);
         btnUpdate.setBackground(new Color(34, 34, 34));
@@ -304,23 +300,18 @@ public class MainDashboard extends JFrame {
         add(mainPanel);
     }
 
-    // ⬇️ 년월일(숫자) (영어요일) / 시분초(숫자) 형태로 최종 수정한 메서드입니다.
     private void startClock() {
         SimpleDateFormat dateSdf    = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         SimpleDateFormat dayTimeSdf = new SimpleDateFormat("EEE  HH:mm:ss", Locale.US);
-        Timer timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String date    = dateSdf.format(new Date());
-                String dayTime = dayTimeSdf.format(new Date());
-                // 확실한 변화를 위해 font-size를 40pt로 대폭 키워봅니다.
-                liveClockLabel.setText(
-                    "<html><center>" +
-                    "<div style='font-size:28pt; font-family:Malgun Gothic;'>" + date + "</div>" +
-                    "<div style='font-size:20pt; font-family:Malgun Gothic;'>" + (dayTime) + "</div>" +
-                    "</center></html>"
-                );
-            }
+        Timer timer = new Timer(1000, e -> {
+            String date    = dateSdf.format(new Date());
+            String dayTime = dayTimeSdf.format(new Date());
+            liveClockLabel.setText(
+                "<html><center>" +
+                "<div style='font-size:28pt; font-family:Malgun Gothic;'>" + date + "</div>" +
+                "<div style='font-size:20pt; font-family:Malgun Gothic;'>" + dayTime + "</div>" +
+                "</center></html>"
+            );
         });
         timer.start();
     }
@@ -330,8 +321,13 @@ public class MainDashboard extends JFrame {
         for (ActionListener al : btnRefresh.getActionListeners()) btnRefresh.removeActionListener(al);
         for (ActionListener al : btnDelete.getActionListeners()) btnDelete.removeActionListener(al);
         for (ActionListener al : btnUpdate.getActionListeners()) btnUpdate.removeActionListener(al);
+        for (ActionListener al : btnSearch.getActionListeners()) btnSearch.removeActionListener(al);
+        for (ActionListener al : searchField.getActionListeners()) searchField.removeActionListener(al);
         for (MouseListener ml : dataTable.getMouseListeners()) dataTable.removeMouseListener(ml);
+        searchField.setText("");
         btnAdd.setEnabled(true);
+        searchField.setVisible(true);
+        btnSearch.setVisible(true);
     }
 
     private void loadMenuData(String menuName) {
@@ -339,8 +335,11 @@ public class MainDashboard extends JFrame {
 
         if (menuName.equals("영화 관리")) {
             menuTitleLabel.setText("영화 관리 (Movie Master)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("영화 추가");
-            btnRefresh.addActionListener(movieControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); movieControl.load(); bigCount.setText(String.valueOf(movieControl.getMovieCount())); });
+            btnSearch.addActionListener(e -> movieControl.search(searchField.getText()));
+            searchField.addActionListener(e -> movieControl.search(searchField.getText()));
             btnAdd.addActionListener(movieControl);
             btnDelete.addActionListener(movieControl);
             btnUpdate.addActionListener(movieControl);
@@ -353,8 +352,11 @@ public class MainDashboard extends JFrame {
 
         } else if (menuName.equals("예약 관리")) {
             menuTitleLabel.setText("예약 관리 (Reservation Info)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("예약 추가");
-            btnRefresh.addActionListener(reservControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); reservControl.load(); });
+            btnSearch.addActionListener(e -> reservControl.search(searchField.getText()));
+            searchField.addActionListener(e -> reservControl.search(searchField.getText()));
             btnAdd.addActionListener(reservControl);
             btnDelete.addActionListener(reservControl);
             btnUpdate.addActionListener(reservControl);
@@ -366,8 +368,11 @@ public class MainDashboard extends JFrame {
 
         } else if (menuName.equals("상영 일정 관리")) {
             menuTitleLabel.setText("상영 일정 관리 (Schedules)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("일정 추가");
-            btnRefresh.addActionListener(screeningControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); screeningControl.load(); });
+            btnSearch.addActionListener(e -> screeningControl.search(searchField.getText()));
+            searchField.addActionListener(e -> screeningControl.search(searchField.getText()));
             btnAdd.addActionListener(screeningControl);
             btnDelete.addActionListener(screeningControl);
             btnUpdate.addActionListener(screeningControl);
@@ -379,8 +384,11 @@ public class MainDashboard extends JFrame {
 
         } else if (menuName.equals("고객 관리")) {
             menuTitleLabel.setText("고객 관리 (Customer Base)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("고객 추가");
-            btnRefresh.addActionListener(custControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); custControl.load(); });
+            btnSearch.addActionListener(e -> custControl.search(searchField.getText()));
+            searchField.addActionListener(e -> custControl.search(searchField.getText()));
             btnDelete.addActionListener(custControl);
             btnUpdate.addActionListener(custControl);
             custControl.setTable(dataTable);
@@ -392,11 +400,14 @@ public class MainDashboard extends JFrame {
 
         } else if (menuName.equals("수입 관리")) {
             menuTitleLabel.setText("수입 관리 (Revenue)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("추가");
             btnAdd.setEnabled(false);
             btnDelete.setEnabled(false);
             btnUpdate.setEnabled(false);
-            btnRefresh.addActionListener(revenueControl);
+            searchField.setVisible(false);
+            btnSearch.setVisible(false);
+            btnRefresh.addActionListener(e -> revenueControl.load());
             revenueControl.setTable(dataTable);
             revenueControl.setTotalLabel(totalRevenueLabel);
             revenueControl.load();
@@ -411,19 +422,36 @@ public class MainDashboard extends JFrame {
 
     private class MenuActionListener implements ActionListener {
         private String menuName;
-        public MenuActionListener(String menuName) {
-            this.menuName = menuName;
-        }
+        public MenuActionListener(String menuName) { this.menuName = menuName; }
         @Override
-        public void actionPerformed(ActionEvent e) {
-            loadMenuData(menuName);
+        public void actionPerformed(ActionEvent e) { loadMenuData(menuName); }
+    }
+
+    private void seedFromKobisIfEmpty() {
+        try {
+            var rs = DBUtil.getConnection().createStatement()
+                .executeQuery("SELECT COUNT(*) FROM movie");
+            rs.next();
+            if (rs.getInt(1) == 0) {
+                System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
+                new KobisImporter().importMovies();
+                System.out.println("[KOBIS] 데이터 삽입 완료");
+                SwingUtilities.invokeLater(() -> {
+                    movieControl.load();
+                    bigCount.setText(String.valueOf(movieControl.getMovieCount()));
+                });
+            }
+        } catch (Exception e) {
+            System.err.println("[KOBIS] 초기 데이터 로드 실패: " + e.getMessage());
         }
     }
 
-    public static void main(String[] args) {
+    public static void launch() {
+        System.setProperty("java.awt.im.style", "below-the-spot");
+        common.SchemaManager.run();
         SwingUtilities.invokeLater(() -> {
-            new MainDashboard();
-
+            MainDashboard app = new MainDashboard();
+            new Thread(app::seedFromKobisIfEmpty).start();
         });
     }
 }
