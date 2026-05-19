@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 
 public class ReservationService {
 
@@ -23,6 +23,9 @@ public class ReservationService {
 		if (repository.findRemainSeatsByScreening(reservation.getScreenId()) <= 0) {
 			throw new SQLException(SOLD_OUT_MESSAGE);
 		}
+		if (repository.existsByScreenIdAndSeatNo(reservation.getScreenId(), reservation.getSeatNo(), 0)) {
+			throw new SQLException(DUPLICATE_SEAT_MESSAGE);
+		}
 		try {
 			repository.save(reservation);
 		} catch (SQLException e) {
@@ -34,6 +37,9 @@ public class ReservationService {
 	}
 	public void update(Reservation reservation) throws SQLException {
 		validateSeatNo(reservation.getSeatNo());
+		if (repository.existsByScreenIdAndSeatNo(reservation.getScreenId(), reservation.getSeatNo(), reservation.getReservId())) {
+			throw new SQLException(DUPLICATE_SEAT_MESSAGE);
+		}
 		try {
 			repository.update(reservation);
 		} catch (SQLException e) {
@@ -56,8 +62,8 @@ public class ReservationService {
 			|| e.getMessage() != null && e.getMessage().contains("Duplicate entry");
 	}
 
-	public List<ComboItem> getCustomerOptions() throws SQLException              { return repository.findCustomerOptions(); }
-	public List<ComboItem> getMovieOptions() throws SQLException                { return repository.findMovieOptions(); }
-	public List<ComboItem> getScreeningsByMovie(int movieId) throws SQLException { return repository.findScreeningsByMovie(movieId); }
+	public List<OptionItem> getCustomerOptions() throws SQLException              { return repository.findCustomerOptions(); }
+	public List<OptionItem> getMovieOptions() throws SQLException                { return repository.findMovieOptions(); }
+	public List<OptionItem> getScreeningsByMovie(int movieId) throws SQLException { return repository.findScreeningsByMovie(movieId); }
 
 }

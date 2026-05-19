@@ -1,0 +1,10 @@
+url=jdbc:mysql://localhost:3306/cinemasys?useUnicode=true&characterEncoding=UTF-8
+user=root
+password=your_password
+kobis.api.key=your_kobis_api_key
+
+# ddl.auto options:
+#   create - drop and recreate schema from schema.sql
+#   update - add missing columns only
+#   none   - do not change schema
+ddl.auto=none
