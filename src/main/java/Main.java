@@ -1,4 +1,4 @@
-import presentation.swing.MainDashboard;
+import presentation.swing.maindashboard.MainDashboard;
 
 public class Main {
 

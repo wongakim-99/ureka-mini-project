@@ -1,4 +1,4 @@
-package presentation.swing;
+package presentation.swing.maindashboard;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;

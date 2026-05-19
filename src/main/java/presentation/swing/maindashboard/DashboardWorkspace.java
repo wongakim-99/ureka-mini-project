@@ -1,4 +1,4 @@
-package presentation.swing;
+package presentation.swing.maindashboard;
 
 import java.awt.Color;
 import java.awt.Font;
