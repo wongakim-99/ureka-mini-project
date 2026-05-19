@@ -17,7 +17,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import infrastructure.persistence.movie.MovieJdbcRepository;
 import domain.movie.Movie;
 import domain.movie.MovieService;
 
@@ -36,8 +35,8 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
-	public MovieControl(JDialog dialog, JLabel dialogLabel) {
-		service = new MovieService(new MovieJdbcRepository());
+	public MovieControl(MovieService service, JDialog dialog, JLabel dialogLabel) {
+		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("MovieID"); columnNames.add("제목");
 		columnNames.add("장르"); columnNames.add("감독"); columnNames.add("관람등급"); columnNames.add("러닝타임(분)");

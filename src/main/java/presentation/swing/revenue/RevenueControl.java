@@ -1,6 +1,5 @@
 package presentation.swing.revenue;
 
-import infrastructure.persistence.revenue.RevenueJdbcRepository;
 import domain.revenue.Revenue;
 import domain.revenue.RevenueService;
 
@@ -25,8 +24,8 @@ public class RevenueControl implements ActionListener {
 	private JTable table;
 	private JLabel totalLabel;
 
-	public RevenueControl(JDialog dialog, JLabel dialogLabel) {
-		service = new RevenueService(new RevenueJdbcRepository());
+	public RevenueControl(RevenueService service, JDialog dialog, JLabel dialogLabel) {
+		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("MovieID");
 		columnNames.add("제목");

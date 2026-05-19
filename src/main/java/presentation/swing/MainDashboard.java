@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import application.AppFactory;
 import presentation.swing.movie.*;
 import presentation.swing.reservation.*;
 import presentation.swing.screening.*;
@@ -80,22 +81,22 @@ public class MainDashboard extends JFrame {
         btnDialogClose.addActionListener(e -> dialog.setVisible(false));
 
         movieInsFrm = new MovieInsFrm(); movieUpFrm = new MovieUpFrm();
-        movieControl = new MovieControl(dialog, dialogLabel);
+        movieControl = AppFactory.createMovieControl(dialog, dialogLabel);
         movieInsFrm.addEvent(movieControl); movieUpFrm.addEvent(movieControl);
 
         reservInsFrm = new ReservInsFrm(); reservUpFrm = new ReservUpFrm();
-        reservControl = new ReservControl(dialog, dialogLabel);
+        reservControl = AppFactory.createReservationControl(dialog, dialogLabel);
         reservInsFrm.addEvent(reservControl); reservUpFrm.addEvent(reservControl);
 
         screeningInsFrm = new ScreeningInsFrm(); screeningUpFrm = new ScreeningUpFrm();
-        screeningControl = new ScreeningControl(dialog, dialogLabel);
+        screeningControl = AppFactory.createScreeningControl(dialog, dialogLabel);
         screeningInsFrm.addEvent(screeningControl); screeningUpFrm.addEvent(screeningControl);
 
         custInsFrm = new CustInsFrm(); custUpFrm = new CustUpFrm();
-        custControl = new CustControl(dialog, dialogLabel);
+        custControl = AppFactory.createCustomerControl(dialog, dialogLabel);
         custInsFrm.addEvent(custControl); custUpFrm.addEvent(custControl);
 
-        revenueControl = new RevenueControl(dialog, dialogLabel);
+        revenueControl = AppFactory.createRevenueControl(dialog, dialogLabel);
     }
 
     private void initUI() {

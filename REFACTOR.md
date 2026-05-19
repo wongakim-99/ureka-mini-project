@@ -282,16 +282,18 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - 모든 DB CRUD 동작 유지
 - `./gradlew build` 성공
 
-### Step 4. 의존성 조립 위치 통합
+### Step 4. 의존성 조립 위치 통합 - 완료
 
-- 각 Swing Control 생성자에서 Service를 직접 만들지 않도록 변경한다.
-- `MovieControl(MovieService service, JDialog dialog, JLabel dialogLabel)`처럼 Service를 주입받게 한다.
+- 각 Swing Control 생성자에서 Service를 직접 만들지 않도록 변경했다.
+- `MovieControl(MovieService service, JDialog dialog, JLabel dialogLabel)`처럼 Service를 주입받게 했다.
 - `application.AppFactory`에서 Repository -> Service -> Control을 조립한다.
+- `MainDashboard`는 직접 Controller를 생성하지 않고 `AppFactory`의 생성 메서드를 호출한다.
 
 완료 기준:
 
 - UI 계층이 `infrastructure.persistence`를 import하지 않는다.
 - Repository 구현체 생성 위치가 `AppFactory` 하나로 모인다.
+- `./gradlew build` 성공
 
 ### Step 5. `common` 해체
 
