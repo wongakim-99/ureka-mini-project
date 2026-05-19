@@ -240,6 +240,8 @@ public class MainDashboard extends JFrame {
         btnDelete.setForeground(Color.WHITE);
         btnDelete.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnDelete.setFocusPainted(false);
+        btnDelete.setOpaque(true);
+        btnDelete.setBorderPainted(false);
         btnDelete.setEnabled(false);
         mainPanel.add(btnDelete);
 
@@ -256,6 +258,8 @@ public class MainDashboard extends JFrame {
         btnRefresh.setForeground(Color.WHITE);
         btnRefresh.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnRefresh.setFocusPainted(false);
+        btnRefresh.setOpaque(true);
+        btnRefresh.setBorderPainted(false);
         mainPanel.add(btnRefresh);
 
         // [추가] 버튼 배치
@@ -265,6 +269,8 @@ public class MainDashboard extends JFrame {
         btnAdd.setForeground(Color.WHITE);
         btnAdd.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnAdd.setFocusPainted(false);
+        btnAdd.setOpaque(true);
+        btnAdd.setBorderPainted(false);
         mainPanel.add(btnAdd);
 
         // [수정] 버튼 배치
@@ -274,6 +280,8 @@ public class MainDashboard extends JFrame {
         btnUpdate.setForeground(Color.WHITE);
         btnUpdate.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnUpdate.setFocusPainted(false);
+        btnUpdate.setOpaque(true);
+        btnUpdate.setBorderPainted(false);
         btnUpdate.setEnabled(false);
         mainPanel.add(btnUpdate);
 

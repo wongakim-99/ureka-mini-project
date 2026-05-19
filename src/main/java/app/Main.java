@@ -223,6 +223,8 @@ public class Main extends JFrame {
         btnDelete.setForeground(Color.WHITE);
         btnDelete.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnDelete.setFocusPainted(false);
+        btnDelete.setOpaque(true);
+        btnDelete.setBorderPainted(false);
         btnDelete.setEnabled(false);
         mainPanel.add(btnDelete);
 
@@ -237,6 +239,8 @@ public class Main extends JFrame {
         btnRefresh.setForeground(Color.WHITE);
         btnRefresh.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnRefresh.setFocusPainted(false);
+        btnRefresh.setOpaque(true);
+        btnRefresh.setBorderPainted(false);
         mainPanel.add(btnRefresh);
 
         btnAdd = new JButton("추가");
@@ -245,6 +249,8 @@ public class Main extends JFrame {
         btnAdd.setForeground(Color.WHITE);
         btnAdd.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnAdd.setFocusPainted(false);
+        btnAdd.setOpaque(true);
+        btnAdd.setBorderPainted(false);
         mainPanel.add(btnAdd);
 
         btnUpdate = new JButton("수정");
@@ -253,6 +259,8 @@ public class Main extends JFrame {
         btnUpdate.setForeground(Color.WHITE);
         btnUpdate.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
         btnUpdate.setFocusPainted(false);
+        btnUpdate.setOpaque(true);
+        btnUpdate.setBorderPainted(false);
         btnUpdate.setEnabled(false);
         mainPanel.add(btnUpdate);
 

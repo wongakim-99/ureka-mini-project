@@ -110,7 +110,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 			service.save(s);
 			screeningInsFrm.tfPrice.setText("");
 			screeningInsFrm.setVisible(false); readAll();
-		} catch (Exception e) { dialogOpen("상영일정 추가 실패"); }
+		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 추가 실패"); }
 	}
 
 	private void updateOne() {
@@ -123,7 +123,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 			s.setShowtime(getFormattedShowtime(screeningUpFrm.tfDate, screeningUpFrm.cbHour, screeningUpFrm.cbMin));
 			s.setPrice(Integer.parseInt(screeningUpFrm.tfPrice.getText().trim()));
 			service.update(s); clearUpFrm(); readAll();
-		} catch (Exception e) { dialogOpen("상영일정 수정 실패"); }
+		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 수정 실패"); }
 	}
 
 	private void deleteOne() {

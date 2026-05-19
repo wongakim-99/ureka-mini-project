@@ -101,14 +101,14 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 			movieInsFrm.tfDirector.setText(""); movieInsFrm.tfRating.setText("");
 			movieInsFrm.setVisible(false);
 			readAll();
-		} catch (SQLException e) { dialogOpen("영화 추가 실패"); }
+		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 추가 실패"); }
 	}
 
 	private void updateOne() {
 		Movie movie = new Movie(selectedMovieId, movieUpFrm.tfTitle.getText(), movieUpFrm.tfGenre.getText(),
 				movieUpFrm.tfDirector.getText(), movieUpFrm.tfRating.getText());
 		try { service.update(movie); clearUpFrm(); readAll(); }
-		catch (SQLException e) { dialogOpen("영화 수정 실패"); }
+		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 수정 실패"); }
 	}
 
 	private void deleteOne() {

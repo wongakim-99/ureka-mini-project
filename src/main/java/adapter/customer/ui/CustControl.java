@@ -84,14 +84,14 @@ public class CustControl extends MouseAdapter implements ActionListener {
 			service.save(new Customer(0, custInsFrm.tfName.getText(), custInsFrm.tfPhone.getText(), custInsFrm.tfEmail.getText()));
 			custInsFrm.tfName.setText(""); custInsFrm.tfPhone.setText(""); custInsFrm.tfEmail.setText("");
 			custInsFrm.setVisible(false); readAll();
-		} catch (SQLException e) { dialogOpen("고객 추가 실패"); }
+		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 추가 실패"); }
 	}
 
 	private void updateOne() {
 		try {
 			service.update(new Customer(selectedCustId, custUpFrm.tfName.getText(), custUpFrm.tfPhone.getText(), custUpFrm.tfEmail.getText()));
 			clearUpFrm(); readAll();
-		} catch (SQLException e) { dialogOpen("고객 수정 실패"); }
+		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 수정 실패"); }
 	}
 
 	private void deleteOne() {

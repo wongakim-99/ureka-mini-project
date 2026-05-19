@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -35,22 +37,15 @@ public class KobisImporter {
 		String yesterday = LocalDate.now().minusDays(1)
 			.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
+		// 1단계: API에서 데이터 전부 수집 (DB 건드리기 전)
 		String json = fetch(BOX_OFFICE_URL + "?key=" + apiKey + "&targetDt=" + yesterday);
 
 		JsonArray dailyList = gson.fromJson(json, JsonObject.class)
 			.getAsJsonObject("boxOfficeResult")
 			.getAsJsonArray("dailyBoxOfficeList");
 
-		Connection conn = DBUtil.getConnection();
-		conn.createStatement().executeUpdate("DELETE FROM reservation");
-		conn.createStatement().executeUpdate("DELETE FROM screening");
-		conn.createStatement().executeUpdate("DELETE FROM movie");
-		conn.createStatement().executeUpdate("ALTER TABLE reservation AUTO_INCREMENT = 1");
-		conn.createStatement().executeUpdate("ALTER TABLE screening AUTO_INCREMENT = 1");
-		conn.createStatement().executeUpdate("ALTER TABLE movie AUTO_INCREMENT = 1");
-
-		PreparedStatement psmt = conn.prepareStatement(
-			"INSERT INTO movie(title, genre, director, rating) VALUES(?,?,?,?)");
+		record MovieRow(String title, String genre, String director, String rating) {}
+		List<MovieRow> rows = new ArrayList<>();
 
 		for (JsonElement elem : dailyList) {
 			JsonObject item = elem.getAsJsonObject();
@@ -62,17 +57,43 @@ public class KobisImporter {
 				.getAsJsonObject("movieInfoResult")
 				.getAsJsonObject("movieInfo");
 
-			String genre    = safeStr(movieInfo, "repGenreNm");
-			String director = extractFirst(movieInfo.getAsJsonArray("directors"), "peopleNm");
-			String rating   = extractFirst(movieInfo.getAsJsonArray("audits"), "watchGradeNm");
-
-			psmt.setString(1, movieNm);
-			psmt.setString(2, genre);
-			psmt.setString(3, director);
-			psmt.setString(4, rating);
-			psmt.executeUpdate();
+			rows.add(new MovieRow(
+				movieNm,
+				safeStr(movieInfo, "repGenreNm"),
+				extractFirst(movieInfo.getAsJsonArray("directors"), "peopleNm"),
+				extractFirst(movieInfo.getAsJsonArray("audits"), "watchGradeNm")
+			));
 		}
-		psmt.close();
+
+		// 2단계: API 수집 성공 후에만 DB 초기화 및 삽입 (트랜잭션)
+		Connection conn = DBUtil.getConnection();
+		conn.setAutoCommit(false);
+		try {
+			conn.createStatement().executeUpdate("DELETE FROM reservation");
+			conn.createStatement().executeUpdate("DELETE FROM screening");
+			conn.createStatement().executeUpdate("DELETE FROM movie");
+			conn.createStatement().executeUpdate("ALTER TABLE reservation AUTO_INCREMENT = 1");
+			conn.createStatement().executeUpdate("ALTER TABLE screening AUTO_INCREMENT = 1");
+			conn.createStatement().executeUpdate("ALTER TABLE movie AUTO_INCREMENT = 1");
+
+			PreparedStatement psmt = conn.prepareStatement(
+				"INSERT INTO movie(title, genre, director, rating) VALUES(?,?,?,?)");
+
+			for (MovieRow m : rows) {
+				psmt.setString(1, m.title());
+				psmt.setString(2, m.genre());
+				psmt.setString(3, m.director());
+				psmt.setString(4, m.rating());
+				psmt.executeUpdate();
+			}
+			psmt.close();
+			conn.commit();
+		} catch (Exception e) {
+			conn.rollback();
+			throw e;
+		} finally {
+			conn.setAutoCommit(true);
+		}
 	}
 
 	private String extractFirst(JsonArray arr, String key) {
