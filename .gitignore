@@ -59,3 +59,5 @@ src/main/resources/kobis.properties
 # Serena MCP
 # ========================
 .serena
+
+.idea/
