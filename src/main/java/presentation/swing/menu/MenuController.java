@@ -5,12 +5,12 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MenuControl implements ActionListener {
+public class MenuController implements ActionListener {
 
 	private Container cardContainer;
 	private CardLayout card;
 
-	public MenuControl(Container cardContainer, CardLayout card) {
+	public MenuController(Container cardContainer, CardLayout card) {
 		this.cardContainer = cardContainer;
 		this.card = card;
 	}

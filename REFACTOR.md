@@ -248,7 +248,7 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - `build.gradle`의 `application.mainClass`를 `Main`으로 변경했다.
 - 구버전 중복 파일이던 `app.MainDashboard`는 제거했다.
 - 기존 `app.Main`도 제거하고 최상위 `Main`에서 `MainDashboard.launch()`만 호출하도록 정리했다.
-- `app.MenuControl`은 아직 유지한다. 다음 UI 패키지 이동 단계에서 실제 사용 여부를 확인한 뒤 이동하거나 제거한다.
+- `app.MenuControl`은 다음 UI 패키지 이동 단계에서 실제 사용 여부를 확인한 뒤 이동하거나 제거하기로 남겨두었다.
 
 완료 기준:
 
@@ -310,6 +310,15 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 
 - `domain` 패키지가 `common` 또는 `presentation`을 import하지 않는다.
 - `common` 패키지는 제거되었다.
+- `./gradlew build` 성공
+
+### Step 6. 프레젠테이션 잔여 정리 - 완료
+
+- `presentation.swing.menu.MenuControl`을 목표 구조의 이름에 맞춰 `presentation.swing.menu.MenuController`로 변경했다.
+- `MainDashboard`에서 사용하지 않는 `DialogControl` import를 제거했다.
+
+완료 기준:
+
 - `./gradlew build` 성공
 
 ---

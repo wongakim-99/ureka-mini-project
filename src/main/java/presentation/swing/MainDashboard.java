@@ -22,7 +22,6 @@ import presentation.swing.revenue.RevenueControl;
 import infrastructure.db.DBUtil;
 import infrastructure.db.SchemaManager;
 import infrastructure.kobis.KobisImporter;
-import presentation.swing.common.DialogControl;
 
 public class MainDashboard extends JFrame {
 
