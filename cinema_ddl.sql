@@ -8,44 +8,60 @@ DROP TABLE IF EXISTS theater;
 DROP TABLE IF EXISTS customer;
 DROP TABLE IF EXISTS movie;
 
--- 테이블 생성
+-- 영화
 CREATE TABLE movie (
     movieid  INT AUTO_INCREMENT PRIMARY KEY,
     title    VARCHAR(100) NOT NULL,
     genre    VARCHAR(50),
     director VARCHAR(50),
-    rating   VARCHAR(20)
+    rating   VARCHAR(20),
+
+    UNIQUE(title)
 );
 
+-- 상영관
 CREATE TABLE theater (
     theaterid   INT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(50) NOT NULL,
-    total_seats INT NOT NULL
+    total_seats INT NOT NULL,
+
+    UNIQUE(name)
 );
 
+-- 상영일정
 CREATE TABLE screening (
     screenid  INT AUTO_INCREMENT PRIMARY KEY,
     movieid   INT NOT NULL,
     theaterid INT NOT NULL,
     showtime  DATETIME NOT NULL,
     price     INT NOT NULL,
+
+    UNIQUE(theaterid, showtime),
+
     FOREIGN KEY (movieid)   REFERENCES movie(movieid),
     FOREIGN KEY (theaterid) REFERENCES theater(theaterid)
 );
 
+-- 고객
 CREATE TABLE customer (
     custid INT AUTO_INCREMENT PRIMARY KEY,
     name   VARCHAR(50) NOT NULL,
-    phone  VARCHAR(20),
-    email  VARCHAR(100)
+    phone  VARCHAR(20) NOT NULL,
+    email  VARCHAR(100),
+
+    UNIQUE(phone)
 );
 
+-- 예약
 CREATE TABLE reservation (
     reservid   INT AUTO_INCREMENT PRIMARY KEY,
     custid     INT NOT NULL,
     screenid   INT NOT NULL,
     seatno     VARCHAR(10) NOT NULL,
     reservdate DATE NOT NULL,
+
+    UNIQUE(screenid, seatno),
+
     FOREIGN KEY (custid)   REFERENCES customer(custid),
     FOREIGN KEY (screenid) REFERENCES screening(screenid)
 );
