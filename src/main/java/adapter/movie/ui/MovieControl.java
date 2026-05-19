@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JDialog;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import adapter.movie.MovieDAO;
@@ -30,11 +33,13 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	private MovieInsFrm movieInsFrm;
 	private MovieUpFrm movieUpFrm;
 	private int selectedMovieId;
+	private JButton btnDeleteTop, btnUpdateBottom;
+	private String lastKeyword = "";
 
 	public MovieControl(JDialog dialog, JLabel dialogLabel) {
 		service = new MovieService(new MovieDAO());
 		columnNames = new Vector<>();
-		columnNames.add("MovieID"); columnNames.add("제목");
+		columnNames.add("선택"); columnNames.add("MovieID"); columnNames.add("제목");
 		columnNames.add("장르");    columnNames.add("감독"); columnNames.add("관람등급");
 		this.dialog = dialog;
 		this.dialogLabel = dialogLabel;
@@ -43,6 +48,10 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	public void setTable(JTable t)          { this.table = t; }
 	public void setMovieInsFrm(MovieInsFrm f) { this.movieInsFrm = f; }
 	public void setMovieUpFrm(MovieUpFrm f)   { this.movieUpFrm = f; }
+	public void setDeleteBtn(JButton btn)   { this.btnDeleteTop = btn; }
+	public void setUpdateBtn(JButton btn)   { this.btnUpdateBottom = btn; }
+	public void load() { lastKeyword = ""; readAll(); }
+	public int getMovieCount() { return movieList.size(); }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
@@ -50,14 +59,37 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 		try { movieList = service.findAll(); }
 		catch (SQLException e) { movieList = new ArrayList<>(); dialogOpen("영화 목록 조회 실패"); }
 
-		Vector<Vector<String>> data = new Vector<>();
+		String keyword = lastKeyword.toLowerCase();
+		Vector<Vector<Object>> data = new Vector<>();
 		for (Movie m : movieList) {
-			Vector<String> row = new Vector<>();
+			// 검색어가 있을 경우 제목이나 장르에 포함되지 않으면 제외
+			if (!keyword.isEmpty() && !m.getTitle().toLowerCase().contains(keyword) && 
+				!m.getGenre().toLowerCase().contains(keyword)) continue;
+
+			Vector<Object> row = new Vector<>();
+			row.add(Boolean.FALSE); // 체크박스
 			row.add(String.valueOf(m.getMovieId())); row.add(m.getTitle());
 			row.add(m.getGenre()); row.add(m.getDirector()); row.add(m.getRating());
 			data.add(row);
 		}
-		table.setModel(new DefaultTableModel(data, columnNames));
+		DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+			@Override public Class<?> getColumnClass(int col) { return col == 0 ? Boolean.class : String.class; }
+			@Override public boolean isCellEditable(int row, int col) { return false; }
+		};
+		table.setModel(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setRowSelectionAllowed(true);
+
+		model.addTableModelListener(e -> {
+			int checkCount = 0;
+			for (int i = 0; i < table.getRowCount(); i++) {
+				if ((Boolean) table.getValueAt(i, 0)) checkCount++;
+			}
+			if (btnDeleteTop != null) btnDeleteTop.setEnabled(checkCount > 0);
+			if (btnUpdateBottom != null) btnUpdateBottom.setEnabled(checkCount == 1);
+		});
+		if (btnDeleteTop != null) btnDeleteTop.setEnabled(false);
+		if (btnUpdateBottom != null) btnUpdateBottom.setEnabled(false);
 	}
 
 	private void insertOne() {
@@ -90,25 +122,60 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 		movieUpFrm.setVisible(false);
 	}
 
+	private void openUpdateFrmChecked() {
+		for (int i = 0; i < table.getRowCount(); i++) {
+			if ((Boolean) table.getValueAt(i, 0)) {
+				selectedMovieId = Integer.parseInt(table.getValueAt(i, 1).toString());
+				Movie m = movieList.stream().filter(item -> item.getMovieId() == selectedMovieId).findFirst().orElse(null);
+				if (m != null) {
+					movieUpFrm.tfTitle.setText(m.getTitle()); movieUpFrm.tfGenre.setText(m.getGenre());
+					movieUpFrm.tfDirector.setText(m.getDirector()); movieUpFrm.tfRating.setText(m.getRating());
+					movieUpFrm.setVisible(true);
+				}
+				break;
+			}
+		}
+	}
+
+	private void deleteChecked() {
+		int opt = JOptionPane.showConfirmDialog(null, "선택한 영화 정보를 정말 삭제하시겠습니까?", "삭제 확인", JOptionPane.YES_NO_OPTION);
+		if (opt != JOptionPane.YES_OPTION) return;
+
+		int count = 0;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			if ((Boolean) table.getValueAt(i, 0)) {
+				int id = Integer.parseInt(table.getValueAt(i, 1).toString());
+				try { service.delete(id); count++; } catch (SQLException ignored) {}
+			}
+		}
+		if (count > 0) { dialogOpen(count + "건의 영화 정보가 삭제되었습니다."); readAll(); }
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (e.getActionCommand()) {
-			case "목록 조회": readAll(); break;
+		String cmd = e.getActionCommand();
+		if ("목록 조회".equals(cmd)) {
+			String input = JOptionPane.showInputDialog(null, "검색어를 입력하세요:", "영화 검색", JOptionPane.QUESTION_MESSAGE);
+			if (input != null) { lastKeyword = input.trim(); readAll(); }
+		} else {
+			switch (cmd) {
 			case "영화 추가": movieInsFrm.setVisible(true); break;
 			case "저장":      insertOne(); break;
 			case "취소":      movieInsFrm.setVisible(false); movieUpFrm.setVisible(false); break;
-			case "수정":      updateOne(); break;
-			case "삭제":      deleteOne(); break;
+			case "수정":      if (e.getSource() == btnUpdateBottom) openUpdateFrmChecked(); else updateOne(); break;
+			case "삭제":      deleteChecked(); break;
+			}
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Movie m = movieList.get(table.getSelectedRow());
-		selectedMovieId = m.getMovieId();
-		movieUpFrm.tfTitle.setText(m.getTitle()); movieUpFrm.tfGenre.setText(m.getGenre());
-		movieUpFrm.tfDirector.setText(m.getDirector()); movieUpFrm.tfRating.setText(m.getRating());
-		movieUpFrm.setVisible(true);
+		int col = table.columnAtPoint(e.getPoint());
+		int row = table.rowAtPoint(e.getPoint());
+		if (col == 0 && row >= 0) {
+			boolean curr = (Boolean) table.getValueAt(row, 0);
+			table.setValueAt(!curr, row, 0);
+		}
 	}
 
 }
