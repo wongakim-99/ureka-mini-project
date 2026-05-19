@@ -45,6 +45,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	public void setDeleteBtn(JButton btn)             { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)             { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
+	public void search(String keyword) { lastKeyword = keyword.trim(); readAll(); }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
@@ -110,7 +111,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 			service.save(s);
 			screeningInsFrm.tfPrice.setText("");
 			screeningInsFrm.setVisible(false); readAll();
-		} catch (Exception e) { dialogOpen("상영일정 추가 실패"); }
+		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 추가 실패"); }
 	}
 
 	private void updateOne() {
@@ -123,7 +124,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 			s.setShowtime(getFormattedShowtime(screeningUpFrm.tfDate, screeningUpFrm.cbHour, screeningUpFrm.cbMin));
 			s.setPrice(Integer.parseInt(screeningUpFrm.tfPrice.getText().trim()));
 			service.update(s); clearUpFrm(); readAll();
-		} catch (Exception e) { dialogOpen("상영일정 수정 실패"); }
+		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 수정 실패"); }
 	}
 
 	private void deleteOne() {
@@ -171,10 +172,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if ("목록 조회".equals(cmd)) {
-			String input = JOptionPane.showInputDialog(null, "검색어를 입력하세요:", "상영일정 검색", JOptionPane.QUESTION_MESSAGE);
-			if (input != null) { lastKeyword = input.trim(); readAll(); }
-		} else {
+		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "일정 추가":
 				try { loadOptions(screeningInsFrm.cbMovie, screeningInsFrm.cbTheater); }

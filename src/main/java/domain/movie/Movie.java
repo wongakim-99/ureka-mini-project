@@ -7,15 +7,17 @@ public class Movie {
 	private String genre;
 	private String director;
 	private String rating;
+	private int runtime;
 
 	public Movie() {}
 
-	public Movie(int movieId, String title, String genre, String director, String rating) {
+	public Movie(int movieId, String title, String genre, String director, String rating, int runtime) {
 		this.movieId = movieId;
 		this.title = title;
 		this.genre = genre;
 		this.director = director;
 		this.rating = rating;
+		this.runtime = runtime;
 	}
 
 	public int getMovieId()          { return movieId; }
@@ -28,5 +30,7 @@ public class Movie {
 	public void setDirector(String v){ this.director = v; }
 	public String getRating()        { return rating; }
 	public void setRating(String v)  { this.rating = v; }
+	public int getRuntime()          { return runtime; }
+	public void setRuntime(int v)    { this.runtime = v; }
 
 }
