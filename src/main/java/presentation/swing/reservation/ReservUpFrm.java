@@ -1,6 +1,6 @@
 package presentation.swing.reservation;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
@@ -10,7 +10,7 @@ public class ReservUpFrm extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panInsert, panButton;
-	protected JComboBox<ComboItem> cbCustomer, cbMovie, cbScreening;
+	protected JComboBox<OptionItem> cbCustomer, cbMovie, cbScreening;
 	protected JTextField tfSeatNo;
 	private JButton btnUpdate, btnDelete, btnCancel;
 
@@ -45,7 +45,7 @@ public class ReservUpFrm extends JFrame {
 		btnUpdate.addActionListener(c); btnDelete.addActionListener(c); btnCancel.addActionListener(c);
 		cbMovie.addItemListener(e -> {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
-				ComboItem selected = (ComboItem) cbMovie.getSelectedItem();
+				OptionItem selected = (OptionItem) cbMovie.getSelectedItem();
 				if (selected != null) c.reloadScreenings(selected.id, cbScreening);
 			}
 		});

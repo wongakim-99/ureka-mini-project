@@ -1,6 +1,6 @@
 package presentation.swing.screening;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import presentation.swing.common.DatePickerDialog;
 import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
@@ -12,7 +12,7 @@ public class ScreeningInsFrm extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panInsert, panButton;
-	protected JComboBox<ComboItem> cbMovie, cbTheater;
+	protected JComboBox<OptionItem> cbMovie, cbTheater;
 	protected JTextField tfDate; // 날짜 입력 (YYYY-MM-DD)
 	protected JComboBox<String> cbHour, cbMin; // 시간, 분 선택
 	protected JTextField tfPrice;

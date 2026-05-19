@@ -136,10 +136,10 @@ List<ComboItem> findCustomerOptions() throws SQLException;
 src/main/java/
 ├── Main.java
 ├── application/
-│   ├── AppFactory.java
-│   └── dto/
-│       └── OptionItem.java
+│   └── AppFactory.java
 ├── domain/
+│   ├── common/
+│   │   └── OptionItem.java
 │   ├── customer/
 │   │   ├── Customer.java
 │   │   ├── CustomerRepository.java
@@ -295,21 +295,22 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - Repository 구현체 생성 위치가 `AppFactory` 하나로 모인다.
 - `./gradlew build` 성공
 
-### Step 5. `common` 해체
+### Step 5. `common` 해체 - 완료
 
 - `DBUtil`, `SchemaManager` -> `infrastructure.db`
 - `KobisImporter` -> `infrastructure.kobis`
-- `ComboItem`은 `application.dto.OptionItem` 또는 `presentation.swing.common.ComboItem`으로 이동
+- `ComboItem` -> `domain.common.OptionItem`
 
 주의:
 
-- `ComboItem`은 현재 Repository 인터페이스에 노출되어 있으므로 바로 UI 패키지로 옮기면 domain이 presentation을 의존하게 된다.
-- 먼저 `OptionItem` 같은 UI 중립 모델로 이름과 위치를 바꾸는 편이 낫다.
+- `ComboItem`은 Repository 인터페이스에 노출되어 있으므로 UI 패키지로 옮기지 않았다.
+- `application.dto`에 두면 domain이 application을 의존하게 되므로, Repository 계약에 쓰이는 UI 중립 값 객체로 보고 `domain.common.OptionItem`에 배치했다.
 
 완료 기준:
 
 - `domain` 패키지가 `common` 또는 `presentation`을 import하지 않는다.
-- `common` 패키지는 제거되거나 매우 제한된 유틸만 남는다.
+- `common` 패키지는 제거되었다.
+- `./gradlew build` 성공
 
 ---
 

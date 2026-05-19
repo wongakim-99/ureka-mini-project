@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 
 public class ReservationService {
 
@@ -56,8 +56,8 @@ public class ReservationService {
 			|| e.getMessage() != null && e.getMessage().contains("Duplicate entry");
 	}
 
-	public List<ComboItem> getCustomerOptions() throws SQLException              { return repository.findCustomerOptions(); }
-	public List<ComboItem> getMovieOptions() throws SQLException                { return repository.findMovieOptions(); }
-	public List<ComboItem> getScreeningsByMovie(int movieId) throws SQLException { return repository.findScreeningsByMovie(movieId); }
+	public List<OptionItem> getCustomerOptions() throws SQLException              { return repository.findCustomerOptions(); }
+	public List<OptionItem> getMovieOptions() throws SQLException                { return repository.findMovieOptions(); }
+	public List<OptionItem> getScreeningsByMovie(int movieId) throws SQLException { return repository.findScreeningsByMovie(movieId); }
 
 }

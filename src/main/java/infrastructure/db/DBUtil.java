@@ -1,4 +1,4 @@
-package common;
+package infrastructure.db;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

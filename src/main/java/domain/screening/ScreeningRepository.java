@@ -1,6 +1,6 @@
 package domain.screening;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -9,7 +9,7 @@ public interface ScreeningRepository {
 	void save(Screening screening) throws SQLException;
 	void update(Screening screening) throws SQLException;
 	void delete(int screenId) throws SQLException;
-	List<ComboItem> findMovieOptions() throws SQLException;
-	List<ComboItem> findTheaterOptions() throws SQLException;
+	List<OptionItem> findMovieOptions() throws SQLException;
+	List<OptionItem> findTheaterOptions() throws SQLException;
 	boolean hasOverlap(int theaterId, int excludeScreenId, String showtime, int movieId) throws SQLException;
 }

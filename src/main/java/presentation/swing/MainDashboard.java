@@ -19,8 +19,9 @@ import presentation.swing.screening.*;
 import presentation.swing.customer.*;
 import presentation.swing.theater.*;
 import presentation.swing.revenue.RevenueControl;
-import common.DBUtil;
-import common.KobisImporter;
+import infrastructure.db.DBUtil;
+import infrastructure.db.SchemaManager;
+import infrastructure.kobis.KobisImporter;
 import presentation.swing.common.DialogControl;
 
 public class MainDashboard extends JFrame {
@@ -449,7 +450,7 @@ public class MainDashboard extends JFrame {
 
     public static void launch() {
         System.setProperty("java.awt.im.style", "below-the-spot");
-        common.SchemaManager.run();
+        SchemaManager.run();
         SwingUtilities.invokeLater(() -> {
             MainDashboard app = new MainDashboard();
             new Thread(app::seedFromKobisIfEmpty).start();

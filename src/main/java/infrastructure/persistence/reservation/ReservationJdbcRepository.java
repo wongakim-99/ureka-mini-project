@@ -1,7 +1,7 @@
 package infrastructure.persistence.reservation;
 
-import common.ComboItem;
-import common.DBUtil;
+import domain.common.OptionItem;
+import infrastructure.db.DBUtil;
 import domain.reservation.Reservation;
 import domain.reservation.ReservationRepository;
 import java.sql.*;
@@ -63,32 +63,32 @@ public class ReservationJdbcRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<ComboItem> findCustomerOptions() throws SQLException {
+	public List<OptionItem> findCustomerOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectCustOpts"));
-		List<ComboItem> list = new ArrayList<>();
-		while (rs.next()) list.add(new ComboItem(rs.getInt("custid"), rs.getString("name")));
+		List<OptionItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new OptionItem(rs.getInt("custid"), rs.getString("name")));
 		stmt.close(); rs.close();
 		return list;
 	}
 
 	@Override
-	public List<ComboItem> findMovieOptions() throws SQLException {
+	public List<OptionItem> findMovieOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectMovieOpts"));
-		List<ComboItem> list = new ArrayList<>();
-		while (rs.next()) list.add(new ComboItem(rs.getInt("movieid"), rs.getString("title")));
+		List<OptionItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new OptionItem(rs.getInt("movieid"), rs.getString("title")));
 		stmt.close(); rs.close();
 		return list;
 	}
 
 	@Override
-	public List<ComboItem> findScreeningsByMovie(int movieId) throws SQLException {
+	public List<OptionItem> findScreeningsByMovie(int movieId) throws SQLException {
 		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservSelectScreeningsByMovie"));
 		psmt.setInt(1, movieId);
 		ResultSet rs = psmt.executeQuery();
-		List<ComboItem> list = new ArrayList<>();
-		while (rs.next()) list.add(new ComboItem(rs.getInt("screenid"), rs.getString("info")));
+		List<OptionItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new OptionItem(rs.getInt("screenid"), rs.getString("info")));
 		psmt.close(); rs.close();
 		return list;
 	}

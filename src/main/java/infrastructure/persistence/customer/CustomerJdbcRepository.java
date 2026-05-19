@@ -1,6 +1,6 @@
 package infrastructure.persistence.customer;
 
-import common.DBUtil;
+import infrastructure.db.DBUtil;
 import domain.customer.Customer;
 import domain.customer.CustomerRepository;
 import java.sql.*;

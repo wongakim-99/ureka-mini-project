@@ -1,6 +1,6 @@
 package infrastructure.persistence.revenue;
 
-import common.DBUtil;
+import infrastructure.db.DBUtil;
 import domain.revenue.Revenue;
 import domain.revenue.RevenueRepository;
 

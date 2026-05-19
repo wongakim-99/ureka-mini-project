@@ -1,7 +1,7 @@
 package infrastructure.persistence.screening;
 
-import common.ComboItem;
-import common.DBUtil;
+import domain.common.OptionItem;
+import infrastructure.db.DBUtil;
 import domain.screening.Screening;
 import domain.screening.ScreeningRepository;
 import java.sql.*;
@@ -52,21 +52,21 @@ public class ScreeningJdbcRepository implements ScreeningRepository {
 	}
 
 	@Override
-	public List<ComboItem> findMovieOptions() throws SQLException {
+	public List<OptionItem> findMovieOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("screeningSelectMovieOpts"));
-		List<ComboItem> list = new ArrayList<>();
-		while (rs.next()) list.add(new ComboItem(rs.getInt("movieid"), rs.getString("title")));
+		List<OptionItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new OptionItem(rs.getInt("movieid"), rs.getString("title")));
 		stmt.close(); rs.close();
 		return list;
 	}
 
 	@Override
-	public List<ComboItem> findTheaterOptions() throws SQLException {
+	public List<OptionItem> findTheaterOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("screeningSelectTheaterOpts"));
-		List<ComboItem> list = new ArrayList<>();
-		while (rs.next()) list.add(new ComboItem(rs.getInt("theaterid"), rs.getString("name")));
+		List<OptionItem> list = new ArrayList<>();
+		while (rs.next()) list.add(new OptionItem(rs.getInt("theaterid"), rs.getString("name")));
 		stmt.close(); rs.close();
 		return list;
 	}

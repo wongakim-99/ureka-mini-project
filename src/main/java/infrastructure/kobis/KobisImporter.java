@@ -1,4 +1,4 @@
-package common;
+package infrastructure.kobis;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import infrastructure.db.DBUtil;
 
 public class KobisImporter {
 

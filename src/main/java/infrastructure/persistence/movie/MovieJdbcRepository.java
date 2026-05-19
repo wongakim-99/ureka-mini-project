@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import common.DBUtil;
+import infrastructure.db.DBUtil;
 import domain.movie.Movie;
 import domain.movie.MovieRepository;
 

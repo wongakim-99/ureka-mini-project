@@ -1,6 +1,6 @@
 package domain.reservation;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface ReservationRepository {
 	void update(Reservation reservation) throws SQLException;
 	void delete(int reservId) throws SQLException;
 	int findRemainSeatsByScreening(int screenId) throws SQLException;
-	List<ComboItem> findCustomerOptions() throws SQLException;
-	List<ComboItem> findMovieOptions() throws SQLException;
-	List<ComboItem> findScreeningsByMovie(int movieId) throws SQLException;
+	List<OptionItem> findCustomerOptions() throws SQLException;
+	List<OptionItem> findMovieOptions() throws SQLException;
+	List<OptionItem> findScreeningsByMovie(int movieId) throws SQLException;
 }

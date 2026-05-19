@@ -1,6 +1,6 @@
 package presentation.swing.reservation;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import domain.reservation.Reservation;
 import domain.reservation.ReservationService;
 import java.awt.event.*;
@@ -83,20 +83,20 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 		if (btnUpdateBottom != null) btnUpdateBottom.setEnabled(false);
 	}
 
-	public void reloadScreenings(int movieId, JComboBox<ComboItem> cbScreening) {
+	public void reloadScreenings(int movieId, JComboBox<OptionItem> cbScreening) {
 		cbScreening.removeAllItems();
 		try { service.getScreeningsByMovie(movieId).forEach(cbScreening::addItem); }
 		catch (SQLException e) { dialogOpen("상영일정 로드 실패"); }
 	}
 
-	private void loadOptions(JComboBox<ComboItem> cbC, JComboBox<ComboItem> cbM) throws SQLException {
+	private void loadOptions(JComboBox<OptionItem> cbC, JComboBox<OptionItem> cbM) throws SQLException {
 		cbC.removeAllItems(); service.getCustomerOptions().forEach(cbC::addItem);
 		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
 	}
 
 	private void insertOne() {
-		ComboItem cust   = (ComboItem) reservInsFrm.cbCustomer.getSelectedItem();
-		ComboItem screen = (ComboItem) reservInsFrm.cbScreening.getSelectedItem();
+		OptionItem cust   = (OptionItem) reservInsFrm.cbCustomer.getSelectedItem();
+		OptionItem screen = (OptionItem) reservInsFrm.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
 		String seatNo = reservInsFrm.tfSeatNo.getText().trim();
 		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
@@ -109,8 +109,8 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void updateOne() {
-		ComboItem cust = (ComboItem) reservUpFrm.cbCustomer.getSelectedItem();
-		ComboItem screen = (ComboItem) reservUpFrm.cbScreening.getSelectedItem();
+		OptionItem cust = (OptionItem) reservUpFrm.cbCustomer.getSelectedItem();
+		OptionItem screen = (OptionItem) reservUpFrm.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 상영일정을 선택해주세요."); return; }
 		String seatNo = reservUpFrm.tfSeatNo.getText().trim();
 		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }

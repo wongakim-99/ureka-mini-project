@@ -1,6 +1,6 @@
 package presentation.swing.screening;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import domain.screening.Screening;
 import domain.screening.ScreeningService;
 import java.awt.event.*;
@@ -86,7 +86,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		if (btnUpdateBottom != null) btnUpdateBottom.setEnabled(false);
 	}
 
-	private void loadOptions(JComboBox<ComboItem> cbM, JComboBox<ComboItem> cbT) throws SQLException {
+	private void loadOptions(JComboBox<OptionItem> cbM, JComboBox<OptionItem> cbT) throws SQLException {
 		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
 		cbT.removeAllItems(); service.getTheaterOptions().forEach(cbT::addItem);
 	}
@@ -99,8 +99,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
-		ComboItem movie = (ComboItem) screeningInsFrm.cbMovie.getSelectedItem();
-		ComboItem theater = (ComboItem) screeningInsFrm.cbTheater.getSelectedItem();
+		OptionItem movie = (OptionItem) screeningInsFrm.cbMovie.getSelectedItem();
+		OptionItem theater = (OptionItem) screeningInsFrm.cbTheater.getSelectedItem();
 		if (movie == null || theater == null) { dialogOpen("영화와 상영관을 선택해주세요."); return; }
 		try {
 			Screening s = new Screening();
@@ -114,8 +114,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void updateOne() {
-		ComboItem movie = (ComboItem) screeningUpFrm.cbMovie.getSelectedItem();
-		ComboItem theater = (ComboItem) screeningUpFrm.cbTheater.getSelectedItem();
+		OptionItem movie = (OptionItem) screeningUpFrm.cbMovie.getSelectedItem();
+		OptionItem theater = (OptionItem) screeningUpFrm.cbTheater.getSelectedItem();
 		if (movie == null || theater == null) { dialogOpen("영화와 상영관을 선택해주세요."); return; }
 		try {
 			Screening s = new Screening();

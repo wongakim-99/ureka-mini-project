@@ -1,4 +1,4 @@
-package common;
+package infrastructure.db;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

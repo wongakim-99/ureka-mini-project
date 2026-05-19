@@ -1,11 +1,11 @@
-package common;
+package domain.common;
 
-public class ComboItem {
+public class OptionItem {
 
 	public int id;
 	private String label;
 
-	public ComboItem(int id, String label) {
+	public OptionItem(int id, String label) {
 		this.id = id;
 		this.label = label;
 	}

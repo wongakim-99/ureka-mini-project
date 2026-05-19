@@ -1,6 +1,6 @@
 package infrastructure.persistence.theater;
 
-import common.DBUtil;
+import infrastructure.db.DBUtil;
 import domain.theater.Theater;
 import domain.theater.TheaterRepository;
 import java.sql.*;

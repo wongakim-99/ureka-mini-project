@@ -1,6 +1,6 @@
 package presentation.swing.common;
 
-import common.DBUtil;
+import infrastructure.db.DBUtil;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
