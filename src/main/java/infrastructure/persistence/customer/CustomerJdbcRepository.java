@@ -45,4 +45,15 @@ public class CustomerJdbcRepository implements CustomerRepository {
 		psmt.executeUpdate();
 	}
 
+	@Override
+	public boolean existsByPhone(String phone, int excludeCustomerId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("custExistsByPhone"));
+		psmt.setString(1, phone);
+		psmt.setInt(2, excludeCustomerId);
+		ResultSet rs = psmt.executeQuery();
+		boolean exists = rs.next() && rs.getInt("cnt") > 0;
+		rs.close(); psmt.close();
+		return exists;
+	}
+
 }

@@ -43,4 +43,15 @@ public class TheaterJdbcRepository implements TheaterRepository {
 		psmt.executeUpdate();
 	}
 
+	@Override
+	public boolean existsByName(String name, int excludeTheaterId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("theaterExistsByName"));
+		psmt.setString(1, name);
+		psmt.setInt(2, excludeTheaterId);
+		ResultSet rs = psmt.executeQuery();
+		boolean exists = rs.next() && rs.getInt("cnt") > 0;
+		rs.close(); psmt.close();
+		return exists;
+	}
+
 }

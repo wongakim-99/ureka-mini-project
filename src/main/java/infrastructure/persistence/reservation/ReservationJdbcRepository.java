@@ -63,6 +63,18 @@ public class ReservationJdbcRepository implements ReservationRepository {
 	}
 
 	@Override
+	public boolean existsByScreenIdAndSeatNo(int screenId, String seatNo, int excludeReservationId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservExistsByScreenSeat"));
+		psmt.setInt(1, screenId);
+		psmt.setString(2, seatNo);
+		psmt.setInt(3, excludeReservationId);
+		ResultSet rs = psmt.executeQuery();
+		boolean exists = rs.next() && rs.getInt("cnt") > 0;
+		rs.close(); psmt.close();
+		return exists;
+	}
+
+	@Override
 	public List<OptionItem> findCustomerOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectCustOpts"));

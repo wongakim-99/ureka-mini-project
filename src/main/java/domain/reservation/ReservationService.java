@@ -23,6 +23,9 @@ public class ReservationService {
 		if (repository.findRemainSeatsByScreening(reservation.getScreenId()) <= 0) {
 			throw new SQLException(SOLD_OUT_MESSAGE);
 		}
+		if (repository.existsByScreenIdAndSeatNo(reservation.getScreenId(), reservation.getSeatNo(), 0)) {
+			throw new SQLException(DUPLICATE_SEAT_MESSAGE);
+		}
 		try {
 			repository.save(reservation);
 		} catch (SQLException e) {
@@ -34,6 +37,9 @@ public class ReservationService {
 	}
 	public void update(Reservation reservation) throws SQLException {
 		validateSeatNo(reservation.getSeatNo());
+		if (repository.existsByScreenIdAndSeatNo(reservation.getScreenId(), reservation.getSeatNo(), reservation.getReservId())) {
+			throw new SQLException(DUPLICATE_SEAT_MESSAGE);
+		}
 		try {
 			repository.update(reservation);
 		} catch (SQLException e) {

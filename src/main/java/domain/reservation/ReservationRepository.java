@@ -10,6 +10,7 @@ public interface ReservationRepository {
 	void update(Reservation reservation) throws SQLException;
 	void delete(int reservId) throws SQLException;
 	int findRemainSeatsByScreening(int screenId) throws SQLException;
+	boolean existsByScreenIdAndSeatNo(int screenId, String seatNo, int excludeReservationId) throws SQLException;
 	List<OptionItem> findCustomerOptions() throws SQLException;
 	List<OptionItem> findMovieOptions() throws SQLException;
 	List<OptionItem> findScreeningsByMovie(int movieId) throws SQLException;

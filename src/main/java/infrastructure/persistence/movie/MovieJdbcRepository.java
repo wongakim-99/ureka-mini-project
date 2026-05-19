@@ -52,4 +52,15 @@ public class MovieJdbcRepository implements MovieRepository {
 		psmt.executeUpdate();
 	}
 
+	@Override
+	public boolean existsByTitle(String title, int excludeMovieId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieExistsByTitle"));
+		psmt.setString(1, title);
+		psmt.setInt(2, excludeMovieId);
+		ResultSet rs = psmt.executeQuery();
+		boolean exists = rs.next() && rs.getInt("cnt") > 0;
+		rs.close(); psmt.close();
+		return exists;
+	}
+
 }
