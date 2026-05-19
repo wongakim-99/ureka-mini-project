@@ -321,6 +321,20 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 
 - `./gradlew build` 성공
 
+### Step 7. Swing 클래스명 정리 - 완료
+
+- `*Control`을 `*Controller`로 변경했다.
+- `*InsFrm`을 `*CreateFrame`으로 변경했다.
+- `*UpFrm`을 `*UpdateFrame`으로 변경했다.
+- `*ListPan`을 `*ListPanel`로 변경했다.
+- `Cust*`, `Reserv*` 축약명을 각각 `Customer*`, `Reservation*`으로 변경했다.
+- `AppFactory`, `MainDashboard`, 각 Frame/Controller의 타입과 메서드 참조를 새 이름 기준으로 갱신했다.
+- 내부 변수명도 `movieCreateFrame`, `reservationController`, `customerList`처럼 새 클래스명과 맞춰 정리했다.
+
+완료 기준:
+
+- `./gradlew build` 성공
+
 ---
 
 ## 6. 의존성 원칙

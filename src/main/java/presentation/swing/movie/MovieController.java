@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import domain.movie.Movie;
 import domain.movie.MovieService;
 
-public class MovieControl extends MouseAdapter implements ActionListener {
+public class MovieController extends MouseAdapter implements ActionListener {
 
 	private final MovieService service;
 	private List<Movie> movieList = new ArrayList<>();
@@ -29,13 +29,13 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	private JDialog dialog;
 	private JLabel dialogLabel;
 	private JTable table;
-	private MovieInsFrm movieInsFrm;
-	private MovieUpFrm movieUpFrm;
+	private MovieCreateFrame movieCreateFrame;
+	private MovieUpdateFrame movieUpdateFrame;
 	private int selectedMovieId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
-	public MovieControl(MovieService service, JDialog dialog, JLabel dialogLabel) {
+	public MovieController(MovieService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("MovieID"); columnNames.add("제목");
@@ -45,8 +45,8 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	}
 
 	public void setTable(JTable t)          { this.table = t; }
-	public void setMovieInsFrm(MovieInsFrm f) { this.movieInsFrm = f; }
-	public void setMovieUpFrm(MovieUpFrm f)   { this.movieUpFrm = f; }
+	public void setMovieCreateFrame(MovieCreateFrame f) { this.movieCreateFrame = f; }
+	public void setMovieUpdateFrame(MovieUpdateFrame f)   { this.movieUpdateFrame = f; }
 	public void setDeleteBtn(JButton btn)   { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)   { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
@@ -94,51 +94,51 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
-		int runtime = parseRuntime(movieInsFrm.tfRuntime.getText());
-		Movie movie = new Movie(0, movieInsFrm.tfTitle.getText(), movieInsFrm.tfGenre.getText(),
-				movieInsFrm.tfDirector.getText(), movieInsFrm.tfRating.getText(), runtime);
+		int runtime = parseRuntime(movieCreateFrame.tfRuntime.getText());
+		Movie movie = new Movie(0, movieCreateFrame.tfTitle.getText(), movieCreateFrame.tfGenre.getText(),
+				movieCreateFrame.tfDirector.getText(), movieCreateFrame.tfRating.getText(), runtime);
 		try {
 			service.save(movie);
-			movieInsFrm.tfTitle.setText(""); movieInsFrm.tfGenre.setText("");
-			movieInsFrm.tfDirector.setText(""); movieInsFrm.tfRating.setText(""); movieInsFrm.tfRuntime.setText("");
-			movieInsFrm.setVisible(false);
+			movieCreateFrame.tfTitle.setText(""); movieCreateFrame.tfGenre.setText("");
+			movieCreateFrame.tfDirector.setText(""); movieCreateFrame.tfRating.setText(""); movieCreateFrame.tfRuntime.setText("");
+			movieCreateFrame.setVisible(false);
 			readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 추가 실패"); }
 	}
 
 	private void updateOne() {
-		int runtime = parseRuntime(movieUpFrm.tfRuntime.getText());
-		Movie movie = new Movie(selectedMovieId, movieUpFrm.tfTitle.getText(), movieUpFrm.tfGenre.getText(),
-				movieUpFrm.tfDirector.getText(), movieUpFrm.tfRating.getText(), runtime);
-		try { service.update(movie); clearUpFrm(); readAll(); }
+		int runtime = parseRuntime(movieUpdateFrame.tfRuntime.getText());
+		Movie movie = new Movie(selectedMovieId, movieUpdateFrame.tfTitle.getText(), movieUpdateFrame.tfGenre.getText(),
+				movieUpdateFrame.tfDirector.getText(), movieUpdateFrame.tfRating.getText(), runtime);
+		try { service.update(movie); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 수정 실패"); }
 	}
 
 	private void deleteOne() {
-		try { service.delete(selectedMovieId); clearUpFrm(); readAll(); }
+		try { service.delete(selectedMovieId); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen("영화 삭제 실패"); }
 	}
 
-	private void clearUpFrm() {
-		movieUpFrm.tfTitle.setText(""); movieUpFrm.tfGenre.setText("");
-		movieUpFrm.tfDirector.setText(""); movieUpFrm.tfRating.setText(""); movieUpFrm.tfRuntime.setText("");
-		movieUpFrm.setVisible(false);
+	private void clearUpdateFrame() {
+		movieUpdateFrame.tfTitle.setText(""); movieUpdateFrame.tfGenre.setText("");
+		movieUpdateFrame.tfDirector.setText(""); movieUpdateFrame.tfRating.setText(""); movieUpdateFrame.tfRuntime.setText("");
+		movieUpdateFrame.setVisible(false);
 	}
 
 	private int parseRuntime(String text) {
 		try { return Integer.parseInt(text.trim()); } catch (NumberFormatException e) { return 0; }
 	}
 
-	private void openUpdateFrmChecked() {
+	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if ((Boolean) table.getValueAt(i, 0)) {
 				selectedMovieId = Integer.parseInt(table.getValueAt(i, 1).toString());
 				Movie m = movieList.stream().filter(item -> item.getMovieId() == selectedMovieId).findFirst().orElse(null);
 				if (m != null) {
-					movieUpFrm.tfTitle.setText(m.getTitle()); movieUpFrm.tfGenre.setText(m.getGenre());
-					movieUpFrm.tfDirector.setText(m.getDirector()); movieUpFrm.tfRating.setText(m.getRating());
-					movieUpFrm.tfRuntime.setText(String.valueOf(m.getRuntime()));
-					movieUpFrm.setVisible(true);
+					movieUpdateFrame.tfTitle.setText(m.getTitle()); movieUpdateFrame.tfGenre.setText(m.getGenre());
+					movieUpdateFrame.tfDirector.setText(m.getDirector()); movieUpdateFrame.tfRating.setText(m.getRating());
+					movieUpdateFrame.tfRuntime.setText(String.valueOf(m.getRuntime()));
+					movieUpdateFrame.setVisible(true);
 				}
 				break;
 			}
@@ -164,10 +164,10 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 		String cmd = e.getActionCommand();
 		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
-			case "영화 추가": movieInsFrm.setVisible(true); break;
+			case "영화 추가": movieCreateFrame.setVisible(true); break;
 			case "저장":      insertOne(); break;
-			case "취소":      movieInsFrm.setVisible(false); movieUpFrm.setVisible(false); break;
-			case "수정":      if (e.getSource() == btnUpdateBottom) openUpdateFrmChecked(); else updateOne(); break;
+			case "취소":      movieCreateFrame.setVisible(false); movieUpdateFrame.setVisible(false); break;
+			case "수정":      if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
 			case "삭제":      deleteChecked(); break;
 			}
 		}

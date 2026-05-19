@@ -18,7 +18,7 @@ import presentation.swing.reservation.*;
 import presentation.swing.screening.*;
 import presentation.swing.customer.*;
 import presentation.swing.theater.*;
-import presentation.swing.revenue.RevenueControl;
+import presentation.swing.revenue.RevenueController;
 import infrastructure.db.DBUtil;
 import infrastructure.db.SchemaManager;
 import infrastructure.kobis.KobisImporter;
@@ -39,19 +39,19 @@ public class MainDashboard extends JFrame {
     private JLabel dialogLabel;
     private JButton btnDialogClose;
 
-    private MovieControl movieControl;
-    private MovieInsFrm movieInsFrm;
-    private MovieUpFrm movieUpFrm;
-    private ReservControl reservControl;
-    private ReservInsFrm reservInsFrm;
-    private ReservUpFrm reservUpFrm;
-    private ScreeningControl screeningControl;
-    private ScreeningInsFrm screeningInsFrm;
-    private ScreeningUpFrm screeningUpFrm;
-    private CustControl custControl;
-    private CustInsFrm custInsFrm;
-    private CustUpFrm custUpFrm;
-    private RevenueControl revenueControl;
+    private MovieController movieController;
+    private MovieCreateFrame movieCreateFrame;
+    private MovieUpdateFrame movieUpdateFrame;
+    private ReservationController reservationController;
+    private ReservationCreateFrame reservationCreateFrame;
+    private ReservationUpdateFrame reservationUpdateFrame;
+    private ScreeningController screeningController;
+    private ScreeningCreateFrame screeningCreateFrame;
+    private ScreeningUpdateFrame screeningUpdateFrame;
+    private CustomerController customerController;
+    private CustomerCreateFrame customerCreateFrame;
+    private CustomerUpdateFrame customerUpdateFrame;
+    private RevenueController revenueController;
     private JLabel totalRevenueLabel;
 
     public MainDashboard() {
@@ -80,23 +80,23 @@ public class MainDashboard extends JFrame {
         dialog.add(btnDialogClose);
         btnDialogClose.addActionListener(e -> dialog.setVisible(false));
 
-        movieInsFrm = new MovieInsFrm(); movieUpFrm = new MovieUpFrm();
-        movieControl = AppFactory.createMovieControl(dialog, dialogLabel);
-        movieInsFrm.addEvent(movieControl); movieUpFrm.addEvent(movieControl);
+        movieCreateFrame = new MovieCreateFrame(); movieUpdateFrame = new MovieUpdateFrame();
+        movieController = AppFactory.createMovieController(dialog, dialogLabel);
+        movieCreateFrame.addEvent(movieController); movieUpdateFrame.addEvent(movieController);
 
-        reservInsFrm = new ReservInsFrm(); reservUpFrm = new ReservUpFrm();
-        reservControl = AppFactory.createReservationControl(dialog, dialogLabel);
-        reservInsFrm.addEvent(reservControl); reservUpFrm.addEvent(reservControl);
+        reservationCreateFrame = new ReservationCreateFrame(); reservationUpdateFrame = new ReservationUpdateFrame();
+        reservationController = AppFactory.createReservationController(dialog, dialogLabel);
+        reservationCreateFrame.addEvent(reservationController); reservationUpdateFrame.addEvent(reservationController);
 
-        screeningInsFrm = new ScreeningInsFrm(); screeningUpFrm = new ScreeningUpFrm();
-        screeningControl = AppFactory.createScreeningControl(dialog, dialogLabel);
-        screeningInsFrm.addEvent(screeningControl); screeningUpFrm.addEvent(screeningControl);
+        screeningCreateFrame = new ScreeningCreateFrame(); screeningUpdateFrame = new ScreeningUpdateFrame();
+        screeningController = AppFactory.createScreeningController(dialog, dialogLabel);
+        screeningCreateFrame.addEvent(screeningController); screeningUpdateFrame.addEvent(screeningController);
 
-        custInsFrm = new CustInsFrm(); custUpFrm = new CustUpFrm();
-        custControl = AppFactory.createCustomerControl(dialog, dialogLabel);
-        custInsFrm.addEvent(custControl); custUpFrm.addEvent(custControl);
+        customerCreateFrame = new CustomerCreateFrame(); customerUpdateFrame = new CustomerUpdateFrame();
+        customerController = AppFactory.createCustomerController(dialog, dialogLabel);
+        customerCreateFrame.addEvent(customerController); customerUpdateFrame.addEvent(customerController);
 
-        revenueControl = AppFactory.createRevenueControl(dialog, dialogLabel);
+        revenueController = AppFactory.createRevenueController(dialog, dialogLabel);
     }
 
     private void initUI() {
@@ -187,8 +187,8 @@ public class MainDashboard extends JFrame {
                     dialog.setVisible(true);
                     actionBtn.setEnabled(true);
                     if (menuTitleLabel.getText().contains("영화")) {
-                        movieControl.load();
-                        bigCount.setText(String.valueOf(movieControl.getMovieCount()));
+                        movieController.load();
+                        bigCount.setText(String.valueOf(movieController.getMovieCount()));
                     }
                 });
             } catch (Exception ex) {
@@ -338,66 +338,66 @@ public class MainDashboard extends JFrame {
             menuTitleLabel.setText("영화 관리 (Movie Master)");
             btnRefresh.setText("전체 조회");
             btnAdd.setText("영화 추가");
-            btnRefresh.addActionListener(e -> { searchField.setText(""); movieControl.load(); bigCount.setText(String.valueOf(movieControl.getMovieCount())); });
-            btnSearch.addActionListener(e -> movieControl.search(searchField.getText()));
-            searchField.addActionListener(e -> movieControl.search(searchField.getText()));
-            btnAdd.addActionListener(movieControl);
-            btnDelete.addActionListener(movieControl);
-            btnUpdate.addActionListener(movieControl);
-            movieControl.setTable(dataTable);
-            movieControl.setDeleteBtn(btnDelete);
-            movieControl.setUpdateBtn(btnUpdate);
-            dataTable.addMouseListener(movieControl);
-            movieControl.load();
-            bigCount.setText(String.valueOf(movieControl.getMovieCount()));
+            btnRefresh.addActionListener(e -> { searchField.setText(""); movieController.load(); bigCount.setText(String.valueOf(movieController.getMovieCount())); });
+            btnSearch.addActionListener(e -> movieController.search(searchField.getText()));
+            searchField.addActionListener(e -> movieController.search(searchField.getText()));
+            btnAdd.addActionListener(movieController);
+            btnDelete.addActionListener(movieController);
+            btnUpdate.addActionListener(movieController);
+            movieController.setTable(dataTable);
+            movieController.setDeleteBtn(btnDelete);
+            movieController.setUpdateBtn(btnUpdate);
+            dataTable.addMouseListener(movieController);
+            movieController.load();
+            bigCount.setText(String.valueOf(movieController.getMovieCount()));
 
         } else if (menuName.equals("예약 관리")) {
             menuTitleLabel.setText("예약 관리 (Reservation Info)");
             btnRefresh.setText("전체 조회");
             btnAdd.setText("예약 추가");
-            btnRefresh.addActionListener(e -> { searchField.setText(""); reservControl.load(); });
-            btnSearch.addActionListener(e -> reservControl.search(searchField.getText()));
-            searchField.addActionListener(e -> reservControl.search(searchField.getText()));
-            btnAdd.addActionListener(reservControl);
-            btnDelete.addActionListener(reservControl);
-            btnUpdate.addActionListener(reservControl);
-            reservControl.setTable(dataTable);
-            reservControl.setDeleteBtn(btnDelete);
-            reservControl.setUpdateBtn(btnUpdate);
-            dataTable.addMouseListener(reservControl);
-            reservControl.load();
+            btnRefresh.addActionListener(e -> { searchField.setText(""); reservationController.load(); });
+            btnSearch.addActionListener(e -> reservationController.search(searchField.getText()));
+            searchField.addActionListener(e -> reservationController.search(searchField.getText()));
+            btnAdd.addActionListener(reservationController);
+            btnDelete.addActionListener(reservationController);
+            btnUpdate.addActionListener(reservationController);
+            reservationController.setTable(dataTable);
+            reservationController.setDeleteBtn(btnDelete);
+            reservationController.setUpdateBtn(btnUpdate);
+            dataTable.addMouseListener(reservationController);
+            reservationController.load();
 
         } else if (menuName.equals("상영 일정 관리")) {
             menuTitleLabel.setText("상영 일정 관리 (Schedules)");
             btnRefresh.setText("전체 조회");
             btnAdd.setText("일정 추가");
-            btnRefresh.addActionListener(e -> { searchField.setText(""); screeningControl.load(); });
-            btnSearch.addActionListener(e -> screeningControl.search(searchField.getText()));
-            searchField.addActionListener(e -> screeningControl.search(searchField.getText()));
-            btnAdd.addActionListener(screeningControl);
-            btnDelete.addActionListener(screeningControl);
-            btnUpdate.addActionListener(screeningControl);
-            screeningControl.setTable(dataTable);
-            screeningControl.setDeleteBtn(btnDelete);
-            screeningControl.setUpdateBtn(btnUpdate);
-            dataTable.addMouseListener(screeningControl);
-            screeningControl.load();
+            btnRefresh.addActionListener(e -> { searchField.setText(""); screeningController.load(); });
+            btnSearch.addActionListener(e -> screeningController.search(searchField.getText()));
+            searchField.addActionListener(e -> screeningController.search(searchField.getText()));
+            btnAdd.addActionListener(screeningController);
+            btnDelete.addActionListener(screeningController);
+            btnUpdate.addActionListener(screeningController);
+            screeningController.setTable(dataTable);
+            screeningController.setDeleteBtn(btnDelete);
+            screeningController.setUpdateBtn(btnUpdate);
+            dataTable.addMouseListener(screeningController);
+            screeningController.load();
 
         } else if (menuName.equals("고객 관리")) {
             menuTitleLabel.setText("고객 관리 (Customer Base)");
             btnRefresh.setText("전체 조회");
             btnAdd.setText("고객 추가");
-            btnRefresh.addActionListener(e -> { searchField.setText(""); custControl.load(); });
-            btnSearch.addActionListener(e -> custControl.search(searchField.getText()));
-            searchField.addActionListener(e -> custControl.search(searchField.getText()));
-            btnDelete.addActionListener(custControl);
-            btnUpdate.addActionListener(custControl);
-            custControl.setTable(dataTable);
-            custControl.setDeleteBtn(btnDelete);
-            custControl.setUpdateBtn(btnUpdate);
-            btnAdd.addActionListener(custControl);
-            dataTable.addMouseListener(custControl);
-            custControl.load();
+            btnRefresh.addActionListener(e -> { searchField.setText(""); customerController.load(); });
+            btnSearch.addActionListener(e -> customerController.search(searchField.getText()));
+            searchField.addActionListener(e -> customerController.search(searchField.getText()));
+            btnDelete.addActionListener(customerController);
+            btnUpdate.addActionListener(customerController);
+            customerController.setTable(dataTable);
+            customerController.setDeleteBtn(btnDelete);
+            customerController.setUpdateBtn(btnUpdate);
+            btnAdd.addActionListener(customerController);
+            dataTable.addMouseListener(customerController);
+            customerController.load();
 
         } else if (menuName.equals("수입 관리")) {
             menuTitleLabel.setText("수입 관리 (Revenue)");
@@ -408,10 +408,10 @@ public class MainDashboard extends JFrame {
             btnUpdate.setEnabled(false);
             searchField.setVisible(false);
             btnSearch.setVisible(false);
-            btnRefresh.addActionListener(e -> revenueControl.load());
-            revenueControl.setTable(dataTable);
-            revenueControl.setTotalLabel(totalRevenueLabel);
-            revenueControl.load();
+            btnRefresh.addActionListener(e -> revenueController.load());
+            revenueController.setTable(dataTable);
+            revenueController.setTotalLabel(totalRevenueLabel);
+            revenueController.load();
             totalRevenueLabel.setVisible(true);
             return;
         }
@@ -438,8 +438,8 @@ public class MainDashboard extends JFrame {
                 new KobisImporter().importMovies();
                 System.out.println("[KOBIS] 데이터 삽입 완료");
                 SwingUtilities.invokeLater(() -> {
-                    movieControl.load();
-                    bigCount.setText(String.valueOf(movieControl.getMovieCount()));
+                    movieController.load();
+                    bigCount.setText(String.valueOf(movieController.getMovieCount()));
                 });
             }
         } catch (Exception e) {

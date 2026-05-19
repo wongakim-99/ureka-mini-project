@@ -16,7 +16,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-public class ScreeningControl extends MouseAdapter implements ActionListener {
+public class ScreeningController extends MouseAdapter implements ActionListener {
 
 	private final ScreeningService service;
 	private List<Screening> screeningList = new ArrayList<>();
@@ -24,13 +24,13 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 
 	private JDialog dialog; private JLabel dialogLabel;
 	private JTable table;
-	private ScreeningInsFrm screeningInsFrm;
-	private ScreeningUpFrm screeningUpFrm;
+	private ScreeningCreateFrame screeningCreateFrame;
+	private ScreeningUpdateFrame screeningUpdateFrame;
 	private int selectedScreenId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
-	public ScreeningControl(ScreeningService service, JDialog dialog, JLabel dialogLabel) {
+	public ScreeningController(ScreeningService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("ScreenID"); columnNames.add("영화"); columnNames.add("상영관");
@@ -39,8 +39,8 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	}
 
 	public void setTable(JTable t)                  { this.table = t; }
-	public void setScreeningInsFrm(ScreeningInsFrm f) { this.screeningInsFrm = f; }
-	public void setScreeningUpFrm(ScreeningUpFrm f)   { this.screeningUpFrm = f; }
+	public void setScreeningCreateFrame(ScreeningCreateFrame f) { this.screeningCreateFrame = f; }
+	public void setScreeningUpdateFrame(ScreeningUpdateFrame f)   { this.screeningUpdateFrame = f; }
 	public void setDeleteBtn(JButton btn)             { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)             { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
@@ -99,55 +99,55 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
-		OptionItem movie = (OptionItem) screeningInsFrm.cbMovie.getSelectedItem();
-		OptionItem theater = (OptionItem) screeningInsFrm.cbTheater.getSelectedItem();
+		OptionItem movie = (OptionItem) screeningCreateFrame.cbMovie.getSelectedItem();
+		OptionItem theater = (OptionItem) screeningCreateFrame.cbTheater.getSelectedItem();
 		if (movie == null || theater == null) { dialogOpen("영화와 상영관을 선택해주세요."); return; }
 		try {
 			Screening s = new Screening();
 			s.setMovieId(movie.id); s.setTheaterId(theater.id);
-			s.setShowtime(getFormattedShowtime(screeningInsFrm.tfDate, screeningInsFrm.cbHour, screeningInsFrm.cbMin));
-			s.setPrice(Integer.parseInt(screeningInsFrm.tfPrice.getText().trim()));
+			s.setShowtime(getFormattedShowtime(screeningCreateFrame.tfDate, screeningCreateFrame.cbHour, screeningCreateFrame.cbMin));
+			s.setPrice(Integer.parseInt(screeningCreateFrame.tfPrice.getText().trim()));
 			service.save(s);
-			screeningInsFrm.tfPrice.setText("");
-			screeningInsFrm.setVisible(false); readAll();
+			screeningCreateFrame.tfPrice.setText("");
+			screeningCreateFrame.setVisible(false); readAll();
 		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 추가 실패"); }
 	}
 
 	private void updateOne() {
-		OptionItem movie = (OptionItem) screeningUpFrm.cbMovie.getSelectedItem();
-		OptionItem theater = (OptionItem) screeningUpFrm.cbTheater.getSelectedItem();
+		OptionItem movie = (OptionItem) screeningUpdateFrame.cbMovie.getSelectedItem();
+		OptionItem theater = (OptionItem) screeningUpdateFrame.cbTheater.getSelectedItem();
 		if (movie == null || theater == null) { dialogOpen("영화와 상영관을 선택해주세요."); return; }
 		try {
 			Screening s = new Screening();
 			s.setScreenId(selectedScreenId); s.setMovieId(movie.id); s.setTheaterId(theater.id);
-			s.setShowtime(getFormattedShowtime(screeningUpFrm.tfDate, screeningUpFrm.cbHour, screeningUpFrm.cbMin));
-			s.setPrice(Integer.parseInt(screeningUpFrm.tfPrice.getText().trim()));
-			service.update(s); clearUpFrm(); readAll();
+			s.setShowtime(getFormattedShowtime(screeningUpdateFrame.tfDate, screeningUpdateFrame.cbHour, screeningUpdateFrame.cbMin));
+			s.setPrice(Integer.parseInt(screeningUpdateFrame.tfPrice.getText().trim()));
+			service.update(s); clearUpdateFrame(); readAll();
 		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영일정 수정 실패"); }
 	}
 
 	private void deleteOne() {
-		try { service.delete(selectedScreenId); clearUpFrm(); readAll(); }
+		try { service.delete(selectedScreenId); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen("상영일정 삭제 실패"); }
 	}
 
-	private void clearUpFrm() {
-		screeningUpFrm.tfPrice.setText("");
-		screeningUpFrm.setVisible(false);
+	private void clearUpdateFrame() {
+		screeningUpdateFrame.tfPrice.setText("");
+		screeningUpdateFrame.setVisible(false);
 	}
 
-	private void openUpdateFrmChecked() {
+	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if ((Boolean) table.getValueAt(i, 0)) {
 				selectedScreenId = Integer.parseInt(table.getValueAt(i, 1).toString());
 				Screening s = screeningList.stream().filter(item -> item.getScreenId() == selectedScreenId).findFirst().orElse(null);
 				if (s != null) {
-					try { loadOptions(screeningUpFrm.cbMovie, screeningUpFrm.cbTheater); } catch (SQLException ignored) {}
-					for (int j = 0; j < screeningUpFrm.cbMovie.getItemCount(); j++)
-						if (screeningUpFrm.cbMovie.getItemAt(j).id == s.getMovieId()) { screeningUpFrm.cbMovie.setSelectedIndex(j); break; }
-					screeningUpFrm.tfDate.setText(s.getShowtime().substring(0, 10));
-					screeningUpFrm.tfPrice.setText(String.valueOf(s.getPrice()));
-					screeningUpFrm.setVisible(true);
+					try { loadOptions(screeningUpdateFrame.cbMovie, screeningUpdateFrame.cbTheater); } catch (SQLException ignored) {}
+					for (int j = 0; j < screeningUpdateFrame.cbMovie.getItemCount(); j++)
+						if (screeningUpdateFrame.cbMovie.getItemAt(j).id == s.getMovieId()) { screeningUpdateFrame.cbMovie.setSelectedIndex(j); break; }
+					screeningUpdateFrame.tfDate.setText(s.getShowtime().substring(0, 10));
+					screeningUpdateFrame.tfPrice.setText(String.valueOf(s.getPrice()));
+					screeningUpdateFrame.setVisible(true);
 				}
 				break;
 			}
@@ -174,12 +174,12 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "일정 추가":
-				try { loadOptions(screeningInsFrm.cbMovie, screeningInsFrm.cbTheater); }
+				try { loadOptions(screeningCreateFrame.cbMovie, screeningCreateFrame.cbTheater); }
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
-				screeningInsFrm.setVisible(true); break;
+				screeningCreateFrame.setVisible(true); break;
 			case "저장":  insertOne(); break;
-			case "취소":  screeningInsFrm.setVisible(false); screeningUpFrm.setVisible(false); break;
-			case "수정":  if (e.getSource() == btnUpdateBottom) openUpdateFrmChecked(); else updateOne(); break;
+			case "취소":  screeningCreateFrame.setVisible(false); screeningUpdateFrame.setVisible(false); break;
+			case "수정":  if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
 			case "삭제":  deleteChecked(); break;
 			}
 		}

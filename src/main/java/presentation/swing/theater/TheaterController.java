@@ -10,7 +10,7 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class TheaterControl extends MouseAdapter implements ActionListener {
+public class TheaterController extends MouseAdapter implements ActionListener {
 
 	private final TheaterService service;
 	private List<Theater> theaterList = new ArrayList<>();
@@ -18,11 +18,11 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 
 	private JDialog dialog; private JLabel dialogLabel;
 	private JTable table;
-	private TheaterInsFrm theaterInsFrm;
-	private TheaterUpFrm theaterUpFrm;
+	private TheaterCreateFrame theaterCreateFrame;
+	private TheaterUpdateFrame theaterUpdateFrame;
 	private int selectedTheaterId;
 
-	public TheaterControl(TheaterService service, JDialog dialog, JLabel dialogLabel) {
+	public TheaterController(TheaterService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("TheaterID"); columnNames.add("상영관명"); columnNames.add("총 좌석수");
@@ -30,8 +30,8 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 	}
 
 	public void setTable(JTable t)              { this.table = t; }
-	public void setTheaterInsFrm(TheaterInsFrm f) { this.theaterInsFrm = f; }
-	public void setTheaterUpFrm(TheaterUpFrm f)   { this.theaterUpFrm = f; }
+	public void setTheaterCreateFrame(TheaterCreateFrame f) { this.theaterCreateFrame = f; }
+	public void setTheaterUpdateFrame(TheaterUpdateFrame f)   { this.theaterUpdateFrame = f; }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
@@ -50,38 +50,38 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 
 	private void insertOne() {
 		try {
-			service.save(new Theater(0, theaterInsFrm.tfName.getText().trim(),
-					Integer.parseInt(theaterInsFrm.tfTotalSeats.getText().trim())));
-			theaterInsFrm.tfName.setText(""); theaterInsFrm.tfTotalSeats.setText("");
-			theaterInsFrm.setVisible(false); readAll();
+			service.save(new Theater(0, theaterCreateFrame.tfName.getText().trim(),
+					Integer.parseInt(theaterCreateFrame.tfTotalSeats.getText().trim())));
+			theaterCreateFrame.tfName.setText(""); theaterCreateFrame.tfTotalSeats.setText("");
+			theaterCreateFrame.setVisible(false); readAll();
 		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영관 추가 실패"); }
 	}
 
 	private void updateOne() {
 		try {
-			service.update(new Theater(selectedTheaterId, theaterUpFrm.tfName.getText().trim(),
-					Integer.parseInt(theaterUpFrm.tfTotalSeats.getText().trim())));
-			clearUpFrm(); readAll();
+			service.update(new Theater(selectedTheaterId, theaterUpdateFrame.tfName.getText().trim(),
+					Integer.parseInt(theaterUpdateFrame.tfTotalSeats.getText().trim())));
+			clearUpdateFrame(); readAll();
 		} catch (Exception e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "상영관 수정 실패"); }
 	}
 
 	private void deleteOne() {
-		try { service.delete(selectedTheaterId); clearUpFrm(); readAll(); }
+		try { service.delete(selectedTheaterId); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen("상영관 삭제 실패"); }
 	}
 
-	private void clearUpFrm() {
-		theaterUpFrm.tfName.setText(""); theaterUpFrm.tfTotalSeats.setText("");
-		theaterUpFrm.setVisible(false);
+	private void clearUpdateFrame() {
+		theaterUpdateFrame.tfName.setText(""); theaterUpdateFrame.tfTotalSeats.setText("");
+		theaterUpdateFrame.setVisible(false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 			case "목록 조회":   readAll(); break;
-			case "상영관 추가": theaterInsFrm.setVisible(true); break;
+			case "상영관 추가": theaterCreateFrame.setVisible(true); break;
 			case "저장":        insertOne(); break;
-			case "취소":        theaterInsFrm.setVisible(false); theaterUpFrm.setVisible(false); break;
+			case "취소":        theaterCreateFrame.setVisible(false); theaterUpdateFrame.setVisible(false); break;
 			case "수정":        updateOne(); break;
 			case "삭제":        deleteOne(); break;
 		}
@@ -91,9 +91,9 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		Theater t = theaterList.get(table.getSelectedRow());
 		selectedTheaterId = t.getTheaterId();
-		theaterUpFrm.tfName.setText(t.getName());
-		theaterUpFrm.tfTotalSeats.setText(String.valueOf(t.getTotalSeats()));
-		theaterUpFrm.setVisible(true);
+		theaterUpdateFrame.tfName.setText(t.getName());
+		theaterUpdateFrame.tfTotalSeats.setText(String.valueOf(t.getTotalSeats()));
+		theaterUpdateFrame.setVisible(true);
 	}
 
 }

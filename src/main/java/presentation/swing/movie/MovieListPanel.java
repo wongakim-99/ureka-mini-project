@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class MovieListPan extends JPanel {
+public class MovieListPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,7 +13,7 @@ public class MovieListPan extends JPanel {
 	private JPanel pan;
 	private JButton btnAdd, btnReadAll;
 
-	public MovieListPan() {
+	public MovieListPanel() {
 		table      = new JTable();
 		scrollPan  = new JScrollPane(table);
 		pan        = new JPanel();
@@ -30,7 +30,7 @@ public class MovieListPan extends JPanel {
 		pan.add(btnReadAll);
 	}
 
-	public void addEvent(MovieControl c) {
+	public void addEvent(MovieController c) {
 		c.setTable(table);
 		btnReadAll.addActionListener(c);
 		btnAdd.addActionListener(c);

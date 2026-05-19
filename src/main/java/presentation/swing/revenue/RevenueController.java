@@ -13,7 +13,7 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class RevenueControl implements ActionListener {
+public class RevenueController implements ActionListener {
 
 	private final RevenueService service;
 	private List<Revenue> revenueList = new ArrayList<>();
@@ -24,7 +24,7 @@ public class RevenueControl implements ActionListener {
 	private JTable table;
 	private JLabel totalLabel;
 
-	public RevenueControl(RevenueService service, JDialog dialog, JLabel dialogLabel) {
+	public RevenueController(RevenueService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("MovieID");

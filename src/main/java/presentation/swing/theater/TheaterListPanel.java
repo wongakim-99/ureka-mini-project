@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class TheaterListPan extends JPanel {
+public class TheaterListPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,7 +13,7 @@ public class TheaterListPan extends JPanel {
 	private JPanel pan;
 	private JButton btnAdd, btnReadAll;
 
-	public TheaterListPan() {
+	public TheaterListPanel() {
 		table = new JTable(); scrollPan = new JScrollPane(table);
 		pan = new JPanel();
 		btnAdd = new JButton("상영관 추가"); btnReadAll = new JButton("목록 조회");
@@ -26,7 +26,7 @@ public class TheaterListPan extends JPanel {
 		pan.add(btnAdd); pan.add(btnReadAll);
 	}
 
-	public void addEvent(TheaterControl c) {
+	public void addEvent(TheaterController c) {
 		c.setTable(table);
 		btnReadAll.addActionListener(c); btnAdd.addActionListener(c);
 		table.addMouseListener(c);

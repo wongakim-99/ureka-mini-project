@@ -11,21 +11,21 @@ import javax.swing.*;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-public class CustControl extends MouseAdapter implements ActionListener {
+public class CustomerController extends MouseAdapter implements ActionListener {
 
 	private final CustomerService service;
-	private List<Customer> custList = new ArrayList<>();
+	private List<Customer> customerList = new ArrayList<>();
 	private final Vector<String> columnNames;
 
 	private JDialog dialog; private JLabel dialogLabel;
 	private JTable table;
-	private CustInsFrm custInsFrm;
-	private CustUpFrm custUpFrm;
-	private int selectedCustId;
+	private CustomerCreateFrame customerCreateFrame;
+	private CustomerUpdateFrame customerUpdateFrame;
+	private int selectedCustomerId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
-	public CustControl(CustomerService service, JDialog dialog, JLabel dialogLabel) {
+	public CustomerController(CustomerService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("CustID"); columnNames.add("이름"); columnNames.add("전화번호"); columnNames.add("이메일");
@@ -33,8 +33,8 @@ public class CustControl extends MouseAdapter implements ActionListener {
 	}
 
 	public void setTable(JTable t)        { this.table = t; }
-	public void setCustInsFrm(CustInsFrm f) { this.custInsFrm = f; }
-	public void setCustUpFrm(CustUpFrm f)   { this.custUpFrm = f; }
+	public void setCustomerCreateFrame(CustomerCreateFrame f) { this.customerCreateFrame = f; }
+	public void setCustomerUpdateFrame(CustomerUpdateFrame f)   { this.customerUpdateFrame = f; }
 	public void setDeleteBtn(JButton btn)   { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)   { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
@@ -43,12 +43,12 @@ public class CustControl extends MouseAdapter implements ActionListener {
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
-		try { custList = service.findAll(); }
-		catch (SQLException e) { custList = new ArrayList<>(); dialogOpen("고객 목록 조회 실패"); }
+		try { customerList = service.findAll(); }
+		catch (SQLException e) { customerList = new ArrayList<>(); dialogOpen("고객 목록 조회 실패"); }
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
-		for (Customer c : custList) {
+		for (Customer c : customerList) {
 			// 이름이나 전화번호에 검색어가 포함되어 있는지 필터링
 			if (!keyword.isEmpty() && !c.getName().toLowerCase().contains(keyword) && 
 				!c.getPhone().toLowerCase().contains(keyword)) continue;
@@ -81,39 +81,39 @@ public class CustControl extends MouseAdapter implements ActionListener {
 
 	private void insertOne() {
 		try {
-			service.save(new Customer(0, custInsFrm.tfName.getText(), custInsFrm.tfPhone.getText(), custInsFrm.tfEmail.getText()));
-			custInsFrm.tfName.setText(""); custInsFrm.tfPhone.setText(""); custInsFrm.tfEmail.setText("");
-			custInsFrm.setVisible(false); readAll();
+			service.save(new Customer(0, customerCreateFrame.tfName.getText(), customerCreateFrame.tfPhone.getText(), customerCreateFrame.tfEmail.getText()));
+			customerCreateFrame.tfName.setText(""); customerCreateFrame.tfPhone.setText(""); customerCreateFrame.tfEmail.setText("");
+			customerCreateFrame.setVisible(false); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 추가 실패"); }
 	}
 
 	private void updateOne() {
 		try {
-			service.update(new Customer(selectedCustId, custUpFrm.tfName.getText(), custUpFrm.tfPhone.getText(), custUpFrm.tfEmail.getText()));
-			clearUpFrm(); readAll();
+			service.update(new Customer(selectedCustomerId, customerUpdateFrame.tfName.getText(), customerUpdateFrame.tfPhone.getText(), customerUpdateFrame.tfEmail.getText()));
+			clearUpdateFrame(); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 수정 실패"); }
 	}
 
 	private void deleteOne() {
-		try { service.delete(selectedCustId); clearUpFrm(); readAll(); }
+		try { service.delete(selectedCustomerId); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen("고객 삭제 실패"); }
 	}
 
-	private void clearUpFrm() {
-		custUpFrm.tfName.setText(""); custUpFrm.tfPhone.setText(""); custUpFrm.tfEmail.setText("");
-		custUpFrm.setVisible(false);
+	private void clearUpdateFrame() {
+		customerUpdateFrame.tfName.setText(""); customerUpdateFrame.tfPhone.setText(""); customerUpdateFrame.tfEmail.setText("");
+		customerUpdateFrame.setVisible(false);
 	}
 
-	private void openUpdateFrmChecked() {
+	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedCustId = Integer.parseInt(table.getValueAt(i, 1).toString());
-				Customer c = custList.stream().filter(item -> item.getCustId() == selectedCustId).findFirst().orElse(null);
+				selectedCustomerId = Integer.parseInt(table.getValueAt(i, 1).toString());
+				Customer c = customerList.stream().filter(item -> item.getCustId() == selectedCustomerId).findFirst().orElse(null);
 				if (c != null) {
-					custUpFrm.tfName.setText(c.getName());
-					custUpFrm.tfPhone.setText(c.getPhone());
-					custUpFrm.tfEmail.setText(c.getEmail());
-					custUpFrm.setVisible(true);
+					customerUpdateFrame.tfName.setText(c.getName());
+					customerUpdateFrame.tfPhone.setText(c.getPhone());
+					customerUpdateFrame.tfEmail.setText(c.getEmail());
+					customerUpdateFrame.setVisible(true);
 				}
 				break;
 			}
@@ -140,10 +140,10 @@ public class CustControl extends MouseAdapter implements ActionListener {
 		// 검색창에서 엔터를 치거나 [목록 조회] 버튼을 눌렀을 때 실행
 		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
-				case "고객 추가": custInsFrm.setVisible(true); break;
+				case "고객 추가": customerCreateFrame.setVisible(true); break;
 				case "저장":      insertOne(); break;
-				case "취소":      custInsFrm.setVisible(false); custUpFrm.setVisible(false); break;
-				case "수정":      if (e.getSource() == btnUpdateBottom) openUpdateFrmChecked(); else updateOne(); break;
+				case "취소":      customerCreateFrame.setVisible(false); customerUpdateFrame.setVisible(false); break;
+				case "수정":      if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
 				case "삭제":      deleteChecked(); break;
 			}
 		}

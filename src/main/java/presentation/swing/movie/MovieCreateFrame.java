@@ -3,7 +3,7 @@ package presentation.swing.movie;
 import java.awt.BorderLayout;
 import javax.swing.*;
 
-public class MovieInsFrm extends JFrame {
+public class MovieCreateFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -11,7 +11,7 @@ public class MovieInsFrm extends JFrame {
 	protected JTextField tfTitle, tfGenre, tfDirector, tfRating, tfRuntime;
 	private JButton btnSave, btnCancel;
 
-	public MovieInsFrm() {
+	public MovieCreateFrame() {
 		panInsert  = new JPanel();
 		panButton  = new JPanel();
 		tfTitle    = new JTextField();
@@ -48,8 +48,8 @@ public class MovieInsFrm extends JFrame {
 		panButton.add(btnSave); panButton.add(btnCancel);
 	}
 
-	public void addEvent(MovieControl c) {
-		c.setMovieInsFrm(this);
+	public void addEvent(MovieController c) {
+		c.setMovieCreateFrame(this);
 		btnSave.addActionListener(c); btnCancel.addActionListener(c);
 	}
 

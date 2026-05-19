@@ -12,21 +12,21 @@ import javax.swing.*;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-public class ReservControl extends MouseAdapter implements ActionListener {
+public class ReservationController extends MouseAdapter implements ActionListener {
 
 	private final ReservationService service;
-	private List<Reservation> reservList = new ArrayList<>();
+	private List<Reservation> reservationList = new ArrayList<>();
 	private final Vector<String> columnNames;
 
 	private JDialog dialog; private JLabel dialogLabel;
 	private JTable table;
-	private ReservInsFrm reservInsFrm;
-	private ReservUpFrm reservUpFrm;
-	private int selectedReservId;
+	private ReservationCreateFrame reservationCreateFrame;
+	private ReservationUpdateFrame reservationUpdateFrame;
+	private int selectedReservationId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
-	public ReservControl(ReservationService service, JDialog dialog, JLabel dialogLabel) {
+	public ReservationController(ReservationService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("ReservID"); columnNames.add("고객"); columnNames.add("영화");
@@ -36,8 +36,8 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	}
 
 	public void setTable(JTable t)            { this.table = t; }
-	public void setReservInsFrm(ReservInsFrm f) { this.reservInsFrm = f; }
-	public void setReservUpFrm(ReservUpFrm f)   { this.reservUpFrm = f; }
+	public void setReservationCreateFrame(ReservationCreateFrame f) { this.reservationCreateFrame = f; }
+	public void setReservationUpdateFrame(ReservationUpdateFrame f)   { this.reservationUpdateFrame = f; }
 	public void setDeleteBtn(JButton btn)       { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)       { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
@@ -46,12 +46,12 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
-		try { reservList = service.findAll(); }
-		catch (SQLException e) { reservList = new ArrayList<>(); dialogOpen("예약 목록 조회 실패"); }
+		try { reservationList = service.findAll(); }
+		catch (SQLException e) { reservationList = new ArrayList<>(); dialogOpen("예약 목록 조회 실패"); }
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
-		for (Reservation r : reservList) {
+		for (Reservation r : reservationList) {
 			// 고객 이름 또는 영화 제목으로 검색 필터링
 			if (!keyword.isEmpty() && !r.getCustName().toLowerCase().contains(keyword) && 
 				!r.getMovieTitle().toLowerCase().contains(keyword)) continue;
@@ -95,55 +95,55 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
-		OptionItem cust   = (OptionItem) reservInsFrm.cbCustomer.getSelectedItem();
-		OptionItem screen = (OptionItem) reservInsFrm.cbScreening.getSelectedItem();
+		OptionItem cust   = (OptionItem) reservationCreateFrame.cbCustomer.getSelectedItem();
+		OptionItem screen = (OptionItem) reservationCreateFrame.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
-		String seatNo = reservInsFrm.tfSeatNo.getText().trim();
+		String seatNo = reservationCreateFrame.tfSeatNo.getText().trim();
 		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
 			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(seatNo);
 			service.save(r);
-			reservInsFrm.tfSeatNo.setText(""); reservInsFrm.setVisible(false); readAll();
+			reservationCreateFrame.tfSeatNo.setText(""); reservationCreateFrame.setVisible(false); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() == null ? "예약 추가 실패" : e.getMessage()); }
 	}
 
 	private void updateOne() {
-		OptionItem cust = (OptionItem) reservUpFrm.cbCustomer.getSelectedItem();
-		OptionItem screen = (OptionItem) reservUpFrm.cbScreening.getSelectedItem();
+		OptionItem cust = (OptionItem) reservationUpdateFrame.cbCustomer.getSelectedItem();
+		OptionItem screen = (OptionItem) reservationUpdateFrame.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 상영일정을 선택해주세요."); return; }
-		String seatNo = reservUpFrm.tfSeatNo.getText().trim();
+		String seatNo = reservationUpdateFrame.tfSeatNo.getText().trim();
 		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
-			r.setReservId(selectedReservId); r.setCustId(cust.id); r.setScreenId(screen.id);
+			r.setReservId(selectedReservationId); r.setCustId(cust.id); r.setScreenId(screen.id);
 			r.setSeatNo(seatNo);
-			service.update(r); clearUpFrm(); readAll();
+			service.update(r); clearUpdateFrame(); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() == null ? "예약 수정 실패" : e.getMessage()); }
 	}
 
 	private void deleteOne() {
-		try { service.delete(selectedReservId); clearUpFrm(); readAll(); }
+		try { service.delete(selectedReservationId); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen("예약 삭제 실패"); }
 	}
 
-	private void clearUpFrm() { reservUpFrm.tfSeatNo.setText(""); reservUpFrm.setVisible(false); }
+	private void clearUpdateFrame() { reservationUpdateFrame.tfSeatNo.setText(""); reservationUpdateFrame.setVisible(false); }
 
-	private void openUpdateFrmChecked() {
+	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedReservId = Integer.parseInt(table.getValueAt(i, 1).toString());
-				Reservation r = reservList.stream().filter(item -> item.getReservId() == selectedReservId).findFirst().orElse(null);
+				selectedReservationId = Integer.parseInt(table.getValueAt(i, 1).toString());
+				Reservation r = reservationList.stream().filter(item -> item.getReservId() == selectedReservationId).findFirst().orElse(null);
 				if (r != null) {
-					try { loadOptions(reservUpFrm.cbCustomer, reservUpFrm.cbMovie); } catch (SQLException ignored) {}
-					for (int j = 0; j < reservUpFrm.cbCustomer.getItemCount(); j++)
-						if (reservUpFrm.cbCustomer.getItemAt(j).id == r.getCustId()) { reservUpFrm.cbCustomer.setSelectedIndex(j); break; }
-					for (int j = 0; j < reservUpFrm.cbMovie.getItemCount(); j++)
-						if (reservUpFrm.cbMovie.getItemAt(j).id == r.getMovieId()) { reservUpFrm.cbMovie.setSelectedIndex(j); break; }
-					for (int j = 0; j < reservUpFrm.cbScreening.getItemCount(); j++)
-						if (reservUpFrm.cbScreening.getItemAt(j).id == r.getScreenId()) { reservUpFrm.cbScreening.setSelectedIndex(j); break; }
-					reservUpFrm.tfSeatNo.setText(r.getSeatNo());
-					reservUpFrm.setVisible(true);
+					try { loadOptions(reservationUpdateFrame.cbCustomer, reservationUpdateFrame.cbMovie); } catch (SQLException ignored) {}
+					for (int j = 0; j < reservationUpdateFrame.cbCustomer.getItemCount(); j++)
+						if (reservationUpdateFrame.cbCustomer.getItemAt(j).id == r.getCustId()) { reservationUpdateFrame.cbCustomer.setSelectedIndex(j); break; }
+					for (int j = 0; j < reservationUpdateFrame.cbMovie.getItemCount(); j++)
+						if (reservationUpdateFrame.cbMovie.getItemAt(j).id == r.getMovieId()) { reservationUpdateFrame.cbMovie.setSelectedIndex(j); break; }
+					for (int j = 0; j < reservationUpdateFrame.cbScreening.getItemCount(); j++)
+						if (reservationUpdateFrame.cbScreening.getItemAt(j).id == r.getScreenId()) { reservationUpdateFrame.cbScreening.setSelectedIndex(j); break; }
+					reservationUpdateFrame.tfSeatNo.setText(r.getSeatNo());
+					reservationUpdateFrame.setVisible(true);
 				}
 				break;
 			}
@@ -170,12 +170,12 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "예약 추가":
-				try { loadOptions(reservInsFrm.cbCustomer, reservInsFrm.cbMovie); }
+				try { loadOptions(reservationCreateFrame.cbCustomer, reservationCreateFrame.cbMovie); }
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
-				reservInsFrm.setVisible(true); break;
+				reservationCreateFrame.setVisible(true); break;
 			case "저장":  insertOne(); break;
-			case "취소":  reservInsFrm.setVisible(false); reservUpFrm.setVisible(false); break;
-			case "수정":  if (e.getSource() == btnUpdateBottom) openUpdateFrmChecked(); else updateOne(); break;
+			case "취소":  reservationCreateFrame.setVisible(false); reservationUpdateFrame.setVisible(false); break;
+			case "수정":  if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
 			case "삭제":  deleteChecked(); break;
 			}
 		}

@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
 
-public class ReservUpFrm extends JFrame {
+public class ReservationUpdateFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -14,7 +14,7 @@ public class ReservUpFrm extends JFrame {
 	protected JTextField tfSeatNo;
 	private JButton btnUpdate, btnDelete, btnCancel;
 
-	public ReservUpFrm() {
+	public ReservationUpdateFrame() {
 		panInsert = new JPanel(); panButton = new JPanel();
 		cbCustomer = new JComboBox<>(); cbMovie = new JComboBox<>();
 		cbScreening = new JComboBox<>();
@@ -40,8 +40,8 @@ public class ReservUpFrm extends JFrame {
 		panButton.add(btnUpdate); panButton.add(btnDelete); panButton.add(btnCancel);
 	}
 
-	public void addEvent(ReservControl c) {
-		c.setReservUpFrm(this);
+	public void addEvent(ReservationController c) {
+		c.setReservationUpdateFrame(this);
 		btnUpdate.addActionListener(c); btnDelete.addActionListener(c); btnCancel.addActionListener(c);
 		cbMovie.addItemListener(e -> {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
