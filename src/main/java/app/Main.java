@@ -427,7 +427,7 @@ public class Main extends JFrame {
         public void actionPerformed(ActionEvent e) { loadMenuData(menuName); }
     }
 
-    private static void seedFromKobisIfEmpty() {
+    private void seedFromKobisIfEmpty() {
         try {
             var rs = DBUtil.getConnection().createStatement()
                 .executeQuery("SELECT COUNT(*) FROM movie");
@@ -436,6 +436,10 @@ public class Main extends JFrame {
                 System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
                 new KobisImporter().importMovies();
                 System.out.println("[KOBIS] 데이터 삽입 완료");
+                SwingUtilities.invokeLater(() -> {
+                    movieControl.load();
+                    bigCount.setText(String.valueOf(movieControl.getMovieCount()));
+                });
             }
         } catch (Exception e) {
             System.err.println("[KOBIS] 초기 데이터 로드 실패: " + e.getMessage());
@@ -445,7 +449,9 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.setProperty("java.awt.im.style", "below-the-spot");
         common.SchemaManager.run();
-        seedFromKobisIfEmpty();
-        SwingUtilities.invokeLater(() -> new Main());
+        SwingUtilities.invokeLater(() -> {
+            Main app = new Main();
+            new Thread(app::seedFromKobisIfEmpty).start();
+        });
     }
 }
