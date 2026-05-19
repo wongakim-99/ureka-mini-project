@@ -335,6 +335,17 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 
 - `./gradlew build` 성공
 
+### Step 8. MainDashboard 일부 분리 - 완료
+
+- 도메인별 Controller와 Frame 생성/연결을 `DashboardControls`로 분리했다.
+- 좌측 메뉴 UI를 `DashboardSidebar`로 분리했다.
+- 중간 시계/영화 수/데이터 동기화 패널을 `DashboardStatusPanel`로 분리했다.
+- `MainDashboard`는 전체 화면 조립, 메뉴별 테이블 바인딩, KOBIS 초기 로딩 흐름만 남겼다.
+
+완료 기준:
+
+- `./gradlew build` 성공
+
 ---
 
 ## 6. 의존성 원칙
