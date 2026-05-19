@@ -1,8 +1,10 @@
 package adapter.screening.ui;
 
 import common.ComboItem;
+import common.ui.DatePickerDialog;
 import java.awt.BorderLayout;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import javax.swing.*;
 
 public class ScreeningInsFrm extends JFrame {
@@ -11,15 +13,20 @@ public class ScreeningInsFrm extends JFrame {
 
 	private JPanel panInsert, panButton;
 	protected JComboBox<ComboItem> cbMovie, cbTheater;
-	protected JSpinner spinShowtime;
+	protected JTextField tfDate; // 날짜 입력 (YYYY-MM-DD)
+	protected JComboBox<String> cbHour, cbMin; // 시간, 분 선택
 	protected JTextField tfPrice;
 	private JButton btnSave, btnCancel;
 
 	public ScreeningInsFrm() {
 		panInsert  = new JPanel(); panButton = new JPanel();
 		cbMovie    = new JComboBox<>(); cbTheater = new JComboBox<>();
-		spinShowtime = new JSpinner(new SpinnerDateModel());
-		spinShowtime.setEditor(new JSpinner.DateEditor(spinShowtime, "yyyy-MM-dd HH:mm:ss"));
+		
+		tfDate = new JTextField(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+		cbHour = new JComboBox<>(new String[]{"08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","00","01"});
+		String[] mins = {"00","05","10","15","20","25","30","35","40","45","50","55"};
+		cbMin = new JComboBox<>(mins);
+		
 		tfPrice    = new JTextField();
 		btnSave    = new JButton("저장"); btnCancel = new JButton("취소");
 		makeGui();
@@ -34,10 +41,22 @@ public class ScreeningInsFrm extends JFrame {
 		panInsert.add(lT); lT.setBounds(10, 60,  70, 30);
 		panInsert.add(lS); lS.setBounds(10, 100, 70, 30);
 		panInsert.add(lP); lP.setBounds(10, 140, 70, 30);
-		panInsert.add(cbMovie);      cbMovie.setBounds(90,      20,  380, 30);
-		panInsert.add(cbTheater);    cbTheater.setBounds(90,    60,  380, 30);
-		panInsert.add(spinShowtime); spinShowtime.setBounds(90, 100, 380, 30);
-		panInsert.add(tfPrice);      tfPrice.setBounds(90,      140, 380, 30);
+		panInsert.add(cbMovie);   cbMovie.setBounds(90, 20, 380, 30);
+		panInsert.add(cbTheater); cbTheater.setBounds(90, 60, 380, 30);
+		
+		JButton btnDatePick = new JButton("▼");
+		btnDatePick.addActionListener(e -> {
+			String picked = DatePickerDialog.show(this, tfDate.getText());
+			if (picked != null) tfDate.setText(picked);
+		});
+		panInsert.add(tfDate);      tfDate.setBounds(90, 100, 120, 30);
+		panInsert.add(btnDatePick); btnDatePick.setBounds(215, 100, 30, 30);
+		panInsert.add(cbHour);      cbHour.setBounds(250, 100, 70, 30);
+		panInsert.add(new JLabel("시")).setBounds(325, 100, 20, 30);
+		panInsert.add(cbMin);       cbMin.setBounds(350, 100, 70, 30);
+		panInsert.add(new JLabel("분")).setBounds(425, 100, 20, 30);
+
+		panInsert.add(tfPrice);   tfPrice.setBounds(90, 140, 380, 30);
 		add(panButton, BorderLayout.SOUTH);
 		panButton.add(btnSave); panButton.add(btnCancel);
 	}
