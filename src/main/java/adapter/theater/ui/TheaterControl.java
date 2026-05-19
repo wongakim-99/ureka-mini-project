@@ -51,8 +51,8 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 
 	private void insertOne() {
 		try {
-			service.save(new Theater(0, theaterInsFrm.tfName.getText(),
-					Integer.parseInt(theaterInsFrm.tfTotalSeats.getText())));
+			service.save(new Theater(0, theaterInsFrm.tfName.getText().trim(),
+					Integer.parseInt(theaterInsFrm.tfTotalSeats.getText().trim())));
 			theaterInsFrm.tfName.setText(""); theaterInsFrm.tfTotalSeats.setText("");
 			theaterInsFrm.setVisible(false); readAll();
 		} catch (Exception e) { dialogOpen("상영관 추가 실패"); }
@@ -60,8 +60,8 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 
 	private void updateOne() {
 		try {
-			service.update(new Theater(selectedTheaterId, theaterUpFrm.tfName.getText(),
-					Integer.parseInt(theaterUpFrm.tfTotalSeats.getText())));
+			service.update(new Theater(selectedTheaterId, theaterUpFrm.tfName.getText().trim(),
+					Integer.parseInt(theaterUpFrm.tfTotalSeats.getText().trim())));
 			clearUpFrm(); readAll();
 		} catch (Exception e) { dialogOpen("상영관 수정 실패"); }
 	}
