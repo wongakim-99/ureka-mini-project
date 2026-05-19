@@ -1,6 +1,6 @@
 package domain.screening;
 
-import common.ComboItem;
+import domain.common.OptionItem;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -38,8 +38,8 @@ public class ScreeningService {
 	}
 
 	public void delete(int screenId) throws SQLException          { repository.delete(screenId); }
-	public List<ComboItem> getMovieOptions() throws SQLException  { return repository.findMovieOptions(); }
-	public List<ComboItem> getTheaterOptions() throws SQLException{ return repository.findTheaterOptions(); }
+	public List<OptionItem> getMovieOptions() throws SQLException  { return repository.findMovieOptions(); }
+	public List<OptionItem> getTheaterOptions() throws SQLException{ return repository.findTheaterOptions(); }
 
 	private boolean isDuplicate(SQLException e) {
 		return e instanceof SQLIntegrityConstraintViolationException

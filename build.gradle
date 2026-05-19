@@ -9,7 +9,7 @@ java {
 }
 
 application {
-    mainClass = 'app.Main'
+    mainClass = 'Main'
     applicationDefaultJvmArgs = ['-Djava.awt.im.style=below-the-spot', '-Dfile.encoding=UTF-8']
 }
 

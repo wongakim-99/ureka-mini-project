@@ -18,6 +18,9 @@ public class TheaterService {
 	public void save(Theater theater) throws SQLException {
 		theater.setName(normalizeName(theater.getName()));
 		validateName(theater.getName());
+		if (repository.existsByName(theater.getName(), 0)) {
+			throw new SQLException(DUPLICATE_NAME_MESSAGE);
+		}
 		try {
 			repository.save(theater);
 		} catch (SQLException e) {
@@ -30,6 +33,9 @@ public class TheaterService {
 	public void update(Theater theater) throws SQLException {
 		theater.setName(normalizeName(theater.getName()));
 		validateName(theater.getName());
+		if (repository.existsByName(theater.getName(), theater.getTheaterId())) {
+			throw new SQLException(DUPLICATE_NAME_MESSAGE);
+		}
 		try {
 			repository.update(theater);
 		} catch (SQLException e) {

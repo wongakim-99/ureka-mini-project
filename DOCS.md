@@ -20,49 +20,66 @@
 
 ```text
 src/main/java/
-├── app/
-│   ├── Main.java
-│   └── MenuControl.java
-├── common/
-│   ├── DBUtil.java
-│   ├── ComboItem.java
-│   └── ui/
-│       ├── DialogControl.java
-│       └── WindowControl.java
+├── Main.java
+├── application/
+│   └── AppFactory.java
 ├── domain/
+│   ├── common/
 │   ├── movie/
 │   ├── theater/
 │   ├── screening/
 │   ├── customer/
-│   └── reservation/
-└── adapter/
-    ├── movie/
-    ├── theater/
-    ├── screening/
-    ├── customer/
-    └── reservation/
+│   ├── reservation/
+│   └── revenue/
+├── infrastructure/
+│   ├── db/
+│   ├── kobis/
+│   └── persistence/
+│       ├── movie/
+│       ├── theater/
+│       ├── screening/
+│       ├── customer/
+│       ├── reservation/
+│       └── revenue/
+└── presentation/
+    └── swing/
+        ├── common/
+        ├── menu/
+        ├── movie/
+        ├── theater/
+        ├── screening/
+        ├── customer/
+        ├── reservation/
+        └── revenue/
 ```
 
 ### 레이어 역할
 
 | 레이어 | 역할 | 주요 파일 |
 |---|---|---|
-| `app` | 애플리케이션 실행, 화면 조립, 메뉴 전환 | `Main.java`, `MenuControl.java` |
+| 최상위 `Main` | 애플리케이션 실행 진입점 | `Main.java` |
+| `application` | 의존성 조립, 앱 부트스트랩 보조 | `AppFactory.java` |
 | `domain` | 엔티티, Repository 인터페이스, Service 비즈니스 규칙 | `*Service.java`, `*Repository.java`, 엔티티 |
-| `adapter` | JDBC DAO 구현, Swing UI 이벤트 처리 | `*DAO.java`, `*Control.java`, `*ListPan.java` |
-| `common` | DB 연결, 공통 UI, 검증, 설정, 외부 API 클라이언트 | `DBUtil.java`, `ComboItem.java` |
+| `infrastructure` | JDBC 저장소 구현, DB 설정, 외부 API 연동 | `*JdbcRepository.java`, `DBUtil.java`, `KobisImporter.java` |
+| `presentation.swing` | Swing 화면, Controller, Frame, Panel | `*Controller.java`, `*CreateFrame.java`, `*ListPanel.java` |
 
 ### 의존성 방향
 
 ```text
 Main
-  -> adapter/ui/*Control
+  -> presentation.swing.MainDashboard
+    -> application.AppFactory
+      -> infrastructure.persistence.*JdbcRepository
+      -> domain/*Service
+
+presentation.swing/*Controller
     -> domain/*Service
-      -> domain/*Repository
-        <- adapter/*DAO
+
+infrastructure.persistence/*JdbcRepository
+    -> domain/*Repository
 ```
 
-Spring 없이 수동으로 의존성을 조립한다. 따라서 새 기능을 추가할 때도 `Main.java`에서 어떤 Service와 DAO를 연결하는지 확인해야 한다.
+Spring 없이 수동으로 의존성을 조립한다. 새 Repository 구현체나 Controller가 추가되면 `application.AppFactory`에서 조립한다.
 
 ---
 
@@ -70,14 +87,14 @@ Spring 없이 수동으로 의존성을 조립한다. 따라서 새 기능을 �
 
 ### 공통 CRUD
 
-현재 5개 도메인은 같은 CRUD 흐름을 가진다.
+현재 주요 관리 도메인은 같은 CRUD 흐름을 가진다. `revenue`는 집계 조회 중심이다.
 
 | 기능 | 설명 | 주요 위치 |
 |---|---|---|
-| 목록 조회 | DB 데이터를 JTable에 표시 | `*ListPan`, `*Service.findAll()` |
-| 등록 | 입력 폼에서 값 입력 후 INSERT | `*InsFrm`, `*Service.save()` |
-| 수정 | 선택 행 데이터를 수정 폼으로 전달 후 UPDATE | `*UpFrm`, `*Service.update()` |
-| 삭제 | 선택 행 기준 DELETE | `*Control`, `*Service.delete()` |
+| 목록 조회 | DB 데이터를 JTable에 표시 | `*ListPanel`, `*Service.findAll()` |
+| 등록 | 입력 폼에서 값 입력 후 INSERT | `*CreateFrame`, `*Service.save()` |
+| 수정 | 선택 행 데이터를 수정 폼으로 전달 후 UPDATE | `*UpdateFrame`, `*Service.update()` |
+| 삭제 | 선택 행 기준 DELETE | `*Controller`, `*Service.delete()` |
 
 ### 도메인 관계
 
@@ -109,7 +126,7 @@ Screening(상영)
 ### 기본 원칙
 
 - 팀원은 우선 `domain` 레이어의 규칙을 강화한다.
-- DAO SQL 추가가 필요한 경우 `domain/*Repository.java`, `adapter/*DAO.java`, `sql.properties`를 함께 수정한다.
+- DB SQL 추가가 필요한 경우 `domain/*Repository.java`, `infrastructure/persistence/*/*JdbcRepository.java`, `sql.properties`를 함께 수정한다.
 - UI는 도메인 규칙이 잡힌 뒤 최소한의 검증 메시지와 버튼 흐름만 붙인다.
 - API Key, DB 비밀번호 같은 민감 정보는 문서와 코드에 직접 커밋하지 않는다.
 
@@ -117,9 +134,9 @@ Screening(상영)
 
 1. 도메인별 비즈니스 규칙 정의
 2. Repository 인터페이스에 필요한 조회 메서드 추가
-3. DAO와 `sql.properties` 구현
+3. JDBC Repository와 `sql.properties` 구현
 4. Service에서 규칙 검증
-5. UI Control에서 예외 메시지 표시
+5. Swing Controller에서 예외 메시지 표시
 6. 수동 테스트 시나리오 체크
 
 ---
@@ -234,7 +251,7 @@ ALTER TABLE movie
 
 ---
 
-## 6. Common / 인프라 고도화 계획
+## 6. Infrastructure / 공통 기반 고도화 계획
 
 본인 담당으로 먼저 확인하면 좋은 영역이다.
 
@@ -268,12 +285,19 @@ public static String getSQL(String key) {
 도메인별 UI에서 검증 로직이 중복되지 않도록 공통 유틸을 둘 수 있다.
 
 ```text
-common/
+domain/common/
+└── 필요한 값 객체
+
+infrastructure/
+├── db/
+│   └── ConfigUtil.java
+└── kobis/
+    ├── KobisApiClient.java
+    └── KobisMovieDto.java
+
+presentation/swing/common/
 ├── Validator.java
-├── DateUtil.java
-├── ConfigUtil.java
-├── KobisApiClient.java
-└── KobisMovieDto.java
+└── DateUtil.java
 ```
 
 | 파일 | 역할 |
@@ -395,7 +419,7 @@ KOBIS TOP 10 조회
   -> movieCd 기준으로 이미 등록된 영화인지 확인
   -> 없으면 Movie로 변환
   -> genre/director/rating은 기본값 또는 수동 보완 대상으로 저장
-  -> MovieListPan 새로고침
+  -> MovieListPanel 새로고침
 ```
 
 #### Repository 변경 후보
@@ -426,7 +450,7 @@ public int importFromBoxOffice(List<KobisMovieDto> movies) throws SQLException {
 
 - KOBIS 일별 박스오피스는 보통 전날 날짜로 조회해야 안정적으로 나온다.
 - API Key를 `DOCS.md`, Java 소스, Git 커밋에 직접 남기지 않는다.
-- 현재 프로젝트에는 JSON 라이브러리가 별도로 보이지 않는다. `Gson`, `org.json`, `Jackson` 중 하나를 추가하거나, 팀 범위가 작으면 최소 파싱 방식으로 시작한다.
+- 현재 프로젝트는 `Gson`을 사용한다.
 - `movieNm`만으로 중복 판단하면 동명이인 영화 문제가 생길 수 있으므로 `movieCd`를 저장하는 편이 낫다.
 
 ---
@@ -577,6 +601,6 @@ make clean
 ## 12. 팀 공유 메모
 
 - 도메인 작업자는 `domain/*Service.java`에 규칙을 먼저 넣고, 필요한 조회 기능을 Repository 인터페이스에 추가한다.
-- DAO 작업자는 새 Repository 메서드에 맞춰 `adapter/*DAO.java`와 `sql.properties`를 함께 수정한다.
+- JDBC Repository 작업자는 새 Repository 메서드에 맞춰 `infrastructure/persistence/*/*JdbcRepository.java`와 `sql.properties`를 함께 수정한다.
 - 공통 작업자는 설정, 검증, 예외 메시지, KOBIS API Client를 먼저 안정화한다.
 - UI 작업자는 Service에서 던진 예외를 사용자 메시지로 보여주는 흐름을 맞춘다.
