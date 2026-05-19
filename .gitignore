@@ -12,9 +12,7 @@ RemoteSystemsTempFiles/
 # ========================
 # VS Code
 # ========================
-.vscode/*
-!.vscode/settings.json
-!.vscode/launch.json
+.vscode/
 *.code-workspace
 
 # ========================
