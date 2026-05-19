@@ -1,5 +1,7 @@
 package presentation.swing.customer;
 
+import infrastructure.AppLogger;
+import java.util.logging.Logger;
 import domain.customer.Customer;
 import domain.customer.CustomerService;
 import java.awt.event.*;
@@ -12,6 +14,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 public class CustomerController extends MouseAdapter implements ActionListener {
+
+	private static final Logger log = AppLogger.get(CustomerController.class);
 
 	private final CustomerService service;
 	private List<Customer> customerList = new ArrayList<>();
@@ -43,8 +47,10 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
+		long t = System.currentTimeMillis();
 		try { customerList = service.findAll(); }
 		catch (SQLException e) { customerList = new ArrayList<>(); dialogOpen("고객 목록 조회 실패"); }
+		log.fine(String.format("DB 조회 완료 (%d건, %dms)", customerList.size(), System.currentTimeMillis() - t));
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
@@ -153,6 +159,7 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
+		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);

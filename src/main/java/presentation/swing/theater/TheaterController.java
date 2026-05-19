@@ -1,5 +1,7 @@
 package presentation.swing.theater;
 
+import infrastructure.AppLogger;
+import java.util.logging.Logger;
 import domain.theater.Theater;
 import domain.theater.TheaterService;
 import java.awt.event.*;
@@ -11,6 +13,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class TheaterController extends MouseAdapter implements ActionListener {
+
+	private static final Logger log = AppLogger.get(TheaterController.class);
 
 	private final TheaterService service;
 	private List<Theater> theaterList = new ArrayList<>();
@@ -36,8 +40,10 @@ public class TheaterController extends MouseAdapter implements ActionListener {
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
+		long start = System.currentTimeMillis();
 		try { theaterList = service.findAll(); }
 		catch (SQLException e) { theaterList = new ArrayList<>(); dialogOpen("상영관 목록 조회 실패"); }
+		log.fine(String.format("DB 조회 완료 (%d건, %dms)", theaterList.size(), System.currentTimeMillis() - start));
 
 		Vector<Vector<String>> data = new Vector<>();
 		for (Theater t : theaterList) {
@@ -89,6 +95,9 @@ public class TheaterController extends MouseAdapter implements ActionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		int col = table.columnAtPoint(e.getPoint());
+		int row = table.rowAtPoint(e.getPoint());
+		log.fine(String.format("click col=%d row=%d", col, row));
 		Theater t = theaterList.get(table.getSelectedRow());
 		selectedTheaterId = t.getTheaterId();
 		theaterUpdateFrame.tfName.setText(t.getName());

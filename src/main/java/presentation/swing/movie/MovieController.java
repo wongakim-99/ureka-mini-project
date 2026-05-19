@@ -19,9 +19,12 @@ import javax.swing.table.DefaultTableModel;
 
 import domain.movie.Movie;
 import domain.movie.MovieService;
+import infrastructure.AppLogger;
+import java.util.logging.Logger;
 
 public class MovieController extends MouseAdapter implements ActionListener {
 
+	private static final Logger log = AppLogger.get(MovieController.class);
 	private final MovieService service;
 	private List<Movie> movieList = new ArrayList<>();
 	private final Vector<String> columnNames;
@@ -56,8 +59,10 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
+		long t = System.currentTimeMillis();
 		try { movieList = service.findAll(); }
 		catch (SQLException e) { movieList = new ArrayList<>(); dialogOpen("영화 목록 조회 실패"); }
+		log.fine(String.format("DB 조회 완료 (%d건, %dms)", movieList.size(), System.currentTimeMillis() - t));
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
@@ -177,6 +182,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
+		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);

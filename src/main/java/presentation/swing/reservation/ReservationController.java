@@ -1,5 +1,7 @@
 package presentation.swing.reservation;
 
+import infrastructure.AppLogger;
+import java.util.logging.Logger;
 import domain.common.OptionItem;
 import domain.reservation.Reservation;
 import domain.reservation.ReservationService;
@@ -13,6 +15,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 public class ReservationController extends MouseAdapter implements ActionListener {
+
+	private static final Logger log = AppLogger.get(ReservationController.class);
 
 	private final ReservationService service;
 	private List<Reservation> reservationList = new ArrayList<>();
@@ -46,8 +50,10 @@ public class ReservationController extends MouseAdapter implements ActionListene
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
+		long t = System.currentTimeMillis();
 		try { reservationList = service.findAll(); }
 		catch (SQLException e) { reservationList = new ArrayList<>(); dialogOpen("예약 목록 조회 실패"); }
+		log.fine(String.format("DB 조회 완료 (%d건, %dms)", reservationList.size(), System.currentTimeMillis() - t));
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
@@ -185,6 +191,7 @@ public class ReservationController extends MouseAdapter implements ActionListene
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
+		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);

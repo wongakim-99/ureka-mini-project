@@ -1,5 +1,7 @@
 package presentation.swing.screening;
 
+import infrastructure.AppLogger;
+import java.util.logging.Logger;
 import domain.common.OptionItem;
 import domain.screening.Screening;
 import domain.screening.ScreeningService;
@@ -17,6 +19,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 public class ScreeningController extends MouseAdapter implements ActionListener {
+
+	private static final Logger log = AppLogger.get(ScreeningController.class);
 
 	private final ScreeningService service;
 	private List<Screening> screeningList = new ArrayList<>();
@@ -49,8 +53,10 @@ public class ScreeningController extends MouseAdapter implements ActionListener 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
+		long t = System.currentTimeMillis();
 		try { screeningList = service.findAll(); }
 		catch (SQLException e) { screeningList = new ArrayList<>(); dialogOpen("상영일정 조회 실패"); }
+		log.fine(String.format("DB 조회 완료 (%d건, %dms)", screeningList.size(), System.currentTimeMillis() - t));
 
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
@@ -189,6 +195,7 @@ public class ScreeningController extends MouseAdapter implements ActionListener 
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
+		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);
