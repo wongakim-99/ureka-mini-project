@@ -98,24 +98,28 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 		ComboItem cust   = (ComboItem) reservInsFrm.cbCustomer.getSelectedItem();
 		ComboItem screen = (ComboItem) reservInsFrm.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
+		String seatNo = reservInsFrm.tfSeatNo.getText().trim();
+		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
-			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(reservInsFrm.tfSeatNo.getText());
+			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(seatNo);
 			service.save(r);
 			reservInsFrm.tfSeatNo.setText(""); reservInsFrm.setVisible(false); readAll();
-		} catch (SQLException e) { dialogOpen("예약 추가 실패"); }
+		} catch (SQLException e) { dialogOpen(e.getMessage() == null ? "예약 추가 실패" : e.getMessage()); }
 	}
 
 	private void updateOne() {
 		ComboItem cust = (ComboItem) reservUpFrm.cbCustomer.getSelectedItem();
 		ComboItem screen = (ComboItem) reservUpFrm.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 상영일정을 선택해주세요."); return; }
+		String seatNo = reservUpFrm.tfSeatNo.getText().trim();
+		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
 			r.setReservId(selectedReservId); r.setCustId(cust.id); r.setScreenId(screen.id);
-			r.setSeatNo(reservUpFrm.tfSeatNo.getText());
+			r.setSeatNo(seatNo);
 			service.update(r); clearUpFrm(); readAll();
-		} catch (SQLException e) { dialogOpen("예약 수정 실패"); }
+		} catch (SQLException e) { dialogOpen(e.getMessage() == null ? "예약 수정 실패" : e.getMessage()); }
 	}
 
 	private void deleteOne() {

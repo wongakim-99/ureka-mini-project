@@ -25,22 +25,21 @@ public class MovieInsFrm extends JFrame {
 
 	private void makeGui() {
 		setTitle("영화 추가");
-		setSize(500, 280);
-		add(panInsert, BorderLayout.CENTER);
-		panInsert.setLayout(null);
+	setSize(500, 280);
+	add(panInsert, BorderLayout.CENTER);
+	panInsert.setLayout(null);
 
-		JLabel lTitle = new JLabel("제목"); JLabel lGenre = new JLabel("장르");
-		JLabel lDir   = new JLabel("감독"); JLabel lRate  = new JLabel("관람등급");
+	JLabel lTitle = new JLabel("제목"); JLabel lGenre = new JLabel("장르");
+	JLabel lDir   = new JLabel("감독"); JLabel lRate  = new JLabel("관람등급");
 
-		panInsert.add(lTitle);     lTitle.setBounds(10, 20, 70, 30);
-		panInsert.add(lGenre);     lGenre.setBounds(10, 60, 70, 30);
-		panInsert.add(lDir);       lDir.setBounds(10, 100, 70, 30);
-		panInsert.add(lRate);      lRate.setBounds(10, 140, 70, 30);
-		panInsert.add(tfTitle);    tfTitle.setBounds(90, 20, 350, 30);
-		panInsert.add(tfGenre);    tfGenre.setBounds(90, 60, 350, 30);
-		panInsert.add(tfDirector); tfDirector.setBounds(90, 100, 350, 30);
-		panInsert.add(tfRating);   tfRating.setBounds(90, 140, 350, 30);
-
+	panInsert.add(lTitle);     lTitle.setBounds(10, 20, 70, 30);
+	panInsert.add(lGenre);     lGenre.setBounds(10, 60, 70, 30);
+	panInsert.add(lDir);       lDir.setBounds(10, 100, 70, 30);
+	panInsert.add(lRate);      lRate.setBounds(10, 140, 70, 30);
+	panInsert.add(tfTitle);    tfTitle.setBounds(90, 20, 350, 30);
+	panInsert.add(tfGenre);    tfGenre.setBounds(90, 60, 350, 30);
+	panInsert.add(tfDirector); tfDirector.setBounds(90, 100, 350, 30);
+	panInsert.add(tfRating);   tfRating.setBounds(90, 140, 350, 30);
 		add(panButton, BorderLayout.SOUTH);
 		panButton.add(btnSave); panButton.add(btnCancel);
 	}

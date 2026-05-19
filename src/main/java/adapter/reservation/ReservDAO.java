@@ -52,6 +52,17 @@ public class ReservDAO implements ReservationRepository {
 	}
 
 	@Override
+	public int findRemainSeatsByScreening(int screenId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservSelectRemainSeatsByScreening"));
+		psmt.setInt(1, screenId);
+		ResultSet rs = psmt.executeQuery();
+		int remainSeats = 0;
+		if (rs.next()) remainSeats = rs.getInt("remain_seats");
+		psmt.close(); rs.close();
+		return remainSeats;
+	}
+
+	@Override
 	public List<ComboItem> findCustomerOptions() throws SQLException {
 		Statement stmt = DBUtil.getConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("reservSelectCustOpts"));
