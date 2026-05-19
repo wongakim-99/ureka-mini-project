@@ -3,7 +3,7 @@ package presentation.swing.reservation;
 import common.ComboItem;
 import domain.reservation.Reservation;
 import domain.reservation.ReservationService;
-import adapter.reservation.ReservDAO;
+import infrastructure.persistence.reservation.ReservationJdbcRepository;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class ReservControl extends MouseAdapter implements ActionListener {
 	private String lastKeyword = "";
 
 	public ReservControl(JDialog dialog, JLabel dialogLabel) {
-		service = new ReservationService(new ReservDAO());
+		service = new ReservationService(new ReservationJdbcRepository());
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("ReservID"); columnNames.add("고객"); columnNames.add("영화");
 		columnNames.add("상영관"); columnNames.add("상영시간"); columnNames.add("좌석");

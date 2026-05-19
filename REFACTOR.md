@@ -268,16 +268,19 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - 목록/검색/추가/수정/삭제 버튼 동작 유지
 - `./gradlew build` 성공
 
-### Step 3. JDBC DAO 패키지 이동
+### Step 3. JDBC DAO 패키지 이동 - 완료
 
-- `adapter/*DAO.java`를 `infrastructure.persistence/*/*JdbcRepository.java`로 이동한다.
-- 클래스명도 `DAO`보다 `JdbcRepository` 기준으로 정리한다.
-- `common.DBUtil` import는 임시로 유지한다.
+- `adapter/*DAO.java`를 `infrastructure.persistence/*/*JdbcRepository.java`로 이동했다.
+- 클래스명도 `DAO`보다 `JdbcRepository` 기준으로 정리했다.
+- `common.DBUtil` import는 임시로 유지했다.
+- Swing Controller의 import와 생성 코드는 새 `JdbcRepository` 클래스명으로 갱신했다.
+- UI가 `infrastructure.persistence`를 직접 import하는 상태는 Step 4에서 `AppFactory`로 의존성 조립을 모으며 제거한다.
 
 완료 기준:
 
 - 기존 `domain.*Repository` 인터페이스 구현 유지
 - 모든 DB CRUD 동작 유지
+- `./gradlew build` 성공
 
 ### Step 4. 의존성 조립 위치 통합
 

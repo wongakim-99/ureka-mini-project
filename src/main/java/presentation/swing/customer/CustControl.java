@@ -2,7 +2,7 @@ package presentation.swing.customer;
 
 import domain.customer.Customer;
 import domain.customer.CustomerService;
-import adapter.customer.CustDAO;
+import infrastructure.persistence.customer.CustomerJdbcRepository;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class CustControl extends MouseAdapter implements ActionListener {
 	private String lastKeyword = "";
 
 	public CustControl(JDialog dialog, JLabel dialogLabel) {
-		service = new CustomerService(new CustDAO());
+		service = new CustomerService(new CustomerJdbcRepository());
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("CustID"); columnNames.add("이름"); columnNames.add("전화번호"); columnNames.add("이메일");
 		this.dialog = dialog; this.dialogLabel = dialogLabel;

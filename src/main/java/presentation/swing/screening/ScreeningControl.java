@@ -3,7 +3,7 @@ package presentation.swing.screening;
 import common.ComboItem;
 import domain.screening.Screening;
 import domain.screening.ScreeningService;
-import adapter.screening.ScreeningDAO;
+import infrastructure.persistence.screening.ScreeningJdbcRepository;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	private String lastKeyword = "";
 
 	public ScreeningControl(JDialog dialog, JLabel dialogLabel) {
-		service = new ScreeningService(new ScreeningDAO());
+		service = new ScreeningService(new ScreeningJdbcRepository());
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("ScreenID"); columnNames.add("영화"); columnNames.add("상영관");
 		columnNames.add("상영시간"); columnNames.add("가격"); columnNames.add("잔여석");

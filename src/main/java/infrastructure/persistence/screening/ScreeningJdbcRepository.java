@@ -1,4 +1,4 @@
-package adapter.screening;
+package infrastructure.persistence.screening;
 
 import common.ComboItem;
 import common.DBUtil;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreeningDAO implements ScreeningRepository {
+public class ScreeningJdbcRepository implements ScreeningRepository {
 
 	@Override
 	public List<Screening> findAll() throws SQLException {

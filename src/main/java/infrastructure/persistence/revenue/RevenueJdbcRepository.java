@@ -1,4 +1,4 @@
-package adapter.revenue;
+package infrastructure.persistence.revenue;
 
 import common.DBUtil;
 import domain.revenue.Revenue;
@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RevenueDAO implements RevenueRepository {
+public class RevenueJdbcRepository implements RevenueRepository {
 
     @Override
     public List<Revenue> findAllByMovie() throws SQLException {

@@ -2,7 +2,7 @@ package presentation.swing.theater;
 
 import domain.theater.Theater;
 import domain.theater.TheaterService;
-import adapter.theater.TheaterDAO;
+import infrastructure.persistence.theater.TheaterJdbcRepository;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class TheaterControl extends MouseAdapter implements ActionListener {
 	private int selectedTheaterId;
 
 	public TheaterControl(JDialog dialog, JLabel dialogLabel) {
-		service = new TheaterService(new TheaterDAO());
+		service = new TheaterService(new TheaterJdbcRepository());
 		columnNames = new Vector<>();
 		columnNames.add("TheaterID"); columnNames.add("상영관명"); columnNames.add("총 좌석수");
 		this.dialog = dialog; this.dialogLabel = dialogLabel;

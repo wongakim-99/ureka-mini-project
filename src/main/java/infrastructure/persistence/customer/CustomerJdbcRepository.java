@@ -1,4 +1,4 @@
-package adapter.customer;
+package infrastructure.persistence.customer;
 
 import common.DBUtil;
 import domain.customer.Customer;
@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustDAO implements CustomerRepository {
+public class CustomerJdbcRepository implements CustomerRepository {
 
 	@Override
 	public List<Customer> findAll() throws SQLException {

@@ -1,4 +1,4 @@
-package adapter.theater;
+package infrastructure.persistence.theater;
 
 import common.DBUtil;
 import domain.theater.Theater;
@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TheaterDAO implements TheaterRepository {
+public class TheaterJdbcRepository implements TheaterRepository {
 
 	@Override
 	public List<Theater> findAll() throws SQLException {

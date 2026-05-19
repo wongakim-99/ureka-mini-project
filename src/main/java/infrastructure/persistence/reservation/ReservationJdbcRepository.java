@@ -1,4 +1,4 @@
-package adapter.reservation;
+package infrastructure.persistence.reservation;
 
 import common.ComboItem;
 import common.DBUtil;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReservDAO implements ReservationRepository {
+public class ReservationJdbcRepository implements ReservationRepository {
 
 	@Override
 	public List<Reservation> findAll() throws SQLException {

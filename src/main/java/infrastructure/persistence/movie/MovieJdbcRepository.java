@@ -1,4 +1,4 @@
-package adapter.movie;
+package infrastructure.persistence.movie;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ import common.DBUtil;
 import domain.movie.Movie;
 import domain.movie.MovieRepository;
 
-public class MovieDAO implements MovieRepository {
+public class MovieJdbcRepository implements MovieRepository {
 
 	@Override
 	public List<Movie> findAll() throws SQLException {
