@@ -255,16 +255,18 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - `./gradlew build` 성공
 - 앱 실행 시 기존 화면과 초기 데이터 동기화 동작 유지
 
-### Step 2. Swing UI 패키지 이동
+### Step 2. Swing UI 패키지 이동 - 완료
 
-- `adapter/*/ui`를 `presentation.swing/*`로 이동한다.
-- `common.ui`를 `presentation.swing.common`으로 이동한다.
-- import만 변경하고 동작 로직은 건드리지 않는다.
+- `adapter/*/ui`를 `presentation.swing/*`로 이동했다.
+- `common.ui`를 `presentation.swing.common`으로 이동했다.
+- 사용 여부가 애매했던 `app.MenuControl`은 삭제하지 않고 `presentation.swing.menu.MenuControl`로 이동했다.
+- package/import만 변경하고 동작 로직은 건드리지 않았다.
 
 완료 기준:
 
 - 모든 CRUD 화면이 기존과 동일하게 열린다.
 - 목록/검색/추가/수정/삭제 버튼 동작 유지
+- `./gradlew build` 성공
 
 ### Step 3. JDBC DAO 패키지 이동
 

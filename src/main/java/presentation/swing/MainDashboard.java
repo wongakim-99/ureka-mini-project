@@ -12,15 +12,15 @@ import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import adapter.movie.ui.*;
-import adapter.reservation.ui.*;
-import adapter.screening.ui.*;
-import adapter.customer.ui.*;
-import adapter.theater.ui.*;
-import adapter.revenue.ui.RevenueControl;
+import presentation.swing.movie.*;
+import presentation.swing.reservation.*;
+import presentation.swing.screening.*;
+import presentation.swing.customer.*;
+import presentation.swing.theater.*;
+import presentation.swing.revenue.RevenueControl;
 import common.DBUtil;
 import common.KobisImporter;
-import common.ui.DialogControl;
+import presentation.swing.common.DialogControl;
 
 public class MainDashboard extends JFrame {
 
