@@ -1,15 +1,22 @@
 package adapter.movie.ui;
 
-import domain.movie.Movie;
-import domain.movie.MovieService;
-import adapter.movie.MovieDAO;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import adapter.movie.MovieDAO;
+import domain.movie.Movie;
+import domain.movie.MovieService;
 
 public class MovieControl extends MouseAdapter implements ActionListener {
 
