@@ -1,113 +1,130 @@
 # 영화 예약 관리 시스템
 
-Java + JDBC + MySQL + Swing 기반 영화 예약 CRUD 프로그램
+Java 21, Swing, JDBC, MySQL 기반 영화 예약 관리 프로그램입니다.
 
 ---
 
 ## 기술 스택
 
 - Java 21
-- JDBC (mysql-connector-j-8.4.0)
-- MySQL (로컬)
-- Java Swing (GUI)
+- Java Swing
+- JDBC
+- MySQL
+- Gradle
+- Gson
 
 ---
 
 ## 프로젝트 구조
 
-```
+```text
 ureka-mini-project/
-├── src/cinema/
-│   ├── Main.java              # 진입점
-│   ├── movie/                 # 영화 관리
-│   ├── theater/               # 상영관 관리
-│   ├── screening/             # 상영일정 관리
-│   ├── customer/              # 고객 관리
-│   ├── reservation/           # 예약 관리
-│   └── util/                  # DBUtil, ComboItem, sql.properties
-├── lib/                       # JDBC 드라이버, Lombok
-├── cinema_ddl.sql             # DB 생성 스크립트
-└── Makefile                   # 빌드/실행
+├── src/main/java/
+│   ├── Main.java
+│   ├── application/              # 객체 조립
+│   ├── domain/                   # 엔티티, Service, Repository 인터페이스
+│   ├── infrastructure/           # DB, KOBIS, JDBC Repository 구현
+│   └── presentation/swing/       # Swing 화면, Controller, Frame, Panel
+├── src/main/resources/
+│   ├── schema.sql
+│   ├── sql.properties
+│   └── db.properties             # 로컬 설정, git 제외
+├── lib/
+├── build.gradle
+└── Makefile
+```
+
+주요 의존 방향:
+
+```text
+Main
+  -> presentation.swing.MainDashboard
+    -> application.AppFactory
+      -> domain
+      -> infrastructure
 ```
 
 ---
 
-## 시작하기 전에 (공통)
+## 시작하기 전에
 
-### 1. MySQL DB 설정
+### 1. MySQL DB 준비
 
-터미널에서 MySQL 접속 후 DDL 실행:
-
-```bash
-mysql -u root -p
-```
-
-```sql
-source /프로젝트절대경로/cinema_ddl.sql
-```
-
-또는 한 줄로:
+로컬 MySQL에 `cinemasys` 데이터베이스가 필요합니다. 수동으로 초기화하려면:
 
 ```bash
 mysql -u root -p < cinema_ddl.sql
 ```
 
+앱 실행 시 `src/main/resources/db.properties`의 `ddl.auto` 값에 따라 `schema.sql` 기반 초기화도 수행됩니다.
+
 ### 2. db.properties 생성
 
 ```bash
-cp src/cinema/util/db.properties.example src/cinema/util/db.properties
+cp src/main/resources/db.properties.example src/main/resources/db.properties
 ```
 
-`src/cinema/util/db.properties` 열어서 본인 MySQL 정보로 수정:
+`src/main/resources/db.properties`를 본인 환경에 맞게 수정합니다.
 
 ```properties
-url=jdbc:mysql://localhost:3306/cinemasys
+url=jdbc:mysql://localhost:3306/cinemasys?useUnicode=true&characterEncoding=UTF-8
 user=root
-password=여기에_본인_비밀번호
+password=your_password
+kobis.api.key=your_kobis_api_key
+ddl.auto=none
 ```
 
-> 비밀번호가 없으면 `password=` 비워두면 됩니다.
+`db.properties`는 로컬 설정 파일이며 Git에 커밋하지 않습니다.
 
 ---
 
 ## 실행 방법
 
-### 방법 A — 터미널 (IDE 무관, 가장 간단)
+### Gradle
+
+```bash
+./gradlew run
+```
+
+빌드만 확인하려면:
+
+```bash
+./gradlew build
+```
+
+### Makefile
 
 ```bash
 make run
 ```
 
-처음 한 번만 실행하면 빌드 + 실행이 동시에 됩니다.
-
 | 명령어 | 설명 |
-|--------|------|
-| `make run` | 빌드 + 실행 |
-| `make build` | 빌드만 |
-| `make clean` | bin/ 초기화 |
+|---|---|
+| `make build` | `bin/`에 직접 컴파일 |
+| `make run` | 컴파일 후 실행 |
+| `make clean` | `bin/` 정리 |
 
 ---
 
-### 방법 B — Eclipse
+## IDE 실행
+
+### Eclipse
 
 1. `File > Import > General > Existing Projects into Workspace`
-2. `Browse...` → 이 프로젝트 폴더 선택 → `Finish`
-3. `src/cinema/Main.java` 우클릭 → `Run As > Java Application`
+2. 프로젝트 폴더 선택
+3. `src/main/java/Main.java` 실행
 
----
+### VS Code
 
-### 방법 C — VS Code
-
-1. [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) 설치
+1. Extension Pack for Java 설치
 2. 프로젝트 폴더 열기
-3. `src/cinema/Main.java` 열기 → 우측 상단 ▶ 클릭
-
-> `.vscode/settings.json`과 `launch.json`이 이미 포함되어 있어 별도 설정 불필요
+3. `src/main/java/Main.java` 실행
 
 ---
 
 ## 주의 사항
 
-- `src/cinema/util/db.properties`는 git에 올라가지 않습니다. **본인이 직접 생성해야 합니다.**
+- `src/main/resources/db.properties`는 Git 제외 대상입니다.
+- `.idea/`, `.vscode/`는 Git 제외 대상입니다.
 - DB가 실행 중인 상태에서 프로그램을 실행해야 합니다.
-- `cinema_ddl.sql`에 샘플 데이터가 포함되어 있습니다.
+- KOBIS API Key는 문서나 Java 소스에 직접 커밋하지 않습니다.
