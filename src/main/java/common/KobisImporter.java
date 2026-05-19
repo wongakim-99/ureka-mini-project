@@ -44,7 +44,7 @@ public class KobisImporter {
 			.getAsJsonObject("boxOfficeResult")
 			.getAsJsonArray("dailyBoxOfficeList");
 
-		record MovieRow(String title, String genre, String director, String rating) {}
+		record MovieRow(String title, String genre, String director, String rating, int runtime) {}
 		List<MovieRow> rows = new ArrayList<>();
 
 		for (JsonElement elem : dailyList) {
@@ -57,11 +57,15 @@ public class KobisImporter {
 				.getAsJsonObject("movieInfoResult")
 				.getAsJsonObject("movieInfo");
 
+			int runtime = 0;
+			try { runtime = Integer.parseInt(safeStr(movieInfo, "showTm")); } catch (NumberFormatException ignored) {}
+
 			rows.add(new MovieRow(
 				movieNm,
 				safeStr(movieInfo, "repGenreNm"),
 				extractFirst(movieInfo.getAsJsonArray("directors"), "peopleNm"),
-				extractFirst(movieInfo.getAsJsonArray("audits"), "watchGradeNm")
+				extractFirst(movieInfo.getAsJsonArray("audits"), "watchGradeNm"),
+				runtime
 			));
 		}
 
@@ -77,13 +81,14 @@ public class KobisImporter {
 			conn.createStatement().executeUpdate("ALTER TABLE movie AUTO_INCREMENT = 1");
 
 			PreparedStatement psmt = conn.prepareStatement(
-				"INSERT INTO movie(title, genre, director, rating) VALUES(?,?,?,?)");
+				"INSERT INTO movie(title, genre, director, rating, runtime) VALUES(?,?,?,?,?)");
 
 			for (MovieRow m : rows) {
 				psmt.setString(1, m.title());
 				psmt.setString(2, m.genre());
 				psmt.setString(3, m.director());
 				psmt.setString(4, m.rating());
+				psmt.setInt(5, m.runtime());
 				psmt.executeUpdate();
 			}
 			psmt.close();

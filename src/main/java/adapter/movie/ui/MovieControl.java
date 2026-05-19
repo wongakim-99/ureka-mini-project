@@ -40,7 +40,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 		service = new MovieService(new MovieDAO());
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("MovieID"); columnNames.add("제목");
-		columnNames.add("장르");    columnNames.add("감독"); columnNames.add("관람등급");
+		columnNames.add("장르"); columnNames.add("감독"); columnNames.add("관람등급"); columnNames.add("러닝타임(분)");
 		this.dialog = dialog;
 		this.dialogLabel = dialogLabel;
 	}
@@ -51,6 +51,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	public void setDeleteBtn(JButton btn)   { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)   { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
+	public void search(String keyword) { lastKeyword = keyword.trim(); readAll(); }
 	public int getMovieCount() { return movieList.size(); }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
@@ -70,6 +71,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 			row.add(Boolean.FALSE); // 체크박스
 			row.add(String.valueOf(m.getMovieId())); row.add(m.getTitle());
 			row.add(m.getGenre()); row.add(m.getDirector()); row.add(m.getRating());
+			row.add(String.valueOf(m.getRuntime()));
 			data.add(row);
 		}
 		DefaultTableModel model = new DefaultTableModel(data, columnNames) {
@@ -93,20 +95,22 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
+		int runtime = parseRuntime(movieInsFrm.tfRuntime.getText());
 		Movie movie = new Movie(0, movieInsFrm.tfTitle.getText(), movieInsFrm.tfGenre.getText(),
-				movieInsFrm.tfDirector.getText(), movieInsFrm.tfRating.getText());
+				movieInsFrm.tfDirector.getText(), movieInsFrm.tfRating.getText(), runtime);
 		try {
 			service.save(movie);
 			movieInsFrm.tfTitle.setText(""); movieInsFrm.tfGenre.setText("");
-			movieInsFrm.tfDirector.setText(""); movieInsFrm.tfRating.setText("");
+			movieInsFrm.tfDirector.setText(""); movieInsFrm.tfRating.setText(""); movieInsFrm.tfRuntime.setText("");
 			movieInsFrm.setVisible(false);
 			readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 추가 실패"); }
 	}
 
 	private void updateOne() {
+		int runtime = parseRuntime(movieUpFrm.tfRuntime.getText());
 		Movie movie = new Movie(selectedMovieId, movieUpFrm.tfTitle.getText(), movieUpFrm.tfGenre.getText(),
-				movieUpFrm.tfDirector.getText(), movieUpFrm.tfRating.getText());
+				movieUpFrm.tfDirector.getText(), movieUpFrm.tfRating.getText(), runtime);
 		try { service.update(movie); clearUpFrm(); readAll(); }
 		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 수정 실패"); }
 	}
@@ -118,8 +122,12 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 
 	private void clearUpFrm() {
 		movieUpFrm.tfTitle.setText(""); movieUpFrm.tfGenre.setText("");
-		movieUpFrm.tfDirector.setText(""); movieUpFrm.tfRating.setText("");
+		movieUpFrm.tfDirector.setText(""); movieUpFrm.tfRating.setText(""); movieUpFrm.tfRuntime.setText("");
 		movieUpFrm.setVisible(false);
+	}
+
+	private int parseRuntime(String text) {
+		try { return Integer.parseInt(text.trim()); } catch (NumberFormatException e) { return 0; }
 	}
 
 	private void openUpdateFrmChecked() {
@@ -130,6 +138,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 				if (m != null) {
 					movieUpFrm.tfTitle.setText(m.getTitle()); movieUpFrm.tfGenre.setText(m.getGenre());
 					movieUpFrm.tfDirector.setText(m.getDirector()); movieUpFrm.tfRating.setText(m.getRating());
+					movieUpFrm.tfRuntime.setText(String.valueOf(m.getRuntime()));
 					movieUpFrm.setVisible(true);
 				}
 				break;
@@ -154,10 +163,7 @@ public class MovieControl extends MouseAdapter implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if ("목록 조회".equals(cmd)) {
-			String input = JOptionPane.showInputDialog(null, "검색어를 입력하세요:", "영화 검색", JOptionPane.QUESTION_MESSAGE);
-			if (input != null) { lastKeyword = input.trim(); readAll(); }
-		} else {
+		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "영화 추가": movieInsFrm.setVisible(true); break;
 			case "저장":      insertOne(); break;

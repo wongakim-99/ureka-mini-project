@@ -15,8 +15,8 @@ public class Revenue {
         return movieId;
     }
 
-    public void getMovieTitle() {
-        this.movieTitle = movieTitle;
+    public String getMovieTitle() {
+        return movieTitle;
     }
 
     public int getTotalRevenue() {

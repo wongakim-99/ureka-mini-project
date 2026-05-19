@@ -39,6 +39,7 @@ public class CustControl extends MouseAdapter implements ActionListener {
 	public void setDeleteBtn(JButton btn)   { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)   { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
+	public void search(String keyword) { lastKeyword = keyword.trim(); readAll(); }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
@@ -138,10 +139,7 @@ public class CustControl extends MouseAdapter implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		// 검색창에서 엔터를 치거나 [목록 조회] 버튼을 눌렀을 때 실행
-		if ("목록 조회".equals(cmd)) {
-			String input = JOptionPane.showInputDialog(null, "검색어를 입력하세요:", "고객 검색", JOptionPane.QUESTION_MESSAGE);
-			if (input != null) { lastKeyword = input.trim(); readAll(); }
-		} else {
+		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 				case "고객 추가": custInsFrm.setVisible(true); break;
 				case "저장":      insertOne(); break;

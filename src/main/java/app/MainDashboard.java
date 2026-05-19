@@ -17,6 +17,7 @@ import adapter.reservation.ui.*;
 import adapter.screening.ui.*;
 import adapter.customer.ui.*;
 import adapter.theater.ui.*;
+import adapter.revenue.ui.RevenueControl;
 import common.KobisImporter;
 import common.ui.DialogControl;
 
@@ -49,6 +50,8 @@ public class MainDashboard extends JFrame {
     private CustControl custControl;
     private CustInsFrm custInsFrm;
     private CustUpFrm custUpFrm;
+    private RevenueControl revenueControl;
+    private JLabel totalRevenueLabel;
 
     public MainDashboard() {
         setTitle("CGV Seolleung Management Tool");
@@ -95,6 +98,8 @@ public class MainDashboard extends JFrame {
         custInsFrm = new CustInsFrm(); custUpFrm = new CustUpFrm();
         custControl = new CustControl(dialog, dialogLabel);
         custInsFrm.addEvent(custControl); custUpFrm.addEvent(custControl);
+
+        revenueControl = new RevenueControl(dialog, dialogLabel);
     }
 
     private void initUI() {
@@ -117,7 +122,7 @@ public class MainDashboard extends JFrame {
         logoText.setBounds(0, 20, 150, 30);
         sideNav.add(logoText);
 
-        String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리"};
+        String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리", "수입 관리"};
         int yOffset = 100;
 
         for (String menu : menus) {
@@ -285,6 +290,13 @@ public class MainDashboard extends JFrame {
         btnUpdate.setEnabled(false);
         mainPanel.add(btnUpdate);
 
+        totalRevenueLabel = new JLabel("", SwingConstants.RIGHT);
+        totalRevenueLabel.setBounds(440, 525, 620, 30);
+        totalRevenueLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 16));
+        totalRevenueLabel.setForeground(new Color(34, 34, 34));
+        totalRevenueLabel.setVisible(false);
+        mainPanel.add(totalRevenueLabel);
+
         loadMenuData("영화 관리");
 
         mainPanel.add(sideNav);
@@ -319,6 +331,7 @@ public class MainDashboard extends JFrame {
         for (ActionListener al : btnDelete.getActionListeners()) btnDelete.removeActionListener(al);
         for (ActionListener al : btnUpdate.getActionListeners()) btnUpdate.removeActionListener(al);
         for (MouseListener ml : dataTable.getMouseListeners()) dataTable.removeMouseListener(ml);
+        btnAdd.setEnabled(true);
     }
 
     private void loadMenuData(String menuName) {
@@ -376,9 +389,22 @@ public class MainDashboard extends JFrame {
             btnAdd.addActionListener(custControl);
             dataTable.addMouseListener(custControl);
             custControl.load();
+
+        } else if (menuName.equals("수입 관리")) {
+            menuTitleLabel.setText("수입 관리 (Revenue)");
+            btnAdd.setText("추가");
+            btnAdd.setEnabled(false);
+            btnDelete.setEnabled(false);
+            btnUpdate.setEnabled(false);
+            btnRefresh.addActionListener(revenueControl);
+            revenueControl.setTable(dataTable);
+            revenueControl.setTotalLabel(totalRevenueLabel);
+            revenueControl.load();
+            totalRevenueLabel.setVisible(true);
+            return;
         }
-        
-        // 테이블이 비어있을 때를 대비한 갱신 UI 처리
+
+        totalRevenueLabel.setVisible(false);
         dataTable.revalidate();
         dataTable.repaint();
     }

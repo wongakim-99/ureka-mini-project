@@ -71,4 +71,18 @@ public class ScreeningDAO implements ScreeningRepository {
 		return list;
 	}
 
+	@Override
+	public boolean hasOverlap(int theaterId, int excludeScreenId, String showtime, int movieId) throws SQLException {
+		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("screeningCheckOverlap"));
+		psmt.setInt(1, theaterId);
+		psmt.setInt(2, excludeScreenId);
+		psmt.setString(3, showtime);
+		psmt.setString(4, showtime);
+		psmt.setInt(5, movieId);
+		ResultSet rs = psmt.executeQuery();
+		boolean overlap = rs.next() && rs.getInt("cnt") > 0;
+		rs.close(); psmt.close();
+		return overlap;
+	}
+
 }

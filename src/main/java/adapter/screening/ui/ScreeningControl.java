@@ -45,6 +45,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	public void setDeleteBtn(JButton btn)             { this.btnDeleteTop = btn; }
 	public void setUpdateBtn(JButton btn)             { this.btnUpdateBottom = btn; }
 	public void load() { lastKeyword = ""; readAll(); }
+	public void search(String keyword) { lastKeyword = keyword.trim(); readAll(); }
 
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
@@ -171,10 +172,7 @@ public class ScreeningControl extends MouseAdapter implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if ("목록 조회".equals(cmd)) {
-			String input = JOptionPane.showInputDialog(null, "검색어를 입력하세요:", "상영일정 검색", JOptionPane.QUESTION_MESSAGE);
-			if (input != null) { lastKeyword = input.trim(); readAll(); }
-		} else {
+		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "일정 추가":
 				try { loadOptions(screeningInsFrm.cbMovie, screeningInsFrm.cbTheater); }

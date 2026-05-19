@@ -16,6 +16,8 @@ public class ScreeningService {
 	public List<Screening> findAll() throws SQLException { return repository.findAll(); }
 
 	public void save(Screening screening) throws SQLException {
+		if (repository.hasOverlap(screening.getTheaterId(), 0, screening.getShowtime(), screening.getMovieId()))
+			throw new SQLException("해당 상영관의 상영 시간이 다른 영화와 겹칩니다.");
 		try {
 			repository.save(screening);
 		} catch (SQLException e) {
@@ -25,6 +27,8 @@ public class ScreeningService {
 	}
 
 	public void update(Screening screening) throws SQLException {
+		if (repository.hasOverlap(screening.getTheaterId(), screening.getScreenId(), screening.getShowtime(), screening.getMovieId()))
+			throw new SQLException("해당 상영관의 상영 시간이 다른 영화와 겹칩니다.");
 		try {
 			repository.update(screening);
 		} catch (SQLException e) {

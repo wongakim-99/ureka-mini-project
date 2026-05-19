@@ -17,6 +17,7 @@ import adapter.reservation.ui.*;
 import adapter.screening.ui.*;
 import adapter.customer.ui.*;
 import adapter.theater.ui.*;
+import adapter.revenue.ui.RevenueControl;
 import common.DBUtil;
 import common.KobisImporter;
 import common.ui.DialogControl;
@@ -27,6 +28,8 @@ public class Main extends JFrame {
     private JTable dataTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd, btnRefresh, btnDelete, btnUpdate;
+    private JTextField searchField;
+    private JButton btnSearch;
     private JLabel bigCount;
 
     private JLabel liveClockLabel;
@@ -47,6 +50,8 @@ public class Main extends JFrame {
     private CustControl custControl;
     private CustInsFrm custInsFrm;
     private CustUpFrm custUpFrm;
+    private RevenueControl revenueControl;
+    private JLabel totalRevenueLabel;
 
     public Main() {
         setTitle("CGV Seolleung Management Tool");
@@ -89,6 +94,8 @@ public class Main extends JFrame {
         custInsFrm = new CustInsFrm(); custUpFrm = new CustUpFrm();
         custControl = new CustControl(dialog, dialogLabel);
         custInsFrm.addEvent(custControl); custUpFrm.addEvent(custControl);
+
+        revenueControl = new RevenueControl(dialog, dialogLabel);
     }
 
     private void initUI() {
@@ -108,7 +115,7 @@ public class Main extends JFrame {
         logoText.setBounds(0, 20, 150, 30);
         sideNav.add(logoText);
 
-        String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리"};
+        String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리", "수입 관리"};
         int yOffset = 100;
         for (String menu : menus) {
             JButton menuBtn = new JButton(menu);
@@ -228,8 +235,23 @@ public class Main extends JFrame {
         btnDelete.setEnabled(false);
         mainPanel.add(btnDelete);
 
+        searchField = new JTextField();
+        searchField.setBounds(440, 92, 390, 28);
+        searchField.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
+        mainPanel.add(searchField);
+
+        btnSearch = new JButton("검색");
+        btnSearch.setBounds(837, 92, 80, 28);
+        btnSearch.setBackground(new Color(70, 70, 70));
+        btnSearch.setForeground(Color.WHITE);
+        btnSearch.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
+        btnSearch.setFocusPainted(false);
+        btnSearch.setOpaque(true);
+        btnSearch.setBorderPainted(false);
+        mainPanel.add(btnSearch);
+
         JScrollPane scrollPane = new JScrollPane(dataTable);
-        scrollPane.setBounds(440, 120, 620, 340);
+        scrollPane.setBounds(440, 130, 620, 330);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 225)));
         mainPanel.add(scrollPane);
 
@@ -264,6 +286,13 @@ public class Main extends JFrame {
         btnUpdate.setEnabled(false);
         mainPanel.add(btnUpdate);
 
+        totalRevenueLabel = new JLabel("", SwingConstants.RIGHT);
+        totalRevenueLabel.setBounds(440, 525, 620, 30);
+        totalRevenueLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 16));
+        totalRevenueLabel.setForeground(new Color(34, 34, 34));
+        totalRevenueLabel.setVisible(false);
+        mainPanel.add(totalRevenueLabel);
+
         loadMenuData("영화 관리");
 
         mainPanel.add(sideNav);
@@ -292,7 +321,13 @@ public class Main extends JFrame {
         for (ActionListener al : btnRefresh.getActionListeners()) btnRefresh.removeActionListener(al);
         for (ActionListener al : btnDelete.getActionListeners()) btnDelete.removeActionListener(al);
         for (ActionListener al : btnUpdate.getActionListeners()) btnUpdate.removeActionListener(al);
+        for (ActionListener al : btnSearch.getActionListeners()) btnSearch.removeActionListener(al);
+        for (ActionListener al : searchField.getActionListeners()) searchField.removeActionListener(al);
         for (MouseListener ml : dataTable.getMouseListeners()) dataTable.removeMouseListener(ml);
+        searchField.setText("");
+        btnAdd.setEnabled(true);
+        searchField.setVisible(true);
+        btnSearch.setVisible(true);
     }
 
     private void loadMenuData(String menuName) {
@@ -300,8 +335,11 @@ public class Main extends JFrame {
 
         if (menuName.equals("영화 관리")) {
             menuTitleLabel.setText("영화 관리 (Movie Master)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("영화 추가");
-            btnRefresh.addActionListener(movieControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); movieControl.load(); bigCount.setText(String.valueOf(movieControl.getMovieCount())); });
+            btnSearch.addActionListener(e -> movieControl.search(searchField.getText()));
+            searchField.addActionListener(e -> movieControl.search(searchField.getText()));
             btnAdd.addActionListener(movieControl);
             btnDelete.addActionListener(movieControl);
             btnUpdate.addActionListener(movieControl);
@@ -314,8 +352,11 @@ public class Main extends JFrame {
 
         } else if (menuName.equals("예약 관리")) {
             menuTitleLabel.setText("예약 관리 (Reservation Info)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("예약 추가");
-            btnRefresh.addActionListener(reservControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); reservControl.load(); });
+            btnSearch.addActionListener(e -> reservControl.search(searchField.getText()));
+            searchField.addActionListener(e -> reservControl.search(searchField.getText()));
             btnAdd.addActionListener(reservControl);
             btnDelete.addActionListener(reservControl);
             btnUpdate.addActionListener(reservControl);
@@ -327,8 +368,11 @@ public class Main extends JFrame {
 
         } else if (menuName.equals("상영 일정 관리")) {
             menuTitleLabel.setText("상영 일정 관리 (Schedules)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("일정 추가");
-            btnRefresh.addActionListener(screeningControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); screeningControl.load(); });
+            btnSearch.addActionListener(e -> screeningControl.search(searchField.getText()));
+            searchField.addActionListener(e -> screeningControl.search(searchField.getText()));
             btnAdd.addActionListener(screeningControl);
             btnDelete.addActionListener(screeningControl);
             btnUpdate.addActionListener(screeningControl);
@@ -340,8 +384,11 @@ public class Main extends JFrame {
 
         } else if (menuName.equals("고객 관리")) {
             menuTitleLabel.setText("고객 관리 (Customer Base)");
+            btnRefresh.setText("전체 조회");
             btnAdd.setText("고객 추가");
-            btnRefresh.addActionListener(custControl);
+            btnRefresh.addActionListener(e -> { searchField.setText(""); custControl.load(); });
+            btnSearch.addActionListener(e -> custControl.search(searchField.getText()));
+            searchField.addActionListener(e -> custControl.search(searchField.getText()));
             btnDelete.addActionListener(custControl);
             btnUpdate.addActionListener(custControl);
             custControl.setTable(dataTable);
@@ -350,8 +397,25 @@ public class Main extends JFrame {
             btnAdd.addActionListener(custControl);
             dataTable.addMouseListener(custControl);
             custControl.load();
+
+        } else if (menuName.equals("수입 관리")) {
+            menuTitleLabel.setText("수입 관리 (Revenue)");
+            btnRefresh.setText("전체 조회");
+            btnAdd.setText("추가");
+            btnAdd.setEnabled(false);
+            btnDelete.setEnabled(false);
+            btnUpdate.setEnabled(false);
+            searchField.setVisible(false);
+            btnSearch.setVisible(false);
+            btnRefresh.addActionListener(e -> revenueControl.load());
+            revenueControl.setTable(dataTable);
+            revenueControl.setTotalLabel(totalRevenueLabel);
+            revenueControl.load();
+            totalRevenueLabel.setVisible(true);
+            return;
         }
 
+        totalRevenueLabel.setVisible(false);
         dataTable.revalidate();
         dataTable.repaint();
     }
@@ -380,6 +444,7 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         System.setProperty("java.awt.im.style", "below-the-spot");
+        common.SchemaManager.run();
         seedFromKobisIfEmpty();
         SwingUtilities.invokeLater(() -> new Main());
     }
