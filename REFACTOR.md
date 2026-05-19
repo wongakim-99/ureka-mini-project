@@ -340,7 +340,9 @@ DAO, Service, Controller 생성 책임을 한곳에 모은다. 지금처럼 각 
 - 도메인별 Controller와 Frame 생성/연결을 `DashboardControls`로 분리했다.
 - 좌측 메뉴 UI를 `DashboardSidebar`로 분리했다.
 - 중간 시계/영화 수/데이터 동기화 패널을 `DashboardStatusPanel`로 분리했다.
-- `MainDashboard`는 전체 화면 조립, 메뉴별 테이블 바인딩, KOBIS 초기 로딩 흐름만 남겼다.
+- 우측 테이블/검색/버튼 작업 영역을 `DashboardWorkspace`로 분리했다.
+- 메뉴별 Controller 바인딩과 버튼 리스너 교체 로직을 `DashboardMenuRouter`로 분리했다.
+- `MainDashboard`는 전체 화면 조립, KOBIS 동기화/초기 로딩, 시계 시작 흐름만 남겼다.
 
 완료 기준:
 
