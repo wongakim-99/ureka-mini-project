@@ -41,7 +41,6 @@ public class MovieJdbcRepository implements MovieRepository {
 		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieInsertOne"))) {
 			psmt.setString(1, movie.getTitle());
 			psmt.setString(2, movie.getDirector()); psmt.setString(3, movie.getRating());
-			System.out.println(movie.getRating());
 			psmt.setInt(4, movie.getRuntime());
 			psmt.executeUpdate();
 		}
