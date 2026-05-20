@@ -29,6 +29,8 @@ final class DashboardMenuRouter {
 			loadScreenings();
 		} else if ("고객 관리".equals(menuName)) {
 			loadCustomers();
+		} else if ("상영관 관리".equals(menuName)) {
+			loadTheaters();
 		} else if ("수입 관리".equals(menuName)) {
 			loadRevenue();
 			return;
@@ -125,6 +127,23 @@ final class DashboardMenuRouter {
 		workspace.addButton().addActionListener(controls.customerController);
 		workspace.dataTable().addMouseListener(controls.customerController);
 		controls.customerController.load();
+	}
+
+	private void loadTheaters() {
+		workspace.menuTitleLabel().setText("상영관 관리 (Theater Master)");
+		workspace.refreshButton().setText("전체 조회");
+		workspace.addButton().setText("상영관 추가");
+		workspace.searchField().setVisible(false);
+		workspace.searchButton().setVisible(false);
+		workspace.refreshButton().addActionListener(e -> controls.theaterController.load());
+		workspace.addButton().addActionListener(controls.theaterController);
+		workspace.deleteButton().addActionListener(controls.theaterController);
+		workspace.updateButton().addActionListener(controls.theaterController);
+		controls.theaterController.setTable(workspace.dataTable());
+		controls.theaterController.setDeleteBtn(workspace.deleteButton());
+		controls.theaterController.setUpdateBtn(workspace.updateButton());
+		workspace.dataTable().addMouseListener(controls.theaterController);
+		controls.theaterController.load();
 	}
 
 	private void loadRevenue() {
