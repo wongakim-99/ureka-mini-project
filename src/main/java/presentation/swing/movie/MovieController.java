@@ -86,6 +86,9 @@ public class MovieController extends MouseAdapter implements ActionListener {
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setRowSelectionAllowed(true);
+		if (table.getColumnModel().getColumnCount() > 1) {
+			table.removeColumn(table.getColumnModel().getColumn(1));
+		}
 
 		model.addTableModelListener(e -> {
 			int checkCount = 0;
@@ -140,8 +143,9 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedMovieId = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				selectedMovieId = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				Movie m = movieList.stream().filter(item -> item.getMovieId() == selectedMovieId).findFirst().orElse(null);
 				if (m != null) {
 					movieUpdateFrame.tfTitle.setText(m.getTitle());
@@ -160,8 +164,9 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 		int count = 0;
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				int id = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				try { service.delete(id); count++; } catch (SQLException ignored) {}
 			}
 		}

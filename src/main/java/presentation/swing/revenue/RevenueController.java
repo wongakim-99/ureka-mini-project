@@ -62,6 +62,9 @@ public class RevenueController implements ActionListener {
 			@Override public boolean isCellEditable(int row, int col) { return false; }
 		};
 		table.setModel(model);
+		if (table.getColumnModel().getColumnCount() > 0) {
+			table.removeColumn(table.getColumnModel().getColumn(0));
+		}
 	}
 
 	@Override
