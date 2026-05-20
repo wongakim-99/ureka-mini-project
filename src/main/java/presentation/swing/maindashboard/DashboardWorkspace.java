@@ -72,7 +72,7 @@ final class DashboardWorkspace extends JPanel {
 		add(searchField);
 
 		searchButton = new JButton("검색");
-		searchButton.setBounds(837, 92, 80, 28);
+		searchButton.setBounds(837, 92, 70, 30);
 		searchButton.setBackground(new Color(70, 70, 70));
 		searchButton.setForeground(Color.WHITE);
 		searchButton.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
@@ -82,13 +82,15 @@ final class DashboardWorkspace extends JPanel {
 		add(searchButton);
 
 		searchResetButton = new JButton("↻");
-		searchResetButton.setBounds(922, 92, 28, 28);
+		searchResetButton.setBounds(912, 92, 30, 30);
 		searchResetButton.setBackground(new Color(70, 70, 70));
 		searchResetButton.setForeground(Color.WHITE);
-		searchResetButton.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
+		searchResetButton.setFont(new Font("Dialog", Font.BOLD, 16));
 		searchResetButton.setFocusPainted(false);
 		searchResetButton.setOpaque(true);
 		searchResetButton.setBorderPainted(false);
+		searchResetButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+		searchResetButton.setHorizontalAlignment(SwingConstants.CENTER);
 		searchResetButton.setToolTipText("검색 초기화");
 		searchResetButton.setVisible(false);
 		add(searchResetButton);
