@@ -2,7 +2,7 @@ package presentation.swing.maindashboard;
 
 import javax.swing.JLabel;
 
-final class DashboardMenuRouter {
+public final class DashboardMenuRouter {
 
 	private static final String MOVIE_MENU = "영화 관리";
 
@@ -66,7 +66,7 @@ final class DashboardMenuRouter {
 		updateMovieCount();
 	}
 
-	private void updateMovieCount() {
+	public void updateMovieCount() {
 		movieCountLabel.setText(String.valueOf(controls.movieController.getMovieCount()));
 	}
 
