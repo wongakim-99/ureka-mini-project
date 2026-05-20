@@ -1,9 +1,15 @@
 package presentation.swing.reservation;
 
-import domain.common.OptionItem;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import domain.common.OptionItem;
 
 public class ReservationUpdateFrame extends JFrame {
 
@@ -11,16 +17,22 @@ public class ReservationUpdateFrame extends JFrame {
 
 	private JPanel panInsert, panButton;
 	protected JComboBox<OptionItem> cbCustomer, cbMovie, cbScreening;
-	protected JTextField tfSeatNo;
+	protected JComboBox<String> cbSeatRow, cbSeatColumn;
 	private JButton btnUpdate, btnDelete, btnCancel;
 
 	public ReservationUpdateFrame() {
 		panInsert = new JPanel(); panButton = new JPanel();
 		cbCustomer = new JComboBox<>(); cbMovie = new JComboBox<>();
 		cbScreening = new JComboBox<>();
-		tfSeatNo = new JTextField();
+		cbSeatRow = new JComboBox<>(); cbSeatColumn = new JComboBox<>();
+		initializeSeatSelectors();
 		btnUpdate = new JButton("수정"); btnDelete = new JButton("삭제"); btnCancel = new JButton("취소");
 		makeGui();
+	}
+
+	private void initializeSeatSelectors() {
+		for (char row = 'A'; row <= 'K'; row++) cbSeatRow.addItem(String.valueOf(row));
+		for (int col = 1; col <= 16; col++) cbSeatColumn.addItem(String.valueOf(col));
 	}
 
 	private void makeGui() {
@@ -35,7 +47,9 @@ public class ReservationUpdateFrame extends JFrame {
 		panInsert.add(cbCustomer);  cbCustomer.setBounds(90, 20,  420, 30);
 		panInsert.add(cbMovie);     cbMovie.setBounds(90,    60,  420, 30);
 		panInsert.add(cbScreening); cbScreening.setBounds(90, 100, 420, 30);
-		panInsert.add(tfSeatNo);    tfSeatNo.setBounds(90,   140, 420, 30);
+		//
+		panInsert.add(cbSeatRow);   cbSeatRow.setBounds(90,  140, 50, 30);
+		panInsert.add(cbSeatColumn);cbSeatColumn.setBounds(150, 140, 50, 30);
 		add(panButton, BorderLayout.SOUTH);
 		panButton.add(btnUpdate); panButton.add(btnDelete); panButton.add(btnCancel);
 	}

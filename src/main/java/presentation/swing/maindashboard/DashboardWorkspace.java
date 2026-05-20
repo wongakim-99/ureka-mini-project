@@ -22,6 +22,7 @@ final class DashboardWorkspace extends JPanel {
 	private final JTable dataTable;
 	private final JButton addButton;
 	private final JButton refreshButton;
+	private final JButton searchResetButton;
 	private final JButton deleteButton;
 	private final JButton updateButton;
 	private final JTextField searchField;
@@ -80,6 +81,18 @@ final class DashboardWorkspace extends JPanel {
 		searchButton.setBorderPainted(false);
 		add(searchButton);
 
+		searchResetButton = new JButton("↻");
+		searchResetButton.setBounds(922, 92, 28, 28);
+		searchResetButton.setBackground(new Color(70, 70, 70));
+		searchResetButton.setForeground(Color.WHITE);
+		searchResetButton.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
+		searchResetButton.setFocusPainted(false);
+		searchResetButton.setOpaque(true);
+		searchResetButton.setBorderPainted(false);
+		searchResetButton.setToolTipText("검색 초기화");
+		searchResetButton.setVisible(false);
+		add(searchResetButton);
+
 		JScrollPane scrollPane = new JScrollPane(dataTable);
 		scrollPane.setBounds(440, 130, 620, 330);
 		scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 225)));
@@ -93,10 +106,11 @@ final class DashboardWorkspace extends JPanel {
 		refreshButton.setFocusPainted(false);
 		refreshButton.setOpaque(true);
 		refreshButton.setBorderPainted(false);
+		refreshButton.setVisible(false);
 		add(refreshButton);
 
 		addButton = new JButton("추가");
-		addButton.setBounds(560, 480, 110, 35);
+		addButton.setBounds(440, 480, 110, 35);
 		addButton.setBackground(new Color(34, 34, 34));
 		addButton.setForeground(Color.WHITE);
 		addButton.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
@@ -106,7 +120,7 @@ final class DashboardWorkspace extends JPanel {
 		add(addButton);
 
 		updateButton = new JButton("수정");
-		updateButton.setBounds(680, 480, 110, 35);
+		updateButton.setBounds(560, 480, 110, 35);
 		updateButton.setBackground(new Color(34, 34, 34));
 		updateButton.setForeground(Color.WHITE);
 		updateButton.setFont(new Font("Malgun Gothic", Font.BOLD, 14));
@@ -131,6 +145,9 @@ final class DashboardWorkspace extends JPanel {
 		for (ActionListener listener : refreshButton.getActionListeners()) {
 			refreshButton.removeActionListener(listener);
 		}
+		for (ActionListener listener : searchResetButton.getActionListeners()) {
+			searchResetButton.removeActionListener(listener);
+		}
 		for (ActionListener listener : deleteButton.getActionListeners()) {
 			deleteButton.removeActionListener(listener);
 		}
@@ -153,6 +170,7 @@ final class DashboardWorkspace extends JPanel {
 		updateButton.setEnabled(false);
 		searchField.setVisible(true);
 		searchButton.setVisible(true);
+		searchResetButton.setVisible(false);
 		totalRevenueLabel.setVisible(false);
 	}
 
@@ -175,6 +193,10 @@ final class DashboardWorkspace extends JPanel {
 
 	JButton refreshButton() {
 		return refreshButton;
+	}
+
+	JButton searchResetButton() {
+		return searchResetButton;
 	}
 
 	JButton deleteButton() {
