@@ -52,7 +52,6 @@ public class SchemaManager {
         System.out.println("[SchemaManager] update — 누락 컬럼 확인");
         String db = conn.getCatalog();
         addColumnIfMissing(conn, db, "movie", "runtime",  "INT DEFAULT 0");
-        addColumnIfMissing(conn, db, "movie", "genre",    "VARCHAR(100)");
         addColumnIfMissing(conn, db, "movie", "director", "VARCHAR(100)");
         addColumnIfMissing(conn, db, "movie", "rating",   "VARCHAR(50)");
         addUniqueIndexIfMissing(conn, db, "movie", "uk_movie_title", "title", "title");

@@ -45,7 +45,6 @@ public class MovieService {
 
 	private void normalize(Movie movie) {
 		movie.setTitle(normalizeText(movie.getTitle()));
-		movie.setGenre(normalizeText(movie.getGenre()));
 		movie.setDirector(normalizeText(movie.getDirector()));
 		movie.setRating(normalizeText(movie.getRating()));
 	}
