@@ -22,7 +22,7 @@ final class DashboardSidebar extends JPanel {
 		logoText.setBounds(0, 20, 150, 30);
 		add(logoText);
 
-		String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "고객 관리", "수입 관리"};
+		String[] menus = {"영화 관리", "예약 관리", "상영 일정 관리", "상영관 관리", "고객 관리", "수입 관리"};
 		int yOffset = 100;
 		for (String menu : menus) {
 			JButton menuBtn = new JButton(menu);

@@ -17,6 +17,9 @@ import presentation.swing.revenue.RevenueController;
 import presentation.swing.screening.ScreeningController;
 import presentation.swing.screening.ScreeningCreateFrame;
 import presentation.swing.screening.ScreeningUpdateFrame;
+import presentation.swing.theater.TheaterController;
+import presentation.swing.theater.TheaterCreateFrame;
+import presentation.swing.theater.TheaterUpdateFrame;
 
 final class DashboardControls {
 
@@ -32,6 +35,9 @@ final class DashboardControls {
 	final CustomerController customerController;
 	final CustomerCreateFrame customerCreateFrame;
 	final CustomerUpdateFrame customerUpdateFrame;
+	final TheaterController theaterController;
+	final TheaterCreateFrame theaterCreateFrame;
+	final TheaterUpdateFrame theaterUpdateFrame;
 	final RevenueController revenueController;
 
 	DashboardControls(JDialog dialog, JLabel dialogLabel) {
@@ -58,6 +64,12 @@ final class DashboardControls {
 		customerController = AppFactory.createCustomerController(dialog, dialogLabel);
 		customerCreateFrame.addEvent(customerController);
 		customerUpdateFrame.addEvent(customerController);
+
+		theaterCreateFrame = new TheaterCreateFrame();
+		theaterUpdateFrame = new TheaterUpdateFrame();
+		theaterController = AppFactory.createTheaterController(dialog, dialogLabel);
+		theaterCreateFrame.addEvent(theaterController);
+		theaterUpdateFrame.addEvent(theaterController);
 
 		revenueController = AppFactory.createRevenueController(dialog, dialogLabel);
 	}
