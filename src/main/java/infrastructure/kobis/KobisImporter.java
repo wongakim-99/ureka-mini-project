@@ -34,6 +34,18 @@ public class KobisImporter {
 		this.httpClient = HttpClient.newHttpClient();
 		this.gson = new Gson();
 	}
+	
+	private String mapRating(String kobisRating) {
+	    if (kobisRating == null) return "전체";
+
+	    return switch (kobisRating) {
+	        case "전체관람가" -> "전체";
+	        case "12세이상관람가" -> "12세+";
+	        case "15세이상관람가" -> "15세+";
+	        case "청소년관람불가" -> "19세+";
+	        default -> "전체";
+	    };
+	}
 
 	public void importMovies() throws Exception {
 		String yesterday = LocalDate.now().minusDays(1)
@@ -46,7 +58,7 @@ public class KobisImporter {
 			.getAsJsonObject("boxOfficeResult")
 			.getAsJsonArray("dailyBoxOfficeList");
 
-		record MovieRow(String title, String genre, String director, String rating, int runtime) {}
+		record MovieRow(String title, String director, String rating, int runtime) {}
 		List<MovieRow> rows = new ArrayList<>();
 
 		for (JsonElement elem : dailyList) {
@@ -64,7 +76,6 @@ public class KobisImporter {
 
 			rows.add(new MovieRow(
 				movieNm,
-				safeStr(movieInfo, "repGenreNm"),
 				extractFirst(movieInfo.getAsJsonArray("directors"), "peopleNm"),
 				extractFirst(movieInfo.getAsJsonArray("audits"), "watchGradeNm"),
 				runtime
@@ -83,14 +94,13 @@ public class KobisImporter {
 			conn.createStatement().executeUpdate("ALTER TABLE movie AUTO_INCREMENT = 1");
 
 			PreparedStatement psmt = conn.prepareStatement(
-				"INSERT INTO movie(title, genre, director, rating, runtime) VALUES(?,?,?,?,?)");
+				"INSERT INTO movie(title, director, rating, runtime) VALUES(?,?,?,?)");
 
 			for (MovieRow m : rows) {
 				psmt.setString(1, m.title());
-				psmt.setString(2, m.genre());
-				psmt.setString(3, m.director());
-				psmt.setString(4, m.rating());
-				psmt.setInt(5, m.runtime());
+				psmt.setString(2, m.director());
+				psmt.setString(3, mapRating(m.rating()));
+				psmt.setInt(4, m.runtime());
 				psmt.executeUpdate();
 			}
 			psmt.close();
