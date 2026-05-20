@@ -54,16 +54,6 @@ final class DashboardStatusPanel extends JPanel {
 		movieCountLabel.setFont(new Font("Arial", Font.BOLD, 74));
 		movieCountLabel.setForeground(Color.WHITE);
 		add(movieCountLabel);
-
-		JButton syncButton = new JButton("데이터 동기화");
-		syncButton.setBounds(50, 450, 160, 40);
-		syncButton.setBackground(new Color(229, 9, 20));
-		syncButton.setForeground(Color.WHITE);
-		syncButton.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
-		syncButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-		syncButton.setFocusPainted(false);
-		syncButton.addActionListener(syncAction);
-		add(syncButton);
 	}
 
 	JLabel getClockLabel() {

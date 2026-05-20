@@ -21,6 +21,7 @@ import domain.movie.Movie;
 import domain.movie.MovieService;
 import infrastructure.AppLogger;
 import java.util.logging.Logger;
+import presentation.swing.maindashboard.DashboardMenuRouter;
 
 public class MovieController extends MouseAdapter implements ActionListener {
 
@@ -37,6 +38,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	private int selectedMovieId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
+	private DashboardMenuRouter router;
 
 	public MovieController(MovieService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
@@ -55,7 +57,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	public void load() { lastKeyword = ""; readAll(); }
 	public void search(String keyword) { lastKeyword = keyword.trim(); readAll(); }
 	public int getMovieCount() { return movieList.size(); }
-
+	public void setRouter(DashboardMenuRouter router) { this.router = router; }
 	private void dialogOpen(String msg) { dialogLabel.setText(msg); dialog.setVisible(true); }
 
 	private void readAll() {
@@ -108,6 +110,9 @@ public class MovieController extends MouseAdapter implements ActionListener {
 			movieCreateFrame.tfDirector.setText(""); movieCreateFrame.tfRating.setText(""); movieCreateFrame.tfRuntime.setText("");
 			movieCreateFrame.setVisible(false);
 			readAll();
+			if (router != null) {
+			    router.updateMovieCount();
+			}
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 추가 실패"); }
 	}
 
@@ -161,7 +166,14 @@ public class MovieController extends MouseAdapter implements ActionListener {
 				try { service.delete(id); count++; } catch (SQLException ignored) {}
 			}
 		}
-		if (count > 0) { dialogOpen(count + "건의 영화 정보가 삭제되었습니다."); readAll(); }
+		
+		
+		if (count > 0) { dialogOpen(count + "건의 영화 정보가 삭제되었습니다."); readAll(); 
+			if (router != null) {
+			    router.updateMovieCount();
+			}
+		}
+		
 	}
 
 	@Override
