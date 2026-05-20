@@ -64,6 +64,9 @@ public class TheaterController extends MouseAdapter implements ActionListener {
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setRowSelectionAllowed(true);
+		if (table.getColumnModel().getColumnCount() > 1) {
+			table.removeColumn(table.getColumnModel().getColumn(1));
+		}
 
 		model.addTableModelListener(e -> {
 			int checkCount = 0;
@@ -108,8 +111,9 @@ public class TheaterController extends MouseAdapter implements ActionListener {
 
 		int count = 0;
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				int id = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				try { service.delete(id); count++; } catch (SQLException ignored) {}
 			}
 		}
@@ -118,8 +122,9 @@ public class TheaterController extends MouseAdapter implements ActionListener {
 
 	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedTheaterId = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				selectedTheaterId = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				Theater t = theaterList.stream().filter(item -> item.getTheaterId() == selectedTheaterId).findFirst().orElse(null);
 				if (t != null) {
 					theaterUpdateFrame.tfName.setText(t.getName());
