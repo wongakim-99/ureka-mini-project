@@ -71,6 +71,9 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setRowSelectionAllowed(true);
+		if (table.getColumnModel().getColumnCount() > 1) {
+			table.removeColumn(table.getColumnModel().getColumn(1));
+		}
 		
 		// 체크박스 상태 변화 감지 리스너
 		model.addTableModelListener(e -> {
@@ -134,8 +137,9 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 
 	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedCustomerId = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				selectedCustomerId = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				Customer c = customerList.stream().filter(item -> item.getCustId() == selectedCustomerId).findFirst().orElse(null);
 				if (c != null) {
 					customerUpdateFrame.tfName.setText(c.getName());
@@ -154,8 +158,9 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 
 		int count = 0;
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				int id = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				try { service.delete(id); count++; } catch (SQLException ignored) {}
 			}
 		}
