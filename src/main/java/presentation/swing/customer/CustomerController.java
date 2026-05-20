@@ -159,7 +159,6 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
-		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);
