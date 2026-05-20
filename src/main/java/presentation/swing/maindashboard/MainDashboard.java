@@ -13,11 +13,15 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import infrastructure.AppLogger;
 import infrastructure.db.DBUtil;
 import infrastructure.db.SchemaManager;
 import infrastructure.kobis.KobisImporter;
+import java.util.logging.Logger;
 
 public class MainDashboard extends JFrame {
+
+    private static final Logger log = AppLogger.get(MainDashboard.class);
 
     private JLabel bigCount;
 
@@ -123,16 +127,16 @@ public class MainDashboard extends JFrame {
                 isEmpty = rs.getInt(1) == 0;
             }
             if (isEmpty) {
-                System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
+                log.info("영화 데이터가 없어 박스오피스 데이터를 가져옵니다...");
                 new KobisImporter().importMovies();
-                System.out.println("[KOBIS] 데이터 삽입 완료");
+                log.info("영화 데이터 초기 로드 완료");
                 SwingUtilities.invokeLater(() -> {
                     controls.movieController.load();
                     bigCount.setText(String.valueOf(controls.movieController.getMovieCount()));
                 });
             }
         } catch (Exception e) {
-            System.err.println("[KOBIS] 초기 데이터 로드 실패: " + e.getMessage());
+            log.warning("영화 초기 데이터 로드 실패: " + e.getMessage());
         }
     }
 
