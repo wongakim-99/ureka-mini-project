@@ -9,8 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import domain.common.OptionItem;
 
@@ -24,7 +26,9 @@ public class ReservationCreateFrame extends JFrame {
 	protected JScrollPane spCustomerTable;
 	protected JLabel lblSelectedCustomer;
 	protected JComboBox<OptionItem> cbMovie, cbScreening;
-	protected JComboBox<String> cbSeatRow, cbSeatColumn;
+	protected JSpinner spPersonCount;
+	protected JButton btnSelectSeats;
+	protected JLabel lblSelectedSeats;
 	private JButton btnSave, btnCancel;
 
 	public ReservationCreateFrame() {
@@ -35,22 +39,21 @@ public class ReservationCreateFrame extends JFrame {
 		lblSelectedCustomer = new JLabel("선택된 고객 없음");
 		cbMovie = new JComboBox<>();
 		cbScreening = new JComboBox<>();
-		cbSeatRow = new JComboBox<>(); cbSeatColumn = new JComboBox<>();
-		initializeSeatSelectors();
+		// seat selection is handled via seat picker dialog
+		spPersonCount = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+		btnSelectSeats = new JButton("좌석 선택");
+		lblSelectedSeats = new JLabel("선택된 좌석 없음");
 		btnSave = new JButton("저장"); btnCancel = new JButton("취소");
 		makeGui();
 	}
 
-	private void initializeSeatSelectors() {
-		for (char row = 'A'; row <= 'K'; row++) cbSeatRow.addItem(String.valueOf(row));
-		for (int col = 1; col <= 16; col++) cbSeatColumn.addItem(String.valueOf(col));
-	}
+	// seat selectors removed; seat selection uses SeatSelectionDialog
 
 	private void makeGui() {
 		setTitle("예약 추가"); setSize(560, 420);
 		add(panInsert, BorderLayout.CENTER); panInsert.setLayout(null);
 		JLabel lC = new JLabel("고객");    JLabel lM = new JLabel("영화");
-		JLabel lS = new JLabel("상영일정"); JLabel lN = new JLabel("좌석번호");
+		JLabel lS = new JLabel("상영일정"); JLabel lN = new JLabel("인원수");
 		panInsert.add(lC); lC.setBounds(10, 20,  70, 30);
 		panInsert.add(tfCustomerSearch); tfCustomerSearch.setBounds(90, 20, 420, 30);
 		panInsert.add(lblSelectedCustomer); lblSelectedCustomer.setBounds(90, 50, 420, 20);
@@ -60,8 +63,9 @@ public class ReservationCreateFrame extends JFrame {
 		panInsert.add(lN); lN.setBounds(10, 290, 70, 30);
 		panInsert.add(cbMovie);     cbMovie.setBounds(90,    210,  420, 30);
 		panInsert.add(cbScreening); cbScreening.setBounds(90, 250, 420, 30);
-		panInsert.add(cbSeatRow);   cbSeatRow.setBounds(90,  290, 50, 30);
-		panInsert.add(cbSeatColumn);cbSeatColumn.setBounds(150, 290, 50, 30);
+		panInsert.add(spPersonCount); spPersonCount.setBounds(90, 290, 80, 30);
+		panInsert.add(btnSelectSeats); btnSelectSeats.setBounds(180, 290, 120, 30);
+		panInsert.add(lblSelectedSeats); lblSelectedSeats.setBounds(310, 290, 200, 30);
 		add(panButton, BorderLayout.SOUTH);
 		panButton.add(btnSave); panButton.add(btnCancel);
 	}
@@ -77,6 +81,7 @@ public class ReservationCreateFrame extends JFrame {
 				if (selected != null) c.reloadScreenings(selected.id, cbScreening);
 			}
 		});
+		btnSelectSeats.addActionListener(e -> c.openSeatSelectionDialog());
 	}
 
 	public String getCustomerSearchKeyword() {
@@ -94,6 +99,14 @@ public class ReservationCreateFrame extends JFrame {
 	public void clearCustomerSearch() {
 		tfCustomerSearch.setText("");
 		setSelectedCustomerText("선택된 고객 없음");
+	}
+
+	public String getSelectedSeatText() {
+		String t = lblSelectedSeats.getText();
+		if (t == null) return "";
+		if (t.startsWith("선택된 좌석:")) return t.substring("선택된 좌석:".length()).trim();
+		if (t.equals("선택된 좌석 없음")) return "";
+		return t;
 	}
 
 }

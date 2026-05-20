@@ -26,6 +26,15 @@ public class MovieJdbcRepository implements MovieRepository {
 			return list;
 		}
 	}
+	
+//	private String mapRating(String v) {
+//	    return switch (v) {
+//	        case "12세+" -> "12세이상관람가";
+//	        case "15세+" -> "15세이상관람가";
+//	        case "19세+" -> "청소년관람불가";
+//	        default -> "전체관람가";
+//	    };
+//	}
 
 	@Override
 	public void save(Movie movie) throws SQLException {
@@ -60,6 +69,16 @@ public class MovieJdbcRepository implements MovieRepository {
 		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieExistsByTitle"))) {
 			psmt.setString(1, title);
 			psmt.setInt(2, excludeMovieId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
+	}
+
+	@Override
+	public boolean hasScreenings(int movieId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieHasScreenings"))) {
+			psmt.setInt(1, movieId);
 			try (ResultSet rs = psmt.executeQuery()) {
 				return rs.next() && rs.getInt("cnt") > 0;
 			}

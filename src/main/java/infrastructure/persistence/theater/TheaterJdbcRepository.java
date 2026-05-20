@@ -57,4 +57,14 @@ public class TheaterJdbcRepository implements TheaterRepository {
 		}
 	}
 
+	@Override
+	public boolean hasScreenings(int theaterId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("theaterHasScreenings"))) {
+			psmt.setInt(1, theaterId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
+	}
+
 }

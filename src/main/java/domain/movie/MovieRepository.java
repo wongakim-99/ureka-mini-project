@@ -9,4 +9,5 @@ public interface MovieRepository {
 	void update(Movie movie) throws SQLException;
 	void delete(int movieId) throws SQLException;
 	boolean existsByTitle(String title, int excludeMovieId) throws SQLException;
+	boolean hasScreenings(int movieId) throws SQLException;
 }
