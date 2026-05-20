@@ -25,7 +25,8 @@ public class ReservationService {
 	public void save(Reservation reservation) throws SQLException {
 		validateSeatNo(reservation.getSeatNo());
 		validateAgeRestriction(reservation.getCustId(), reservation.getScreenId());
-		if (repository.findRemainSeatsByScreening(reservation.getScreenId()) <= 0) {
+		int requestedSeats = reservation.getSeatNo().split(",").length;
+		if (repository.findRemainSeatsByScreening(reservation.getScreenId()) < requestedSeats) {
 			throw new SQLException(SOLD_OUT_MESSAGE);
 		}
 		if (repository.existsByScreenIdAndSeatNo(reservation.getScreenId(), reservation.getSeatNo(), 0)) {

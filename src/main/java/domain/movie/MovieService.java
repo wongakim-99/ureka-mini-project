@@ -41,7 +41,12 @@ public class MovieService {
 		}
 	}
 
-	public void delete(int movieId) throws SQLException { repository.delete(movieId); }
+	public void delete(int movieId) throws SQLException {
+		if (repository.hasScreenings(movieId)) {
+			throw new SQLException("상영 일정이 등록된 영화는 삭제할 수 없습니다.");
+		}
+		repository.delete(movieId);
+	}
 
 	private void normalize(Movie movie) {
 		movie.setTitle(normalizeText(movie.getTitle()));

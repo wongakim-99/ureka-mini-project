@@ -121,13 +121,14 @@ public class MainDashboard extends JFrame {
 
     private void seedFromKobisIfEmpty() {
         try {
-            boolean isEmpty;
+            int count;
             try (var stmt = DBUtil.getConnection().createStatement();
                  var rs = stmt.executeQuery("SELECT COUNT(*) FROM movie")) {
                 rs.next();
-                isEmpty = rs.getInt(1) == 0;
+                count = rs.getInt(1);
             }
-            if (isEmpty) {
+            log.info("movie 테이블 현재 행 수: " + count);
+            if (count == 0) {
                 log.info("영화 데이터가 없어 박스오피스 데이터를 가져옵니다...");
                 new KobisImporter().importMovies();
                 log.info("영화 데이터 초기 로드 완료");
@@ -135,9 +136,13 @@ public class MainDashboard extends JFrame {
                     controls.movieController.load();
                     bigCount.setText(String.valueOf(controls.movieController.getMovieCount()));
                 });
+            } else {
+                log.info("movie 테이블에 데이터가 이미 있어 KOBIS API 호출 생략");
             }
         } catch (Exception e) {
             log.warning("영화 초기 데이터 로드 실패: " + e.getMessage());
+            log.warning("원인: " + e.getClass().getName());
+            if (e.getCause() != null) log.warning("근본 원인: " + e.getCause().getMessage());
         }
     }
 

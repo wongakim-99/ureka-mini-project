@@ -75,4 +75,14 @@ public class MovieJdbcRepository implements MovieRepository {
 		}
 	}
 
+	@Override
+	public boolean hasScreenings(int movieId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieHasScreenings"))) {
+			psmt.setInt(1, movieId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
+	}
+
 }

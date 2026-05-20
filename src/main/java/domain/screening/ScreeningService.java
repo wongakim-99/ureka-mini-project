@@ -37,7 +37,12 @@ public class ScreeningService {
 		}
 	}
 
-	public void delete(int screenId) throws SQLException          { repository.delete(screenId); }
+	public void delete(int screenId) throws SQLException {
+		if (repository.hasReservations(screenId)) {
+			throw new SQLException("예약이 있는 상영 일정은 삭제할 수 없습니다.");
+		}
+		repository.delete(screenId);
+	}
 	public List<OptionItem> getMovieOptions() throws SQLException  { return repository.findMovieOptions(); }
 	public List<OptionItem> getTheaterOptions() throws SQLException{ return repository.findTheaterOptions(); }
 

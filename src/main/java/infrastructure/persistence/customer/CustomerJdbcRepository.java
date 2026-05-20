@@ -66,4 +66,14 @@ public class CustomerJdbcRepository implements CustomerRepository {
 		}
 	}
 
+	@Override
+	public boolean hasReservations(int custId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("custHasReservations"))) {
+			psmt.setInt(1, custId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
+	}
+
 }

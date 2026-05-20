@@ -128,7 +128,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 	private void deleteOne() {
 		try { service.delete(selectedMovieId); clearUpdateFrame(); readAll(); }
-		catch (SQLException e) { dialogOpen("영화 삭제 실패"); }
+		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 삭제 실패"); }
 	}
 
 	private void clearUpdateFrame() {
@@ -163,21 +163,22 @@ public class MovieController extends MouseAdapter implements ActionListener {
 		if (opt != JOptionPane.YES_OPTION) return;
 
 		int count = 0;
+		String errorMsg = null;
 		for (int i = 0; i < table.getRowCount(); i++) {
 			int modelRow = table.convertRowIndexToModel(i);
 			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
 				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
-				try { service.delete(id); count++; } catch (SQLException ignored) {}
+				try { service.delete(id); count++; }
+				catch (SQLException e) { if (errorMsg == null) errorMsg = e.getMessage(); }
 			}
 		}
-		
-		
-		if (count > 0) { dialogOpen(count + "건의 영화 정보가 삭제되었습니다."); readAll(); 
-			if (router != null) {
-			    router.updateMovieCount();
-			}
+		if (count > 0) {
+			readAll();
+			if (router != null) router.updateMovieCount();
 		}
-		
+		if (errorMsg != null) dialogOpen(errorMsg);
+		else if (count > 0) dialogOpen(count + "건의 영화 정보가 삭제되었습니다.");
+
 	}
 
 	@Override

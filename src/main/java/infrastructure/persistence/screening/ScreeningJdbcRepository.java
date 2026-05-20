@@ -75,6 +75,16 @@ public class ScreeningJdbcRepository implements ScreeningRepository {
 	}
 
 	@Override
+	public boolean hasReservations(int screenId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("screeningHasReservations"))) {
+			psmt.setInt(1, screenId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
+	}
+
+	@Override
 	public boolean hasOverlap(int theaterId, int excludeScreenId, String showtime, int movieId) throws SQLException {
 		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("screeningCheckOverlap"))) {
 			psmt.setInt(1, theaterId);
