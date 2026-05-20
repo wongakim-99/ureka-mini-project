@@ -78,6 +78,7 @@ public class ReservationService {
 
 	private int extractAgeLimit(String rating) {
 		if (rating == null || rating.isBlank()) return 0;
+		if (rating.contains("청소년관람불가")) return 19;
 		Matcher m = Pattern.compile("\\d+").matcher(rating);
 		return m.find() ? Integer.parseInt(m.group()) : 0;
 	}
