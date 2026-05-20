@@ -46,12 +46,12 @@ public class MainDashboard extends JFrame {
 
     private void initControls() {
         dialog = new JDialog(this, "알림", true);
-        dialog.setSize(300, 150);
+        dialog.setSize(500, 180);
         dialog.setLayout(null);
         dialogLabel = new JLabel("", SwingConstants.CENTER);
-        dialogLabel.setBounds(10, 20, 260, 30);
+        dialogLabel.setBounds(10, 20, 480, 80);
         btnDialogClose = new JButton("확인");
-        btnDialogClose.setBounds(100, 70, 80, 30);
+        btnDialogClose.setBounds(210, 110, 80, 30);
         dialog.add(dialogLabel);
         dialog.add(btnDialogClose);
         btnDialogClose.addActionListener(e -> dialog.setVisible(false));
