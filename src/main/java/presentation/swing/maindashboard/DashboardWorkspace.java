@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -81,20 +82,45 @@ final class DashboardWorkspace extends JPanel {
 		searchButton.setBorderPainted(false);
 		add(searchButton);
 
-		searchResetButton = new JButton("↻");
-		searchResetButton.setBounds(912, 92, 30, 30);
-		searchResetButton.setBackground(new Color(70, 70, 70));
-		searchResetButton.setForeground(Color.WHITE);
-		searchResetButton.setFont(new Font("Dialog", Font.BOLD, 16));
-		searchResetButton.setFocusPainted(false);
-		searchResetButton.setOpaque(true);
-		searchResetButton.setBorderPainted(false);
-		searchResetButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-		searchResetButton.setHorizontalAlignment(SwingConstants.CENTER);
-		searchResetButton.setToolTipText("검색 초기화");
-		searchResetButton.setVisible(false);
-		add(searchResetButton);
 
+		searchResetButton = new JButton();
+
+		ImageIcon resetIcon = new ImageIcon(
+			new ImageIcon(getClass().getResource("/images/reset.png"))
+				.getImage()
+				.getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH)
+		);
+
+		searchResetButton.setIcon(resetIcon);
+
+		// 위치/크기
+		searchResetButton.setBounds(912, 92, 30, 30);
+
+		// 🔥 배경색 ON (중요)
+		searchResetButton.setBackground(new Color(70, 70, 70));
+		searchResetButton.setOpaque(true);
+		searchResetButton.setContentAreaFilled(true);
+
+		// UI 정리
+		searchResetButton.setBorderPainted(false);
+		searchResetButton.setFocusPainted(false);
+		searchResetButton.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// tooltip
+		searchResetButton.setToolTipText("검색 초기화");
+
+		// 기본 숨김
+		searchResetButton.setVisible(false);
+
+		// 클릭 이벤트
+		searchResetButton.addActionListener(e -> {
+			searchField.setText("");
+
+			// 필요하면 검색 초기화 로직 추가
+			System.out.println("검색 초기화 클릭됨");
+		});
+
+		add(searchResetButton);
 		JScrollPane scrollPane = new JScrollPane(dataTable);
 		scrollPane.setBounds(440, 130, 620, 330);
 		scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 225)));
