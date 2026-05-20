@@ -105,11 +105,11 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	private void insertOne() {
 		int runtime = parseRuntime(movieCreateFrame.tfRuntime.getText());
 		Movie movie = new Movie(0, movieCreateFrame.tfTitle.getText(), 
-				movieCreateFrame.tfDirector.getText(), movieCreateFrame.tfRating.getText(), runtime);
+				movieCreateFrame.tfDirector.getText(), movieCreateFrame.cbRating.getSelectedItem().toString(),  runtime);
 		try {
 			service.save(movie);
 			movieCreateFrame.tfTitle.setText(""); 
-			movieCreateFrame.tfDirector.setText(""); movieCreateFrame.tfRating.setText(""); movieCreateFrame.tfRuntime.setText("");
+			movieCreateFrame.tfDirector.setText(""); movieCreateFrame.cbRating.setSelectedIndex(0); movieCreateFrame.tfRuntime.setText("");
 			movieCreateFrame.setVisible(false);
 			readAll();
 			if (router != null) {
@@ -121,7 +121,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	private void updateOne() {
 		int runtime = parseRuntime(movieUpdateFrame.tfRuntime.getText());
 		Movie movie = new Movie(selectedMovieId, movieUpdateFrame.tfTitle.getText(), 
-				movieUpdateFrame.tfDirector.getText(), movieUpdateFrame.tfRating.getText(), runtime);
+				movieUpdateFrame.tfDirector.getText(), movieCreateFrame.cbRating.getSelectedItem().toString(), runtime);
 		try { service.update(movie); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 수정 실패"); }
 	}
@@ -133,7 +133,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 	private void clearUpdateFrame() {
 		movieUpdateFrame.tfTitle.setText("");
-		movieUpdateFrame.tfDirector.setText(""); movieUpdateFrame.tfRating.setText(""); movieUpdateFrame.tfRuntime.setText("");
+		movieUpdateFrame.tfDirector.setText(""); movieCreateFrame.cbRating.setSelectedIndex(0); movieUpdateFrame.tfRuntime.setText("");
 		movieUpdateFrame.setVisible(false);
 	}
 
@@ -149,7 +149,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 				Movie m = movieList.stream().filter(item -> item.getMovieId() == selectedMovieId).findFirst().orElse(null);
 				if (m != null) {
 					movieUpdateFrame.tfTitle.setText(m.getTitle());
-					movieUpdateFrame.tfDirector.setText(m.getDirector()); movieUpdateFrame.tfRating.setText(m.getRating());
+					movieUpdateFrame.tfDirector.setText(m.getDirector()); movieUpdateFrame.cbRating.setSelectedItem(m.getRating());
 					movieUpdateFrame.tfRuntime.setText(String.valueOf(m.getRuntime()));
 					movieUpdateFrame.setVisible(true);
 				}
