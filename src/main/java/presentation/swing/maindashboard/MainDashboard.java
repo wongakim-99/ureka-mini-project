@@ -69,6 +69,7 @@ public class MainDashboard extends JFrame {
         liveClockLabel = statusPanel.getClockLabel();
         bigCount = statusPanel.getMovieCountLabel();
         menuRouter = new DashboardMenuRouter(controls, mainPanel, bigCount);
+        controls.movieController.setRouter(menuRouter);
         DashboardSidebar sideNav = new DashboardSidebar(menuRouter::load);
 
         mainPanel.add(sideNav);
