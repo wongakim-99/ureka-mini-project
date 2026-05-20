@@ -45,9 +45,10 @@ final class DashboardMenuRouter {
 
 	private void loadMovies() {
 		workspace.menuTitleLabel().setText("영화 관리 (Movie Master)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(true);
 		workspace.addButton().setText("영화 추가");
-		workspace.refreshButton().addActionListener(e -> {
+		workspace.searchResetButton().addActionListener(e -> {
 			workspace.searchField().setText("");
 			controls.movieController.load();
 			updateMovieCount();
@@ -71,9 +72,10 @@ final class DashboardMenuRouter {
 
 	private void loadReservations() {
 		workspace.menuTitleLabel().setText("예약 관리 (Reservation Info)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(true);
 		workspace.addButton().setText("예약 추가");
-		workspace.refreshButton().addActionListener(e -> {
+		workspace.searchResetButton().addActionListener(e -> {
 			workspace.searchField().setText("");
 			controls.reservationController.load();
 		});
@@ -91,9 +93,10 @@ final class DashboardMenuRouter {
 
 	private void loadScreenings() {
 		workspace.menuTitleLabel().setText("상영 일정 관리 (Schedules)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(true);
 		workspace.addButton().setText("일정 추가");
-		workspace.refreshButton().addActionListener(e -> {
+		workspace.searchResetButton().addActionListener(e -> {
 			workspace.searchField().setText("");
 			controls.screeningController.load();
 		});
@@ -111,9 +114,10 @@ final class DashboardMenuRouter {
 
 	private void loadCustomers() {
 		workspace.menuTitleLabel().setText("고객 관리 (Customer Base)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(true);
 		workspace.addButton().setText("고객 추가");
-		workspace.refreshButton().addActionListener(e -> {
+		workspace.searchResetButton().addActionListener(e -> {
 			workspace.searchField().setText("");
 			controls.customerController.load();
 		});
@@ -131,11 +135,11 @@ final class DashboardMenuRouter {
 
 	private void loadTheaters() {
 		workspace.menuTitleLabel().setText("상영관 관리 (Theater Master)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(false);
 		workspace.addButton().setText("상영관 추가");
 		workspace.searchField().setVisible(false);
 		workspace.searchButton().setVisible(false);
-		workspace.refreshButton().addActionListener(e -> controls.theaterController.load());
 		workspace.addButton().addActionListener(controls.theaterController);
 		workspace.deleteButton().addActionListener(controls.theaterController);
 		workspace.updateButton().addActionListener(controls.theaterController);
@@ -148,14 +152,14 @@ final class DashboardMenuRouter {
 
 	private void loadRevenue() {
 		workspace.menuTitleLabel().setText("수입 관리 (Revenue)");
-		workspace.refreshButton().setText("전체 조회");
+		workspace.refreshButton().setVisible(false);
+		workspace.searchResetButton().setVisible(false);
 		workspace.addButton().setText("추가");
 		workspace.addButton().setEnabled(false);
 		workspace.deleteButton().setEnabled(false);
 		workspace.updateButton().setEnabled(false);
 		workspace.searchField().setVisible(false);
 		workspace.searchButton().setVisible(false);
-		workspace.refreshButton().addActionListener(e -> controls.revenueController.load());
 		controls.revenueController.setTable(workspace.dataTable());
 		controls.revenueController.setTotalLabel(workspace.totalRevenueLabel());
 		controls.revenueController.load();

@@ -17,19 +17,26 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import domain.common.OptionItem;
+import domain.customer.Customer;
+import domain.customer.CustomerService;
 import domain.reservation.Reservation;
 import domain.reservation.ReservationService;
 import infrastructure.AppLogger;
+import infrastructure.persistence.customer.CustomerJdbcRepository;
 
 public class ReservationController extends MouseAdapter implements ActionListener {
 
 	private static final Logger log = AppLogger.get(ReservationController.class);
 
 	private final ReservationService service;
+	private final CustomerService customerService;
 	private List<Reservation> reservationList = new ArrayList<>();
+	private List<Customer> customerList = new ArrayList<>();
 	private final Vector<String> columnNames;
 
 	private JDialog dialog; private JLabel dialogLabel;
@@ -37,11 +44,13 @@ public class ReservationController extends MouseAdapter implements ActionListene
 	private ReservationCreateFrame reservationCreateFrame;
 	private ReservationUpdateFrame reservationUpdateFrame;
 	private int selectedReservationId;
+	private int selectedCustomerId;
 	private JButton btnDeleteTop, btnUpdateBottom;
 	private String lastKeyword = "";
 
 	public ReservationController(ReservationService service, JDialog dialog, JLabel dialogLabel) {
 		this.service = service;
+		this.customerService = new CustomerService(new CustomerJdbcRepository());
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("ReservID"); columnNames.add("고객"); columnNames.add("영화");
 		columnNames.add("상영관"); columnNames.add("상영시간"); columnNames.add("좌석");
@@ -109,9 +118,69 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		catch (SQLException e) { dialogOpen("상영일정 로드 실패"); }
 	}
 
+	private void loadOptions(JComboBox<OptionItem> cbM) throws SQLException {
+		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
+	}
+
 	private void loadOptions(JComboBox<OptionItem> cbC, JComboBox<OptionItem> cbM) throws SQLException {
 		cbC.removeAllItems(); service.getCustomerOptions().forEach(cbC::addItem);
-		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
+		loadOptions(cbM);
+	}
+
+	private void loadCustomerTable(String keyword) {
+		long t = System.currentTimeMillis();
+		try { customerList = customerService.findAll(); }
+		catch (SQLException e) { customerList = new ArrayList<>(); dialogOpen("고객 목록 조회 실패"); }
+		log.fine(String.format("고객 DB 조회 완료 (%d건, %dms)", customerList.size(), System.currentTimeMillis() - t));
+
+		String lower = keyword == null ? "" : keyword.toLowerCase().trim();
+		Vector<Vector<Object>> data = new Vector<>();
+		for (Customer c : customerList) {
+			if (!lower.isEmpty() && !c.getName().toLowerCase().contains(lower)
+				&& !c.getPhone().toLowerCase().contains(lower)
+				&& !c.getEmail().toLowerCase().contains(lower)) continue;
+
+			Vector<Object> row = new Vector<>();
+			row.add(String.valueOf(c.getCustId())); row.add(c.getName()); row.add(c.getPhone()); row.add(c.getEmail());
+			data.add(row);
+		}
+
+		Vector<String> columns = new Vector<>();
+		columns.add("CustID"); columns.add("이름"); columns.add("전화번호"); columns.add("이메일");
+		DefaultTableModel model = new DefaultTableModel(data, columns) {
+			@Override public Class<?> getColumnClass(int col) { return String.class; }
+			@Override public boolean isCellEditable(int row, int col) { return false; }
+		};
+		reservationCreateFrame.getCustomerTable().setModel(model);
+		reservationCreateFrame.getCustomerTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		reservationCreateFrame.getCustomerTable().setRowSelectionAllowed(true);
+		if (reservationCreateFrame.getCustomerTable().getColumnModel().getColumnCount() > 0) {
+			reservationCreateFrame.getCustomerTable().getColumnModel().getColumn(0).setMinWidth(60);
+			reservationCreateFrame.getCustomerTable().getColumnModel().getColumn(0).setMaxWidth(60);
+		}
+		selectedCustomerId = 0;
+		reservationCreateFrame.setSelectedCustomerText("선택된 고객 없음");
+	}
+
+	public DocumentListener getCustomerSearchListener() {
+		return new DocumentListener() {
+			@Override public void insertUpdate(DocumentEvent e) { loadCustomerTable(reservationCreateFrame.getCustomerSearchKeyword()); }
+			@Override public void removeUpdate(DocumentEvent e) { loadCustomerTable(reservationCreateFrame.getCustomerSearchKeyword()); }
+			@Override public void changedUpdate(DocumentEvent e) { loadCustomerTable(reservationCreateFrame.getCustomerSearchKeyword()); }
+		};
+	}
+
+	public java.awt.event.MouseListener getCustomerTableClickListener() {
+		return new java.awt.event.MouseAdapter() {
+			@Override public void mouseClicked(java.awt.event.MouseEvent e) {
+				int row = reservationCreateFrame.getCustomerTable().rowAtPoint(e.getPoint());
+				if (row < 0) return;
+				int modelRow = reservationCreateFrame.getCustomerTable().convertRowIndexToModel(row);
+				selectedCustomerId = Integer.parseInt(reservationCreateFrame.getCustomerTable().getModel().getValueAt(modelRow, 0).toString());
+				String name = reservationCreateFrame.getCustomerTable().getModel().getValueAt(modelRow, 1).toString();
+				reservationCreateFrame.setSelectedCustomerText("선택된 고객: " + name);
+			}
+		};
 	}
 
 	private String buildSeatNo(JComboBox<String> cbRow, JComboBox<String> cbColumn) {
@@ -138,14 +207,13 @@ public class ReservationController extends MouseAdapter implements ActionListene
 	}
 
 	private void insertOne() {
-		OptionItem cust   = (OptionItem) reservationCreateFrame.cbCustomer.getSelectedItem();
 		OptionItem screen = (OptionItem) reservationCreateFrame.cbScreening.getSelectedItem();
-		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
+		if (selectedCustomerId == 0 || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
 		String seatNo = buildSeatNo(reservationCreateFrame.cbSeatRow, reservationCreateFrame.cbSeatColumn);
 		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 선택해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
-			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(seatNo);
+			r.setCustId(selectedCustomerId); r.setScreenId(screen.id); r.setSeatNo(seatNo);
 			service.save(r);
 			reservationCreateFrame.cbSeatRow.setSelectedIndex(0);
 			reservationCreateFrame.cbSeatColumn.setSelectedIndex(0);
@@ -222,11 +290,10 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		if (!"목록 조회".equals(cmd)) {
 			switch (cmd) {
 			case "예약 추가":
-				try { loadOptions(reservationCreateFrame.cbCustomer, reservationCreateFrame.cbMovie); }
+				try { loadOptions(reservationCreateFrame.cbMovie); loadCustomerTable(""); }
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
 				reservationCreateFrame.cbSeatRow.setSelectedIndex(0);
-			reservationCreateFrame.cbSeatColumn.setSelectedIndex(0);
-			reservationCreateFrame.setVisible(true); break;
+			reservationCreateFrame.cbSeatColumn.setSelectedIndex(0);		reservationCreateFrame.clearCustomerSearch();			reservationCreateFrame.setVisible(true); break;
 			case "저장":  insertOne(); break;
 			case "취소":  reservationCreateFrame.setVisible(false); reservationUpdateFrame.setVisible(false); break;
 			case "수정":  if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
