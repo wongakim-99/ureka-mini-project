@@ -47,8 +47,8 @@ public class ReservationCreateFrame extends JFrame {
 		panInsert.add(cbCustomer);  cbCustomer.setBounds(90, 20,  420, 30);
 		panInsert.add(cbMovie);     cbMovie.setBounds(90,    60,  420, 30);
 		panInsert.add(cbScreening); cbScreening.setBounds(90, 100, 420, 30);
-		panInsert.add(cbSeatRow);   cbSeatRow.setBounds(90,  140, 160, 30);
-		panInsert.add(cbSeatColumn);cbSeatColumn.setBounds(260, 140, 120, 30);
+		panInsert.add(cbSeatRow);   cbSeatRow.setBounds(90,  140, 50, 30);
+		panInsert.add(cbSeatColumn);cbSeatColumn.setBounds(150, 140, 50, 30);
 		add(panButton, BorderLayout.SOUTH);
 		panButton.add(btnSave); panButton.add(btnCancel);
 	}
