@@ -116,10 +116,13 @@ public class MainDashboard extends JFrame {
 
     private void seedFromKobisIfEmpty() {
         try {
-            var rs = DBUtil.getConnection().createStatement()
-                .executeQuery("SELECT COUNT(*) FROM movie");
-            rs.next();
-            if (rs.getInt(1) == 0) {
+            boolean isEmpty;
+            try (var stmt = DBUtil.getConnection().createStatement();
+                 var rs = stmt.executeQuery("SELECT COUNT(*) FROM movie")) {
+                rs.next();
+                isEmpty = rs.getInt(1) == 0;
+            }
+            if (isEmpty) {
                 System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
                 new KobisImporter().importMovies();
                 System.out.println("[KOBIS] 데이터 삽입 완료");
