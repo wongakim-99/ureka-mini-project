@@ -1,18 +1,28 @@
 package presentation.swing.reservation;
 
-import infrastructure.AppLogger;
-import java.util.logging.Logger;
-import domain.common.OptionItem;
-import domain.reservation.Reservation;
-import domain.reservation.ReservationService;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.*;
+import java.util.logging.Logger;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+
+import domain.common.OptionItem;
+import domain.reservation.Reservation;
+import domain.reservation.ReservationService;
+import infrastructure.AppLogger;
 
 public class ReservationController extends MouseAdapter implements ActionListener {
 
@@ -100,17 +110,43 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		cbM.removeAllItems(); service.getMovieOptions().forEach(cbM::addItem);
 	}
 
+	private String buildSeatNo(JComboBox<String> cbRow, JComboBox<String> cbColumn) {
+		String row = (String) cbRow.getSelectedItem();
+		String column = (String) cbColumn.getSelectedItem();
+		if (row == null || row.isEmpty() || column == null || column.isEmpty()) return "";
+		return row + column;
+	}
+
+	private void selectSeatNo(JComboBox<String> cbRow, JComboBox<String> cbColumn, String seatNo) {
+		if (seatNo == null || seatNo.isEmpty()) {
+			cbRow.setSelectedIndex(0);
+			cbColumn.setSelectedIndex(0);
+			return;
+		}
+		String row = seatNo.substring(0, 1);
+		String column = seatNo.length() > 1 ? seatNo.substring(1) : "";
+		for (int i = 0; i < cbRow.getItemCount(); i++) {
+			if (cbRow.getItemAt(i).equals(row)) { cbRow.setSelectedIndex(i); break; }
+		}
+		for (int i = 0; i < cbColumn.getItemCount(); i++) {
+			if (cbColumn.getItemAt(i).equals(column)) { cbColumn.setSelectedIndex(i); break; }
+		}
+	}
+
 	private void insertOne() {
 		OptionItem cust   = (OptionItem) reservationCreateFrame.cbCustomer.getSelectedItem();
 		OptionItem screen = (OptionItem) reservationCreateFrame.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 영화/상영일정을 선택해주세요."); return; }
-		String seatNo = reservationCreateFrame.tfSeatNo.getText().trim();
-		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
+		String seatNo = buildSeatNo(reservationCreateFrame.cbSeatRow, reservationCreateFrame.cbSeatColumn);
+		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 선택해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
 			r.setCustId(cust.id); r.setScreenId(screen.id); r.setSeatNo(seatNo);
 			service.save(r);
-			reservationCreateFrame.tfSeatNo.setText(""); reservationCreateFrame.setVisible(false); readAll();
+			reservationCreateFrame.cbSeatRow.setSelectedIndex(0);
+			reservationCreateFrame.cbSeatColumn.setSelectedIndex(0);
+			reservationCreateFrame.setVisible(false);
+			readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() == null ? "예약 추가 실패" : e.getMessage()); }
 	}
 
@@ -118,8 +154,8 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		OptionItem cust = (OptionItem) reservationUpdateFrame.cbCustomer.getSelectedItem();
 		OptionItem screen = (OptionItem) reservationUpdateFrame.cbScreening.getSelectedItem();
 		if (cust == null || screen == null) { dialogOpen("고객과 상영일정을 선택해주세요."); return; }
-		String seatNo = reservationUpdateFrame.tfSeatNo.getText().trim();
-		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 입력해주세요."); return; }
+		String seatNo = buildSeatNo(reservationUpdateFrame.cbSeatRow, reservationUpdateFrame.cbSeatColumn);
+		if (seatNo.isEmpty()) { dialogOpen("좌석번호를 선택해주세요."); return; }
 		try {
 			Reservation r = new Reservation();
 			r.setReservId(selectedReservationId); r.setCustId(cust.id); r.setScreenId(screen.id);
@@ -133,7 +169,11 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		catch (SQLException e) { dialogOpen("예약 삭제 실패"); }
 	}
 
-	private void clearUpdateFrame() { reservationUpdateFrame.tfSeatNo.setText(""); reservationUpdateFrame.setVisible(false); }
+	private void clearUpdateFrame() {
+		reservationUpdateFrame.cbSeatRow.setSelectedIndex(0);
+		reservationUpdateFrame.cbSeatColumn.setSelectedIndex(0);
+		reservationUpdateFrame.setVisible(false);
+	}
 
 	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
@@ -148,7 +188,7 @@ public class ReservationController extends MouseAdapter implements ActionListene
 						if (reservationUpdateFrame.cbMovie.getItemAt(j).id == r.getMovieId()) { reservationUpdateFrame.cbMovie.setSelectedIndex(j); break; }
 					for (int j = 0; j < reservationUpdateFrame.cbScreening.getItemCount(); j++)
 						if (reservationUpdateFrame.cbScreening.getItemAt(j).id == r.getScreenId()) { reservationUpdateFrame.cbScreening.setSelectedIndex(j); break; }
-					reservationUpdateFrame.tfSeatNo.setText(r.getSeatNo());
+					selectSeatNo(reservationUpdateFrame.cbSeatRow, reservationUpdateFrame.cbSeatColumn, r.getSeatNo());
 					reservationUpdateFrame.setVisible(true);
 				}
 				break;
@@ -178,7 +218,9 @@ public class ReservationController extends MouseAdapter implements ActionListene
 			case "예약 추가":
 				try { loadOptions(reservationCreateFrame.cbCustomer, reservationCreateFrame.cbMovie); }
 				catch (SQLException ex) { dialogOpen("옵션 로드 실패"); return; }
-				reservationCreateFrame.setVisible(true); break;
+				reservationCreateFrame.cbSeatRow.setSelectedIndex(0);
+			reservationCreateFrame.cbSeatColumn.setSelectedIndex(0);
+			reservationCreateFrame.setVisible(true); break;
 			case "저장":  insertOne(); break;
 			case "취소":  reservationCreateFrame.setVisible(false); reservationUpdateFrame.setVisible(false); break;
 			case "수정":  if (e.getSource() == btnUpdateBottom) openCheckedUpdateFrame(); else updateOne(); break;
