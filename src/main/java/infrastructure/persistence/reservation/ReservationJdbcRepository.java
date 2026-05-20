@@ -108,4 +108,26 @@ public class ReservationJdbcRepository implements ReservationRepository {
 		}
 	}
 
+	@Override
+	public Integer findCustomerAge(int custId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservSelectCustAge"))) {
+			psmt.setInt(1, custId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				if (!rs.next()) return null;
+				int age = rs.getInt("age");
+				return rs.wasNull() ? null : age;
+			}
+		}
+	}
+
+	@Override
+	public String findMovieRatingByScreening(int screenId) throws SQLException {
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("reservSelectMovieRatingByScreen"))) {
+			psmt.setInt(1, screenId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() ? rs.getString("rating") : null;
+			}
+		}
+	}
+
 }
