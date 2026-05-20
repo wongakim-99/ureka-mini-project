@@ -86,16 +86,38 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 	}
 
 	private void insertOne() {
+		String name = customerCreateFrame.tfName.getText().trim();
+		String phone = customerCreateFrame.tfPhone.getText().trim();
+		String email = customerCreateFrame.tfEmail.getText().trim();
+
+		if (name.isEmpty()) { dialogOpen("이름을 입력해주세요."); return; }
+		if (phone.isEmpty()) { dialogOpen("전화번호를 입력해주세요."); return; }
+		if (email.isEmpty()) { dialogOpen("이메일을 입력해주세요."); return; }
+		if (!isValidEmail(email)) { dialogOpen("올바른 이메일 형식을 입력해주세요. (예: user@example.com)"); return; }
+
 		try {
-			service.save(new Customer(0, customerCreateFrame.tfName.getText(), customerCreateFrame.tfPhone.getText(), customerCreateFrame.tfEmail.getText()));
+			service.save(new Customer(0, name, phone, email));
 			customerCreateFrame.tfName.setText(""); customerCreateFrame.tfPhone.setText(""); customerCreateFrame.tfEmail.setText("");
 			customerCreateFrame.setVisible(false); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 추가 실패"); }
 	}
 
+	private boolean isValidEmail(String email) {
+		return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+	}
+
 	private void updateOne() {
+		String name = customerUpdateFrame.tfName.getText().trim();
+		String phone = customerUpdateFrame.tfPhone.getText().trim();
+		String email = customerUpdateFrame.tfEmail.getText().trim();
+
+		if (name.isEmpty()) { dialogOpen("이름을 입력해주세요."); return; }
+		if (phone.isEmpty()) { dialogOpen("전화번호를 입력해주세요."); return; }
+		if (email.isEmpty()) { dialogOpen("이메일을 입력해주세요."); return; }
+		if (!isValidEmail(email)) { dialogOpen("올바른 이메일 형식을 입력해주세요. (예: user@example.com)"); return; }
+
 		try {
-			service.update(new Customer(selectedCustomerId, customerUpdateFrame.tfName.getText(), customerUpdateFrame.tfPhone.getText(), customerUpdateFrame.tfEmail.getText()));
+			service.update(new Customer(selectedCustomerId, name, phone, email));
 			clearUpdateFrame(); readAll();
 		} catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "고객 수정 실패"); }
 	}
@@ -159,7 +181,6 @@ public class CustomerController extends MouseAdapter implements ActionListener {
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
-		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);

@@ -13,11 +13,15 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import infrastructure.AppLogger;
 import infrastructure.db.DBUtil;
 import infrastructure.db.SchemaManager;
 import infrastructure.kobis.KobisImporter;
+import java.util.logging.Logger;
 
 public class MainDashboard extends JFrame {
+
+    private static final Logger log = AppLogger.get(MainDashboard.class);
 
     private JLabel bigCount;
 
@@ -46,12 +50,12 @@ public class MainDashboard extends JFrame {
 
     private void initControls() {
         dialog = new JDialog(this, "알림", true);
-        dialog.setSize(300, 150);
+        dialog.setSize(500, 180);
         dialog.setLayout(null);
         dialogLabel = new JLabel("", SwingConstants.CENTER);
-        dialogLabel.setBounds(10, 20, 260, 30);
+        dialogLabel.setBounds(10, 20, 480, 80);
         btnDialogClose = new JButton("확인");
-        btnDialogClose.setBounds(100, 70, 80, 30);
+        btnDialogClose.setBounds(210, 110, 80, 30);
         dialog.add(dialogLabel);
         dialog.add(btnDialogClose);
         btnDialogClose.addActionListener(e -> dialog.setVisible(false));
@@ -117,20 +121,23 @@ public class MainDashboard extends JFrame {
 
     private void seedFromKobisIfEmpty() {
         try {
-            var rs = DBUtil.getConnection().createStatement()
-                .executeQuery("SELECT COUNT(*) FROM movie");
-            rs.next();
-            if (rs.getInt(1) == 0) {
-                System.out.println("[KOBIS] movie 테이블이 비어있어 박스오피스 데이터를 가져옵니다...");
+            boolean isEmpty;
+            try (var stmt = DBUtil.getConnection().createStatement();
+                 var rs = stmt.executeQuery("SELECT COUNT(*) FROM movie")) {
+                rs.next();
+                isEmpty = rs.getInt(1) == 0;
+            }
+            if (isEmpty) {
+                log.info("영화 데이터가 없어 박스오피스 데이터를 가져옵니다...");
                 new KobisImporter().importMovies();
-                System.out.println("[KOBIS] 데이터 삽입 완료");
+                log.info("영화 데이터 초기 로드 완료");
                 SwingUtilities.invokeLater(() -> {
                     controls.movieController.load();
                     bigCount.setText(String.valueOf(controls.movieController.getMovieCount()));
                 });
             }
         } catch (Exception e) {
-            System.err.println("[KOBIS] 초기 데이터 로드 실패: " + e.getMessage());
+            log.warning("영화 초기 데이터 로드 실패: " + e.getMessage());
         }
     }
 

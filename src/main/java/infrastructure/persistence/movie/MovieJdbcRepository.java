@@ -15,52 +15,55 @@ public class MovieJdbcRepository implements MovieRepository {
 
 	@Override
 	public List<Movie> findAll() throws SQLException {
-		Statement stmt = DBUtil.getConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(DBUtil.getSQL("movieSelectAll"));
-		List<Movie> list = new ArrayList<>();
-		while (rs.next()) {
-			list.add(new Movie(rs.getInt("movieid"), rs.getString("title"),
-				rs.getString("director"), rs.getString("rating"),
-				rs.getInt("runtime")));
+		try (Statement stmt = DBUtil.getConnection().createStatement();
+			 ResultSet rs = stmt.executeQuery(DBUtil.getSQL("movieSelectAll"))) {
+			List<Movie> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(new Movie(rs.getInt("movieid"), rs.getString("title"),
+					rs.getString("director"), rs.getString("rating"),
+					rs.getInt("runtime")));
+			}
+			return list;
 		}
-		stmt.close(); rs.close();
-		return list;
 	}
 
 	@Override
 	public void save(Movie movie) throws SQLException {
-		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieInsertOne"));
-		psmt.setString(1, movie.getTitle());
-		psmt.setString(2, movie.getDirector()); psmt.setString(3, movie.getRating());
-		psmt.setInt(4, movie.getRuntime());
-		psmt.executeUpdate();
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieInsertOne"))) {
+			psmt.setString(1, movie.getTitle());
+			psmt.setString(2, movie.getDirector()); psmt.setString(3, movie.getRating());
+			psmt.setInt(4, movie.getRuntime());
+			psmt.executeUpdate();
+		}
 	}
 
 	@Override
 	public void update(Movie movie) throws SQLException {
-		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieUpdateOne"));
-		psmt.setString(1, movie.getTitle());
-		psmt.setString(2, movie.getDirector()); psmt.setString(3, movie.getRating());
-		psmt.setInt(4, movie.getRuntime()); psmt.setInt(5, movie.getMovieId());
-		psmt.executeUpdate();
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieUpdateOne"))) {
+			psmt.setString(1, movie.getTitle());
+			psmt.setString(2, movie.getDirector()); psmt.setString(3, movie.getRating());
+			psmt.setInt(4, movie.getRuntime()); psmt.setInt(5, movie.getMovieId());
+			psmt.executeUpdate();
+		}
 	}
 
 	@Override
 	public void delete(int movieId) throws SQLException {
-		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieDeleteOne"));
-		psmt.setInt(1, movieId);
-		psmt.executeUpdate();
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieDeleteOne"))) {
+			psmt.setInt(1, movieId);
+			psmt.executeUpdate();
+		}
 	}
 
 	@Override
 	public boolean existsByTitle(String title, int excludeMovieId) throws SQLException {
-		PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieExistsByTitle"));
-		psmt.setString(1, title);
-		psmt.setInt(2, excludeMovieId);
-		ResultSet rs = psmt.executeQuery();
-		boolean exists = rs.next() && rs.getInt("cnt") > 0;
-		rs.close(); psmt.close();
-		return exists;
+		try (PreparedStatement psmt = DBUtil.getConnection().prepareStatement(DBUtil.getSQL("movieExistsByTitle"))) {
+			psmt.setString(1, title);
+			psmt.setInt(2, excludeMovieId);
+			try (ResultSet rs = psmt.executeQuery()) {
+				return rs.next() && rs.getInt("cnt") > 0;
+			}
+		}
 	}
 
 }

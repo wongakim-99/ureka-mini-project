@@ -74,13 +74,17 @@ public class ReservationController extends MouseAdapter implements ActionListene
 			@Override public boolean isCellEditable(int row, int col) { return false; }
 		};
 		table.setModel(model);
+		if (table.getColumnModel().getColumnCount() > 1) {
+			table.removeColumn(table.getColumnModel().getColumn(1));
+		}
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setRowSelectionAllowed(true);
 
 		model.addTableModelListener(e -> {
 			int checkCount = 0;
 			for (int i = 0; i < table.getRowCount(); i++) {
-				if ((Boolean) table.getValueAt(i, 0)) checkCount++;
+				int modelRow = table.convertRowIndexToModel(i);
+				if ((Boolean) table.getModel().getValueAt(modelRow, 0)) checkCount++;
 			}
 			if (btnDeleteTop != null) btnDeleteTop.setEnabled(checkCount > 0);
 			if (btnUpdateBottom != null) btnUpdateBottom.setEnabled(checkCount == 1);
@@ -137,8 +141,9 @@ public class ReservationController extends MouseAdapter implements ActionListene
 
 	private void openCheckedUpdateFrame() {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				selectedReservationId = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				selectedReservationId = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				Reservation r = reservationList.stream().filter(item -> item.getReservId() == selectedReservationId).findFirst().orElse(null);
 				if (r != null) {
 					try { loadOptions(reservationUpdateFrame.cbCustomer, reservationUpdateFrame.cbMovie); } catch (SQLException ignored) {}
@@ -162,8 +167,9 @@ public class ReservationController extends MouseAdapter implements ActionListene
 
 		int count = 0;
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if ((Boolean) table.getValueAt(i, 0)) {
-				int id = Integer.parseInt(table.getValueAt(i, 1).toString());
+			int modelRow = table.convertRowIndexToModel(i);
+			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
+				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
 				try { service.delete(id); count++; } catch (SQLException ignored) {}
 			}
 		}
@@ -191,7 +197,6 @@ public class ReservationController extends MouseAdapter implements ActionListene
 	public void mouseClicked(MouseEvent e) {
 		int col = table.columnAtPoint(e.getPoint());
 		int row = table.rowAtPoint(e.getPoint());
-		log.fine(String.format("click col=%d row=%d", col, row));
 		if (col == 0 && row >= 0) {
 			boolean curr = (Boolean) table.getValueAt(row, 0);
 			table.setValueAt(!curr, row, 0);

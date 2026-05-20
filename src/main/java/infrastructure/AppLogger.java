@@ -26,7 +26,7 @@ public class AppLogger {
         });
 
         root.addHandler(handler);
-        root.setLevel(Level.FINE);
+        root.setLevel(Level.INFO);
     }
 
     public static Logger get(Class<?> clazz) {
