@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 public class WindowControl extends WindowAdapter {
 
 	private JDialog dialog;
+	
 	private JLabel dialogLabel;
 
 	public WindowControl(JDialog dialog, JLabel dialogLabel) {

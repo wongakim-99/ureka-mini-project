@@ -40,7 +40,8 @@ CREATE TABLE customer (
     name   VARCHAR(50) NOT NULL,
     phone  VARCHAR(20) NOT NULL,
     email  VARCHAR(100),
-    UNIQUE(phone)
+    UNIQUE(phone),
+    age int
 );
 
 CREATE TABLE reservation (
@@ -60,9 +61,35 @@ INSERT INTO theater VALUES (NULL, 'VIP관',   30);
 INSERT INTO theater VALUES (NULL, 'IMAX관', 200);
 INSERT INTO theater VALUES (NULL, '4DX관',   80);
 
-INSERT INTO customer VALUES (NULL, '김가원', '010-1234-5678', 'gawon@email.com');
-INSERT INTO customer VALUES (NULL, '이민준', '010-2345-6789', 'minjun@email.com');
-INSERT INTO customer VALUES (NULL, '박지수', '010-3456-7890', 'jisu@email.com');
-INSERT INTO customer VALUES (NULL, '김철수', '010-1111-2222', 'chulsoo@email.com');
-INSERT INTO customer VALUES (NULL, '이영희', '010-3333-4444', 'younghee@email.com');
-INSERT INTO customer VALUES (NULL, '박민준', '010-5555-6666', 'pminjun@email.com');
+INSERT INTO customer VALUES (NULL, '김가원', '010-1234-5678', 'gawon@email.com',    25);
+INSERT INTO customer VALUES (NULL, '이민준', '010-2345-6789', 'minjun@email.com',   17);
+INSERT INTO customer VALUES (NULL, '박지수', '010-3456-7890', 'jisu@email.com',     30);
+INSERT INTO customer VALUES (NULL, '김철수', '010-1111-2222', 'chulsoo@email.com',  14);
+INSERT INTO customer VALUES (NULL, '이영희', '010-3333-4444', 'younghee@email.com', 22);
+INSERT INTO customer VALUES (NULL, '박민준', '010-5555-6666', 'pminjun@email.com',  19);
+
+-- INSERT INTO movie (movieid, title, genre, director, rating, runtime) VALUES (NULL, '범죄도시4',      '액션',        '허명행', '15세이상관람가', 109);
+-- INSERT INTO movie (movieid, title, genre, director, rating, runtime) VALUES (NULL, '파묘',           '공포/미스터리', '장재현', '15세이상관람가', 134);
+-- INSERT INTO movie (movieid, title, genre, director, rating, runtime) VALUES (NULL, '인사이드 아웃 2', '애니메이션',  '켈시 만', '전체관람가',    100);
+-- INSERT INTO movie (movieid, title, genre, director, rating, runtime) VALUES (NULL, '베테랑2',        '액션/범죄',   '류승완', '15세이상관람가', 120);
+-- INSERT INTO movie (movieid, title, genre, director, rating, runtime) VALUES (NULL, '소풍',           '드라마',      '허진호', '12세이상관람가',  96);
+
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 1, 1, '2026-05-21 10:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 1, 2, '2026-05-21 13:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 2, 3, '2026-05-21 11:00:00', 18000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 2, 1, '2026-05-21 16:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 3, 4, '2026-05-21 14:00:00', 20000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 3, 2, '2026-05-22 10:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 4, 5, '2026-05-22 13:00:00', 15000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 4, 1, '2026-05-22 17:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 5, 2, '2026-05-22 15:00:00', 12000);
+-- INSERT INTO screening (screenid, movieid, theaterid, showtime,              price) VALUES (NULL, 5, 3, '2026-05-23 12:00:00', 18000);
+
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 1, 1,  'A01', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 2, 1,  'A02', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 3, 3,  'B05', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 4, 5,  'C10', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 5, 7,  'A03', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 6, 9,  'D07', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 1, 10, 'B02', '2026-05-20');
+-- INSERT INTO reservation (reservid, custid, screenid, seatno, reservdate) VALUES (NULL, 2, 6,  'A01', '2026-05-20');

@@ -9,4 +9,5 @@ public interface TheaterRepository {
 	void update(Theater theater) throws SQLException;
 	void delete(int theaterId) throws SQLException;
 	boolean existsByName(String name, int excludeTheaterId) throws SQLException;
+	boolean hasScreenings(int theaterId) throws SQLException;
 }

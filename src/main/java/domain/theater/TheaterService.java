@@ -45,7 +45,12 @@ public class TheaterService {
 			throw e;
 		}
 	}
-	public void delete(int theaterId) throws SQLException   { repository.delete(theaterId); }
+	public void delete(int theaterId) throws SQLException {
+		if (repository.hasScreenings(theaterId)) {
+			throw new SQLException("상영 일정이 등록된 상영관은 삭제할 수 없습니다.");
+		}
+		repository.delete(theaterId);
+	}
 
 	private String normalizeName(String name) {
 		return name == null ? null : name.trim().replaceAll("\\s+", " ");

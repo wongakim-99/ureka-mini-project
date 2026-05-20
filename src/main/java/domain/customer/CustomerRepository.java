@@ -9,4 +9,5 @@ public interface CustomerRepository {
 	void update(Customer customer) throws SQLException;
 	void delete(int custId) throws SQLException;
 	boolean existsByPhone(String phone, int excludeCustomerId) throws SQLException;
+	boolean hasReservations(int custId) throws SQLException;
 }

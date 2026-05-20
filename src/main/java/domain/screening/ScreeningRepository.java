@@ -12,4 +12,5 @@ public interface ScreeningRepository {
 	List<OptionItem> findMovieOptions() throws SQLException;
 	List<OptionItem> findTheaterOptions() throws SQLException;
 	boolean hasOverlap(int theaterId, int excludeScreenId, String showtime, int movieId) throws SQLException;
+	boolean hasReservations(int screenId) throws SQLException;
 }

@@ -40,7 +40,12 @@ public class CustomerService {
 		}
 	}
 
-	public void delete(int custId) throws SQLException { repository.delete(custId); }
+	public void delete(int custId) throws SQLException {
+		if (repository.hasReservations(custId)) {
+			throw new SQLException("예약 내역이 있는 고객은 삭제할 수 없습니다.");
+		}
+		repository.delete(custId);
+	}
 
 	private void normalize(Customer customer) {
 		customer.setName(normalizeText(customer.getName()));

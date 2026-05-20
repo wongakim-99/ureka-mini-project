@@ -303,14 +303,18 @@ public class ReservationController extends MouseAdapter implements ActionListene
 		if (opt != JOptionPane.YES_OPTION) return;
 
 		int count = 0;
+		String errorMsg = null;
 		for (int i = 0; i < table.getRowCount(); i++) {
 			int modelRow = table.convertRowIndexToModel(i);
 			if ((Boolean) table.getModel().getValueAt(modelRow, 0)) {
 				int id = Integer.parseInt(table.getModel().getValueAt(modelRow, 1).toString());
-				try { service.delete(id); count++; } catch (SQLException ignored) {}
+				try { service.delete(id); count++; }
+				catch (SQLException e) { if (errorMsg == null) errorMsg = e.getMessage(); }
 			}
 		}
-		if (count > 0) { dialogOpen(count + "건의 예약 정보가 삭제되었습니다."); readAll(); }
+		if (count > 0) readAll();
+		if (errorMsg != null) dialogOpen(errorMsg);
+		else if (count > 0) dialogOpen(count + "건의 예약 정보가 삭제되었습니다.");
 	}
 
 	@Override
