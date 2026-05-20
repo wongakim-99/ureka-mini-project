@@ -14,4 +14,6 @@ public interface ReservationRepository {
 	List<OptionItem> findCustomerOptions() throws SQLException;
 	List<OptionItem> findMovieOptions() throws SQLException;
 	List<OptionItem> findScreeningsByMovie(int movieId) throws SQLException;
+	Integer findCustomerAge(int custId) throws SQLException;
+	String findMovieRatingByScreening(int screenId) throws SQLException;
 }
