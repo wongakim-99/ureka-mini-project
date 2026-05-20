@@ -25,6 +25,7 @@ public class MovieService {
 			if (isDuplicate(e)) throw new SQLException("이미 동일한 제목의 영화가 등록되어 있습니다.");
 			throw e;
 		}
+		
 	}
 
 	public void update(Movie movie) throws SQLException {
