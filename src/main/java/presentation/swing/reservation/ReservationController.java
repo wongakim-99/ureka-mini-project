@@ -180,7 +180,8 @@ public class ReservationController extends MouseAdapter implements ActionListene
 				int modelRow = reservationCreateFrame.getCustomerTable().convertRowIndexToModel(row);
 				selectedCustomerId = Integer.parseInt(reservationCreateFrame.getCustomerTable().getModel().getValueAt(modelRow, 0).toString());
 				String name = reservationCreateFrame.getCustomerTable().getModel().getValueAt(modelRow, 1).toString();
-				reservationCreateFrame.setSelectedCustomerText("선택된 고객: " + name);
+				String phone = reservationCreateFrame.getCustomerTable().getModel().getValueAt(modelRow, 2).toString();
+				reservationCreateFrame.setSelectedCustomerText("선택된 고객: " + name + " | " + phone);
 			}
 		};
 	}

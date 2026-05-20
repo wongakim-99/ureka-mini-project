@@ -176,21 +176,22 @@ public class SeatSelectionDialog extends JDialog {
         int seatSize = Math.max(12, Math.min((availGridWidth - (2 * labelWidth) - (gapCount * gapWidth)) / seatCols,
             (availGridHeight) / rows));
 
-        int gridWidth = seatCols * seatSize + (gapCount * gapWidth) + (2 * labelWidth);
-        int gridHeight = rows * seatSize + (rows - 1) * cellGap;
+        int adjustedSeatSize = seatSize + 6;
+        int gridWidth = seatCols * adjustedSeatSize + (gapCount * gapWidth) + (2 * labelWidth);
+        int gridHeight = rows * adjustedSeatSize + (rows - 1) * cellGap;
         grid.setPreferredSize(new Dimension(gridWidth, gridHeight));
 
-        // adjust components inside grid to use the computed seatSize
+        // adjust components inside grid to use the computed seatSize (plus 2px for better visibility)
         for (Component comp : grid.getComponents()) {
             if (comp instanceof JToggleButton) {
                 JToggleButton b = (JToggleButton) comp;
-                b.setPreferredSize(new Dimension(seatSize, seatSize));
-                // make seat numbers larger and bolder for stronger contrast
-                b.setFont(new Font("Malgun Gothic", Font.BOLD, Math.max(12, seatSize * 3 / 4)));
+                b.setPreferredSize(new Dimension(adjustedSeatSize, adjustedSeatSize));
+                // make seat numbers smaller for cleaner look
+                b.setFont(new Font("Malgun Gothic", Font.BOLD, Math.max(10, adjustedSeatSize / 2)));
             } else if (comp instanceof JPanel) {
-                comp.setPreferredSize(new Dimension(gapWidth, seatSize));
+                comp.setPreferredSize(new Dimension(gapWidth, adjustedSeatSize));
             } else if (comp instanceof JLabel) {
-                comp.setPreferredSize(new Dimension(labelWidth, seatSize));
+                comp.setPreferredSize(new Dimension(labelWidth, adjustedSeatSize));
             }
         }
 
