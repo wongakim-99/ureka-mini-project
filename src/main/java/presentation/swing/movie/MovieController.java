@@ -44,7 +44,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 		this.service = service;
 		columnNames = new Vector<>();
 		columnNames.add("선택"); columnNames.add("MovieID"); columnNames.add("제목");
-		columnNames.add("장르"); columnNames.add("감독"); columnNames.add("관람등급"); columnNames.add("러닝타임(분)");
+		columnNames.add("감독"); columnNames.add("관람등급"); columnNames.add("러닝타임(분)");
 		this.dialog = dialog;
 		this.dialogLabel = dialogLabel;
 	}
@@ -69,14 +69,13 @@ public class MovieController extends MouseAdapter implements ActionListener {
 		String keyword = lastKeyword.toLowerCase();
 		Vector<Vector<Object>> data = new Vector<>();
 		for (Movie m : movieList) {
-			// 검색어가 있을 경우 제목이나 장르에 포함되지 않으면 제외
-			if (!keyword.isEmpty() && !m.getTitle().toLowerCase().contains(keyword) && 
-				!m.getGenre().toLowerCase().contains(keyword)) continue;
+			// 검색어가 있을 경우 제목에 포함되지 않으면 제외
+			if (!keyword.isEmpty() && !m.getTitle().toLowerCase().contains(keyword)) continue;
 
 			Vector<Object> row = new Vector<>();
 			row.add(Boolean.FALSE); // 체크박스
 			row.add(String.valueOf(m.getMovieId())); row.add(m.getTitle());
-			row.add(m.getGenre()); row.add(m.getDirector()); row.add(m.getRating());
+			row.add(m.getDirector()); row.add(m.getRating());
 			row.add(String.valueOf(m.getRuntime()));
 			data.add(row);
 		}
@@ -102,11 +101,11 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 	private void insertOne() {
 		int runtime = parseRuntime(movieCreateFrame.tfRuntime.getText());
-		Movie movie = new Movie(0, movieCreateFrame.tfTitle.getText(), movieCreateFrame.tfGenre.getText(),
+		Movie movie = new Movie(0, movieCreateFrame.tfTitle.getText(), 
 				movieCreateFrame.tfDirector.getText(), movieCreateFrame.tfRating.getText(), runtime);
 		try {
 			service.save(movie);
-			movieCreateFrame.tfTitle.setText(""); movieCreateFrame.tfGenre.setText("");
+			movieCreateFrame.tfTitle.setText(""); 
 			movieCreateFrame.tfDirector.setText(""); movieCreateFrame.tfRating.setText(""); movieCreateFrame.tfRuntime.setText("");
 			movieCreateFrame.setVisible(false);
 			readAll();
@@ -118,7 +117,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 
 	private void updateOne() {
 		int runtime = parseRuntime(movieUpdateFrame.tfRuntime.getText());
-		Movie movie = new Movie(selectedMovieId, movieUpdateFrame.tfTitle.getText(), movieUpdateFrame.tfGenre.getText(),
+		Movie movie = new Movie(selectedMovieId, movieUpdateFrame.tfTitle.getText(), 
 				movieUpdateFrame.tfDirector.getText(), movieUpdateFrame.tfRating.getText(), runtime);
 		try { service.update(movie); clearUpdateFrame(); readAll(); }
 		catch (SQLException e) { dialogOpen(e.getMessage() != null ? e.getMessage() : "영화 수정 실패"); }
@@ -130,7 +129,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 	}
 
 	private void clearUpdateFrame() {
-		movieUpdateFrame.tfTitle.setText(""); movieUpdateFrame.tfGenre.setText("");
+		movieUpdateFrame.tfTitle.setText("");
 		movieUpdateFrame.tfDirector.setText(""); movieUpdateFrame.tfRating.setText(""); movieUpdateFrame.tfRuntime.setText("");
 		movieUpdateFrame.setVisible(false);
 	}
@@ -145,7 +144,7 @@ public class MovieController extends MouseAdapter implements ActionListener {
 				selectedMovieId = Integer.parseInt(table.getValueAt(i, 1).toString());
 				Movie m = movieList.stream().filter(item -> item.getMovieId() == selectedMovieId).findFirst().orElse(null);
 				if (m != null) {
-					movieUpdateFrame.tfTitle.setText(m.getTitle()); movieUpdateFrame.tfGenre.setText(m.getGenre());
+					movieUpdateFrame.tfTitle.setText(m.getTitle());
 					movieUpdateFrame.tfDirector.setText(m.getDirector()); movieUpdateFrame.tfRating.setText(m.getRating());
 					movieUpdateFrame.tfRuntime.setText(String.valueOf(m.getRuntime()));
 					movieUpdateFrame.setVisible(true);
